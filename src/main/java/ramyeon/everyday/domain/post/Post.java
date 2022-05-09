@@ -39,7 +39,7 @@ public class Post extends DateBaseEntity {  // 게시글
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(1) DEFAULT 'Y'")
+    @Column(columnDefinition = "varchar(1) DEFAULT 'N'")
     private Whether isDeleted;  // 삭제 여부
 
     @NotNull
