@@ -6,13 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
 public abstract class DateBaseEntity {
 
-    @NotNull
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(columnDefinition = "datetime(6)")
