@@ -1,0 +1,114 @@
+
+:root {
+    --main-color: #C00000;
+    --sub-color: #e8b9c9;
+
+}
+
+/* .login-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+} */
+
+.main-login {
+    min-height: 100vh;
+    min-width: 100vh;
+    overflow-x: hidden;
+    background: linear-gradient(to bottom, rgb(236, 236, 236) 50%, rgba(236, 236, 236, 0.4));
+
+}
+
+.login-contain {
+    height: 75vh;
+    width: 40%;
+    background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
+    border-radius: 3rem;
+    margin: 4rem auto;
+    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-content {
+    margin: 3rem;
+    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+    height: 80%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-header{
+    display: inline-block;
+    margin-right: 1.5rem;   
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+.img-class{
+    height: 3rem; 
+}
+#img-id{
+    height: 100%;
+    object-fit: cover;
+}
+
+.link{
+    color: var(--main-color);
+    font-weight: bold;  
+}
+.link:hover{
+    color: var(--main-color);
+}
+
+input{
+    display: block;
+    border: none;
+    height: 2.5rem;
+    width: 70%;
+    margin: auto;  
+    margin-top: 1rem;
+    padding: 0.2rem 1rem;
+    color: gray;
+}
+input:focus{
+    outline:none;
+    border:none;
+}
+input:hover{
+    outline: 0.5px solid var(--main-color);
+    box-shadow: 4px 3px 9px -1px gray;
+}
+/* label{
+    display: block;
+    text-align: left;
+    margin: auto;
+    width: 70%;
+    font-size: small;
+    color: gray;
+    margin-bottom: 0.5rem;
+} */
+.login_btn{
+    width: 70%;
+    background: var(--main-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    padding: 0.5rem 1rem;
+    /* transition: all 0.2s ease; */
+}
+.login_btn:hover{
+    box-shadow: 4px 3px 9px -1px gray;
+    /* transform: translateY(-5px); */
+}
+
+.login-footer{
+    display: inline-block;
+    margin: 0.5rem 2rem 2rem 1rem;
+    
+}
