@@ -1,10 +1,9 @@
-
 :root {
     --main-color: #C00000;
-    --sub-color: #e8b9c9;
+    --sub-color: #a6bdf3;
 }
 
-.main-login {
+.main-forgot {
     min-height: 100vh;
     min-width: 100vh;
     overflow-x: hidden;
@@ -12,8 +11,8 @@
     align-items: center;
 }
 
-.login-contain {
-    height: 75vh;
+.forgot-contain {
+    height: 55vh;
     width: 40%;
     background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
     border-radius: 3rem;
@@ -24,7 +23,7 @@
     align-items: center;
 }
 
-.login-content {
+.forgot-content {
     margin: 3rem;
     box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
     height: 80%;
@@ -33,72 +32,60 @@
     flex-direction: column;
     justify-content: center;
 }
-
-
-.login-header{
-    display: inline-block;
-    margin-right: 1rem;   
-    margin-left: 1rem;
+.forgot-inputGroup{
+    width: 100%;
+    position: relative;
 }
-.img-class{
-    height: 3rem; 
-}
-#img-id{
-    height: 100%;
-    object-fit: cover;
-}
-
-#register-link{
-    color: var(--main-color);
-    font-weight: bold;  
-    text-decoration: none;
-}
-#register-link:hover{
-    color: var(--main-color);
-}
-#forgot-link{
-    color: gray;
-    text-decoration: none;
-    font-size: 0.8rem;
-}
-#forgot-link:hover{
-    color: gray;
-}
-
-.login-input{
+.forgot-input{
     display: block;
     border: none;
     height: 3rem;
-    width: 60%;
+    width: 65%;
+    border-radius: 0.5rem;
     color: gray;
     margin: 1.5rem auto 1rem auto;
 }
-.login-input:focus{
+.forgot-input:focus{
     outline:none;
     border:none;
 }
-.login-input:hover{
+.forgot-input:hover{
     outline: 0.5px solid var(--main-color);
     box-shadow: 4px 3px 9px -1px gray;
 }
 
-#login-btn{
+
+.finding-btn{
     width: 65%;
     height: 2.5rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
     background: var(--main-color);
     color: white;
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    margin-top: 1rem;
 }
-#login-btn:hover{
+.finding-btn:hover{
     box-shadow: 4px 3px 9px -1px gray;
-    /* transform: translateY(-5px); */
 }
 
-.login-footer{
-    display: inline-block;
-    margin: 0.5rem 1.5rem 0.5rem 1.5rem;
-    
+.finding-link{
+    text-decoration: none;
+}
+
+#emailAuth-btn{
+    margin-top: 2rem;   
+    width: 65%;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    background: var(--main-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
+}
+#emailAuth-btn:hover{
+    box-shadow: 4px 3px 9px -1px gray;
 }

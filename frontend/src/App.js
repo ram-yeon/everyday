@@ -14,8 +14,7 @@ import TestApi from './pages/TestApi/TestApi';
 function App() {
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
         
       <Router>
         <Routes>
@@ -36,7 +35,7 @@ function App() {
 
         </Routes>
       </Router>
-      </header>
+     
     </div>
   );
 }

@@ -1,0 +1,148 @@
+:root {
+    --main-color: #C00000;
+    --sub-color: #e8b9c9;
+}
+
+.main-Register {
+    min-height: 100vh;
+    min-width: 100vh;
+    overflow-x: hidden;
+    text-align: center;
+    align-items: center;
+    
+}
+.top-right{
+    margin-right: 1rem;
+}
+#login-link{
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--main-color);
+    font-weight: bold;
+  
+}
+#login-link:hover{
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--main-color);
+}
+
+.register-contain {
+    height: 85vh;
+    width: 40%;
+    background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
+    border-radius: 3rem;
+    margin: 4rem auto;
+    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.register-longContain {
+    height: 100vh;
+    width: 40%;
+    background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
+    border-radius: 3rem;
+    margin: 4rem auto;
+    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.register-content {
+    margin: 3rem;
+    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+    height: 85%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.info-inputGroup{
+    width: 100%;
+    position: relative;
+} 
+
+.info-h5{
+    font-size: small;
+    font-weight: 300;
+    color: gray;
+    position: absolute;
+    left: 17.5%;
+    top: -3.2rem;
+    margin: 2rem auto;
+}
+
+.register-input{
+    display: block;
+    border: none;
+    height: 3rem;
+    width: 65%;
+    border-radius: 0.5rem;
+    color: gray;
+    margin: 1.5rem auto 1rem auto;
+}
+.register-input:focus{
+    outline:none;
+    border:none;
+}
+.register-input:hover{
+    outline: 0.5px solid var(--main-color);
+    box-shadow: 4px 3px 9px -1px gray;
+}
+
+/* #searchSchool-input{   
+    
+    border: none;    
+}
+#searchSchool-input:hover{
+    outline: none;
+} */
+#signUp-btn{
+    width: 70%;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background: var(--main-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
+    margin-left: 4.5rem;
+    margin-top: 1rem;
+    
+}
+#signUp-btn:hover{
+    box-shadow: 4px 3px 9px -1px gray;
+}
+.emailAuth-btn{
+    width: 70%;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background: var(--main-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
+    margin-left: 4.5rem;
+    margin-top: 2rem;
+}
+.emailAuth-btn:hover{
+    box-shadow: 4px 3px 9px -1px gray;
+}
+
+.agreement-textArea{
+    display: block;
+    resize: none;
+    border: 0.5px solid lightgray;
+    border-radius: 0.5rem;
+    background: rgb(247, 247, 247);
+    color: gray;
+    width: 80%;
+    height: 100px;
+    overflow: auto;
+    font-size: 0.5rem; 
+    box-shadow:  0.1rem 0.1rem 0.1rem 0.1rem lightgray;
+    margin-left: 2.5rem;
+}

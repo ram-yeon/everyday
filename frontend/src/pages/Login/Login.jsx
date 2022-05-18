@@ -28,11 +28,11 @@ function Login() {
                         </div>
                     </div>
                     <form onSubmit={handlesubmit}>
-                        <input type="id" id="id" placeholder="아이디"
+                        <input type="id" className="login-input" placeholder="아이디"
                             value={idval} onChange={(e) => { setidval(e.target.value) }} />
-                        <input type="password" id="pw" placeholder="비밀번호"
+                        <input type="password" className="login-input" placeholder="비밀번호"
                             value={pwval} onChange={(e) => setpwval(e.target.value)} />
-                        <button type="submit" className="login_btn">로그인</button>
+                        <button type="submit" id="login-btn">로그인</button>
                     </form>
 
                     <div>
@@ -41,12 +41,12 @@ function Login() {
                                 label="로그인 유지" />
                         </div>
                         <div className="login-footer">
-                            <Link className="link" to='/forgot'>아이디/비밀번호 찾기</Link>
+                            <Link id="forgot-link" to='/forgot'>아이디/비밀번호 찾기</Link>
                         </div>
                     </div>
 
                     <div>
-                        <p style={{ color: 'gray' }}>에브리데이에 처음이신가요? <Link className="link" to='/register'>회원가입</Link></p>
+                        <p style={{ color: 'gray', textAlign:'center', fontSize:'0.8rem' }}>에브리데이에 처음이신가요? <Link id="register-link" to='/register'>회원가입</Link></p>
                     </div>
                 </div>
 
