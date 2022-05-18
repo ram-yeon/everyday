@@ -9,6 +9,7 @@ import Register from './pages/Register/Register.jsx';
 import Agreement from './pages/Register/Agreement.jsx';
 import Info from './pages/Register/Info.jsx';
 import Main from './pages/Main/Main.jsx';
+import TestApi from './pages/TestApi/TestApi';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/register/agreement" element={<Agreement />} />
           <Route path="/register/info" element={<Info />} />
           <Route path="/main" element={<Main />} />
+          <Route path="/testapi" element={<TestApi />} />
 
         </Routes>
       </Router>
