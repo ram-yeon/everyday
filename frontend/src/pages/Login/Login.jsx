@@ -21,7 +21,7 @@ function Login() {
                 <div className="login-content">
                     <div >
                         <div className="login-header img-class">
-                            <img src={logo} id="img-id" alt="로고이미지" srcset="" />
+                            <img src={logo} id="img-id" alt="로고이미지" />
                         </div>
                         <div className="login-header">
                             <p style={{ color: 'dimgray', fontWeight: 'bold', fontStyle: 'italic' }}>지금 에브리데이를 시작해보세요!</p>

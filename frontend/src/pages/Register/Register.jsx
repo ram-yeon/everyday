@@ -47,9 +47,6 @@ function getStyles(yearValue, admissionYearVal, theme) {
 
 function Register() {
 
-
-  const [schoolSearchVal, setSchoolSearchVal] = useState("");
-
   const handlesubmit = (event) => {
     event.preventDefualt();
   }
