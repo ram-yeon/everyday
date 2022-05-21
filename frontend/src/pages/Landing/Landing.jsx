@@ -51,7 +51,7 @@ function Landing() {
   return (
     
       <Layout>
-        <Content style={{ position: 'relative', zIndex: '1', width: '145vh', marginTop:'1rem'}}>
+        <Content style={{ position: 'relative', zIndex: '1', width: '146.5vh', marginTop:'1rem'}}>
           <Slider {...bannerSetting} >
             <div>
               <img style={{ width: '100%', height: '95vh' }} src={bannerPage1} alt="배너 이미지1" />
