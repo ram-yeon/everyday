@@ -1,5 +1,6 @@
 package ramyeon.everyday.domain.user;
 
+import lombok.Getter;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.like.Like;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 public class User extends DateBaseEntity {  // 회원
 
