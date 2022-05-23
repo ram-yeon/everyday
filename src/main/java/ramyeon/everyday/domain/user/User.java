@@ -1,6 +1,8 @@
 package ramyeon.everyday.domain.user;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.like.Like;
@@ -11,6 +13,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
 @Entity
 public class User extends DateBaseEntity {  // 회원
@@ -46,6 +49,17 @@ public class User extends DateBaseEntity {  // 회원
     @OneToMany(mappedBy = "user")
     private List<Like> likeList = new ArrayList<Like>();  // 좋아요
 
+    @Builder
+    public User(String loginId, String password, String name, String email, String nickname, String admissionYear, Authority authority, School school) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.nickname = nickname;
+        this.admissionYear = admissionYear;
+        this.authority = authority;
+        this.school = school;
+    }
 
     //== 비즈니스 로직 ==//
 
@@ -54,4 +68,28 @@ public class User extends DateBaseEntity {  // 회원
         this.password = password;
     }
 
+
+    //== 연관관계 메서드 ==//
+
+    public void setSchool(School school) {
+        this.school = school;
+        school.getUserList().add(this);
+    }
+
+
+    //== 생성 메서드 ==//
+
+    public static User registerUser(String loginId, String password, String name, String email, String nickname, String admissionYear, School school) {
+        User user = User.builder()
+                .loginId(loginId)
+                .password(password)
+                .name(name)
+                .email(email)
+                .nickname(nickname)
+                .admissionYear(admissionYear)
+                .authority(Authority.ROLE_BASIC)
+                .school(school).build();
+        user.setSchool(school);
+        return user;
+    }
 }

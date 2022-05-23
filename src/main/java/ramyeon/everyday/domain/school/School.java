@@ -1,5 +1,6 @@
 package ramyeon.everyday.domain.school;
 
+import lombok.Getter;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.user.User;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 public class School extends DateBaseEntity {  // 학교
 

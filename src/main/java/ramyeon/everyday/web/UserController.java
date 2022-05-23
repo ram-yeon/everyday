@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ramyeon.everyday.domain.user.UserService;
@@ -29,4 +30,16 @@ public class UserController {
         }
     }
 
+    /**
+     * 회원 등록 API
+     */
+    @PostMapping("/users")
+    public ResponseEntity register(@RequestBody UserDto.RegisterRequestDto registerRequestDto) {
+        int result = userService.register(registerRequestDto.getLoginId(), registerRequestDto.getPassword(), registerRequestDto.getName(), registerRequestDto.getEmail(), registerRequestDto.getNickname(), registerRequestDto.getAdmissionYear(), registerRequestDto.getSchoolName());
+        if (result == 0) {
+            return new ResponseEntity<>(new ResultDto(200, "회원가입 성공"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResultDto(404, "해당 학교가 없음"), HttpStatus.NOT_FOUND);
+        }
+    }
 }
