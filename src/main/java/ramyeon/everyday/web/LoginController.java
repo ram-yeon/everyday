@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ramyeon.everyday.domain.login.EmailSendService;
+import ramyeon.everyday.domain.login.LoginService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 public class LoginController {
 
     private final EmailSendService emailSendService;
+    private final LoginService loginService;
 
     /**
      * 이메일 인증 API
@@ -45,4 +47,18 @@ public class LoginController {
             return new ResponseEntity<>(new ResultDto(404, "해당 이메일로 가입된 아이디 없음"), HttpStatus.NOT_FOUND);
         }
     }
+
+    /**
+     * 비밀번호 찾기 API
+     */
+    @PostMapping("/find-password")
+    public ResponseEntity findPassword(@RequestBody UserDto.FindPasswordRequestDto findPasswordRequestDto) {
+        boolean isSuccess = loginService.findUserForFindPassword(findPasswordRequestDto.getLoginId());
+        if (isSuccess) {
+            return new ResponseEntity<>(new ResultDto(200, "가입된 아이디 있음"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResultDto(404, "가입된 아이디 없음"), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
