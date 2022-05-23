@@ -16,4 +16,10 @@ public class UserDto {
         private String loginId;  // 아이디
     }
 
+    // 비밀번호 변경 DTO
+    @Getter
+    public static class ChangePasswordRequestDto {
+        private String email;  // 이메일
+        private String password;  // 비밀번호
+    }
 }

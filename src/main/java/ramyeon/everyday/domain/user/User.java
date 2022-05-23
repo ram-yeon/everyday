@@ -47,4 +47,12 @@ public class User extends DateBaseEntity {  // 회원
     @OneToMany(mappedBy = "user")
     private List<Like> likeList = new ArrayList<Like>();  // 좋아요
 
+
+    //== 비즈니스 로직 ==//
+
+    // 비밀번호 변경
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
 }
