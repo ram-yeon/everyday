@@ -32,4 +32,17 @@ public class LoginController {
 
         return new ResponseEntity<>(new ResultDto(200, "인증코드 발송 성공", data), HttpStatus.OK);
     }
+
+    /**
+     * 아이디 찾기 API
+     */
+    @PostMapping("/find-id")
+    public ResponseEntity findId(@RequestBody UserDto.EmailRequestDto emailRequestDto) {
+        boolean sendLoginId = emailSendService.sendLoginId(emailRequestDto.getEmail());
+        if (sendLoginId) {
+            return new ResponseEntity<>(new ResultDto(200, "아이디 찾기 안내 이메일 발송 성공"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResultDto(404, "해당 이메일로 가입된 아이디 없음"), HttpStatus.NOT_FOUND);
+        }
+    }
 }

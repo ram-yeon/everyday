@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
+import ramyeon.everyday.domain.user.User;
+import ramyeon.everyday.domain.user.UserRepository;
 
 import java.util.Random;
 
@@ -12,6 +14,7 @@ import java.util.Random;
 public class EmailSendService {
 
     private final JavaMailSenderImpl javaMailSender;
+    private final UserRepository userRepository;
 
     // 이메일 인증을 위한 인증코드 전송
     public String sendCode(String email) {
@@ -34,6 +37,24 @@ public class EmailSendService {
         javaMailSender.send(message);
 
         return code.toString();
+    }
+
+    // 아이디 찾기를 위한 아이디 전송
+    public boolean sendLoginId(String email) {
+        User findUser = userRepository.findByEmail(email).orElse(null);
+        if (findUser == null) {  // 이메일로 가입된 회원이 없음
+            return false;
+        } else {  // 이메일로 아이디 전송
+            String loginId = findUser.getLoginId();
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("[에브리데이] 아이디 찾기 안내");
+            message.setText("본 이메일에 해당하는 아이디는 " + loginId + " 입니다.");
+            javaMailSender.send(message);
+
+            return true;
+        }
     }
 
 }
