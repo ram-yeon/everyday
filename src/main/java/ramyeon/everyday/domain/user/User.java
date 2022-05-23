@@ -25,7 +25,6 @@ public class User extends DateBaseEntity {  // 회원
 
     private String name;  // 이름
     private String email;  // 이메일
-    private String tel;  // 전화번호
     private String nickname;  // 닉네임
     private String admissionYear;  // 입학 연도
 
