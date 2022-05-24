@@ -23,7 +23,7 @@ public class PostController {
     /**
      * 게시판 별 게시글 목록 조회 API
      */
-    @GetMapping("/posts/{boardType}")
+    @GetMapping("/posts/list/{boardType}")
     public ResponseEntity postsBoard(@PathVariable String boardType, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         try {
             List<PostDto.PostsBoardDto> data = postService.getPostsBoard(principalDetails.getUsername(), boardType);
