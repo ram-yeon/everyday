@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function NormalPost() {
+function Board() {
     const classes = useStyles();
     return (
         <div style={{border:"2px solid red", width:"100%", height:"50vh"}}>
@@ -19,4 +19,4 @@ function NormalPost() {
     )
 }
 
-export default NormalPost
+export default Board
