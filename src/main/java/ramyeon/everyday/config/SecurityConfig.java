@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
 import ramyeon.everyday.jwt.JwtAuthenticationFilter;
+import ramyeon.everyday.jwt.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +18,7 @@ import ramyeon.everyday.jwt.JwtAuthenticationFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -31,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(corsFilter)
                 .formLogin().disable()  // formLogin 사용하지 않음
                 .httpBasic().disable()  // 기본적인 http 로그인 방식을 사용하지 않음
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))  // JwtAuthenticationFilter 추가
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))  // JwtAuthenticationFilter 추가
                 .authorizeRequests().anyRequest().permitAll();  // 모든 리소스에대해 인증절차 없이 접근 허용
     }
 }
