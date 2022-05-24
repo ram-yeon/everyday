@@ -148,7 +148,7 @@ function Agreement() {
 
             </div>
 
-            <Link to='../register/info'><button className="emailAuth-btn" type="submit">이메일 인증</button></Link>
+            <Link to='/certification'><button className="emailAuth-btn" type="submit">이메일 인증</button></Link>
 
 
           </form>

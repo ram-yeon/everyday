@@ -7,6 +7,7 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import ChatIcon from '@mui/icons-material/Chat';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import GroupIcon from '@mui/icons-material/Group';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -29,12 +30,16 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(5),
         cursor: "pointer",
         // margin: "4rem auto 2rem 2rem",
+        // &:hover:{
+        //     background:"gray",
+        // },
         [theme.breakpoints.down("sm")]: {
             marginBottom: theme.spacing(3),
             cursor: "pointer",
             marginLeft:"1.8rem",
         },
     },
+   
     icon:{
         marginRight: theme.spacing(1),
         [theme.breakpoints.up("sm")]: {
@@ -48,10 +53,14 @@ const useStyles = makeStyles((theme) => ({
             display: "none",
         },
     },
+    // active:{
+    //     background:"f4f4f4",
+    // },
 }));
 
 function LeftBar() {
     const classes = useStyles();
+    const location = useLocation();
 
     return <Container className={classes.container}>
         <div className={classes.item}>

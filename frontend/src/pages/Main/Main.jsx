@@ -22,14 +22,11 @@ function Main() {
     <div>
       <NavBar />
       <Grid container>
-        <Grid item sm={1.5} xs={2}>
+        <Grid item sm={2} xs={2}>
           <LeftBar/>
         </Grid>
         <Grid item sm={8} xs={10}>
           <Feed />
-        </Grid>
-        <Grid item sm={2} className={classes.right}>
-          <RightBar/>
         </Grid>
       </Grid>
     </div>

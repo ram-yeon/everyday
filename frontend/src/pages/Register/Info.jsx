@@ -3,6 +3,7 @@ import './Register.css';
 import { Link } from 'react-router-dom';
 
 function Info() {
+  const [nameVal, setNameVal] = useState("");
   const [idVal, setIdVal] = useState("");
   const [pwVal1, setPwVal1] = useState("");
   const [pwVal2, setPwVal2] = useState("");
@@ -23,6 +24,11 @@ function Info() {
           <div id="info-inputGroup">
             <h2 style={{ fontWeight: 'bold', textAlign: 'center', marginBottom: '4rem' }}>회원 정보</h2>
             <form onSubmit={handlesubmit}>
+            <div className="info-inputGroup">
+                <h5 className="info-h5">이름</h5>
+                <input className="register-input" type="text" name="name" id="name1" placeholder="성명 입력"
+                  value={nameVal} onChange={(e) => { setNameVal(e.target.value) }} />
+              </div>
               <div className="info-inputGroup">
                 <h5 className="info-h5">아이디</h5>
                 <input className="register-input" type="text" name="id" id="id1" placeholder="영문, 숫자 4~20자"

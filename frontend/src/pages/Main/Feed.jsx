@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import './Main.css';
 import { Link } from 'react-router-dom';
 import { Container, makeStyles } from "@material-ui/core";
-import Post from './Post';
+import HotPost from './HotPost';
+import NormalPost from './NormalPost';
 
 const useStyles = makeStyles((theme) => ({
     container:{
@@ -14,11 +15,9 @@ function Feed() {
     const classes = useStyles();
     return (
         <Container className={classes.container}>
-            <Post/>
-            <Post/>
-            <Post/>
-            <Post/>
-            <Post/>
+            
+            <HotPost/><HotPost/><HotPost/><HotPost/><HotPost/>
+            {/* <NormalPost/> */}
             
         </Container>
     )

@@ -4,11 +4,12 @@ import Landing from './pages/Landing/Landing.jsx';
 import Login from './pages/Login/Login.jsx';
 import Forgot from './pages/Forgot/Forgot.jsx';
 import Password from './pages/Forgot/Password/Password.jsx';
-import UserId from './pages/Forgot/Password/UserId.jsx';
+import ChangePW from './pages/Forgot/Password/ChangePW';
 import Register from './pages/Register/Register.jsx';
 import Agreement from './pages/Register/Agreement.jsx';
 import Info from './pages/Register/Info.jsx';
 import Main from './pages/Main/Main.jsx';
+import Certification from './pages/Certification/Certification.jsx';
 import TestApi from './pages/TestApi/TestApi';
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/forgot/password" element={<Password />} />
-          <Route path="/forgot/password/userid" element={<UserId />} />
+          <Route path="/forgot/password/changepw" element={<ChangePW />} />
 
           <Route path="/register" element={<Register />} />
           {/* <Route path="agreement" element={<Agreement />} />
@@ -31,6 +32,7 @@ function App() {
           <Route path="/register/agreement" element={<Agreement />} />
           <Route path="/register/info" element={<Info />} />
           <Route path="/main" element={<Main />} />
+          <Route path="/certification" element={<Certification />} />
           <Route path="/testapi" element={<TestApi />} />
 
         </Routes>

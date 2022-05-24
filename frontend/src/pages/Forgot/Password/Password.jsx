@@ -43,7 +43,7 @@ function Password() {
               <input className="forgot-input" type="text" name="id" id="id" placeholder="가입된 아이디"
                 value={idVal} onChange={(e) => { setIdVal(e.target.value) }} />
             </div>
-            <Link to='./userid'><button type="submit" className="finding-btn" >비밀번호 찾기</button></Link>
+            <Link to='/certification'><button type="submit" className="finding-btn" >비밀번호 찾기</button></Link>
            
           </form>
 
