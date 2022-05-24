@@ -1,5 +1,7 @@
 package ramyeon.everyday.domain.post;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.Whether;
@@ -9,10 +11,13 @@ import ramyeon.everyday.domain.school.School;
 import ramyeon.everyday.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @DynamicInsert
+@NoArgsConstructor
+@Getter
 @Entity
 public class Post extends DateBaseEntity {  // 게시글
 
@@ -51,4 +56,12 @@ public class Post extends DateBaseEntity {  // 게시글
     @OneToMany(mappedBy = "post")
     private List<File> fileList = new ArrayList<File>();  // 파일
 
+
+    @Transient
+    private LocalDateTime registrationDate;  // 등록일시
+
+    public Post(LocalDateTime registrationDate, LocalDateTime modificationDate) {
+        super(registrationDate, modificationDate);
+        this.registrationDate = registrationDate;
+    }
 }
