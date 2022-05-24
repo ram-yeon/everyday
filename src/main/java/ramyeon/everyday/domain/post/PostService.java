@@ -42,7 +42,7 @@ public class PostService {
     // 게시글 상세 조회
     public PostDto.PostDetailResponseDto getPostDetail(Long postId, String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        Post post = postRepository.findByIdAndSchool(postId, loginUser.getSchool()).orElse(null);  // 게시글 조회
+        Post post = postRepository.findByIdAndSchoolAndIsDeleted(postId, loginUser.getSchool(), Whether.N).orElse(null);  // 게시글 조회
         if (post == null) {
             return null;
         } else {

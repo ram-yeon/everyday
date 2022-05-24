@@ -12,5 +12,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findBySchoolAndBoardTypeAndIsDeleted(School school, BoardType boardType, Whether isDeleted, Sort sort);  // 게시판 별 게시글 목록 조회
 
-    Optional<Post> findByIdAndSchool(Long id, School school);  // 게시글 상세 조회
+    Optional<Post> findByIdAndSchoolAndIsDeleted(Long id, School school, Whether isDeleted);  // 게시글 상세 조회
 }
