@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.Whether;
+import ramyeon.everyday.domain.comment.Comment;
+import ramyeon.everyday.domain.file.File;
 import ramyeon.everyday.domain.like.LikeRepository;
 import ramyeon.everyday.domain.like.TargetType;
 import ramyeon.everyday.domain.user.User;
 import ramyeon.everyday.domain.user.UserRepository;
+import ramyeon.everyday.dto.CommentDto;
+import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.PostDto;
 
 import java.util.ArrayList;
@@ -21,6 +25,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
+    // 게시판 별 게시글 목록 조회
     public List<PostDto.PostsBoardDto> getPostsBoard(String loginId, String boardType) {
         BoardType board = BoardType.valueOf(boardType);
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
@@ -32,6 +37,36 @@ public class PostService {
                     post.getIsAnonymous(), post.getViews(), likeCount, post.getFileList().size(), post.getCommentList().size()));
         }
         return postsBoardDtos;
+    }
+
+    // 게시글 상세 조회
+    public PostDto.PostDetailResponseDto getPostDetail(Long postId, String loginId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        Post post = postRepository.findByIdAndSchool(postId, loginUser.getSchool()).orElse(null);  // 게시글 조회
+        if (post == null) {
+            return null;
+        } else {
+            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회
+
+            // File 엔티티를 FileInPostResponseDto로 변환
+            List<File> fileList = post.getFileList();
+            List<FileDto.FileInPostResponseDto> fileDtoList = new ArrayList<>();
+            for (File file : fileList) {
+                fileDtoList.add(new FileDto.FileInPostResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
+            }
+
+            // Comment 엔티티를 CommentInPostResponseDto로 변환
+            List<Comment> commentList = post.getCommentList();
+            List<CommentDto.CommentInPostResponseDto> commentDtoList = new ArrayList<>();
+            for (Comment comment : commentList) {
+                commentDtoList.add(new CommentDto.CommentInPostResponseDto(comment.getId(), comment.getUser().getNickname(), comment.getContents(), comment.getRegistrationDate(),
+                        comment.getCommentType(), comment.getPreId(), comment.getIsAnonymous()));
+            }
+
+            return new PostDto.PostDetailResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
+                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), likeCount,
+                    fileDtoList.size(), fileDtoList, commentDtoList.size(), commentDtoList);
+        }
     }
 
 }

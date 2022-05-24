@@ -1,12 +1,18 @@
 package ramyeon.everyday.domain.comment;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.post.Post;
 import ramyeon.everyday.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
+
+@NoArgsConstructor
+@Getter
 @Entity
 public class Comment extends DateBaseEntity {  // 댓글
 
@@ -34,4 +40,12 @@ public class Comment extends DateBaseEntity {  // 댓글
     @JoinColumn(name = "post_id")
     private Post post;  // 게시글
 
+
+    @Transient
+    private LocalDateTime registrationDate;  // 등록일시
+
+    public Comment(LocalDateTime registrationDate, LocalDateTime modificationDate) {
+        super(registrationDate, modificationDate);
+        this.registrationDate = registrationDate;
+    }
 }

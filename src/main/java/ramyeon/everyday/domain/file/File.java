@@ -1,11 +1,13 @@
 package ramyeon.everyday.domain.file;
 
+import lombok.Getter;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.notice.Notice;
 import ramyeon.everyday.domain.post.Post;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 public class File extends DateBaseEntity {  // 파일
 

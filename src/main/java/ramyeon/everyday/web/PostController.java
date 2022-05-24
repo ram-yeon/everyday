@@ -32,4 +32,17 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(400, "존재하지 않는 게시판"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    /**
+     * 게시글 상세 조회 API
+     */
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity postDetail(@PathVariable Long postId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        PostDto.PostDetailResponseDto data = postService.getPostDetail(postId, principalDetails.getUsername());
+        if (data == null) {
+            return new ResponseEntity<>(new ResultDto(404, "존재하지 않는 게시글"), HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(new ResultDto(200, "게시글 상세 조회 성공", data), HttpStatus.OK);
+        }
+    }
 }
