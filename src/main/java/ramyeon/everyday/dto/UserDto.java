@@ -1,5 +1,6 @@
 package ramyeon.everyday.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 public class UserDto {
@@ -32,6 +33,16 @@ public class UserDto {
         private String email;  // 이메일
         private String nickname;  // 닉네임
         private String admissionYear;  // 입학 연도
+        private String schoolName;  // 학교명
+    }
+
+    // 회원 정보 배너 조회 DTO
+    @AllArgsConstructor
+    @Getter
+    public static class BannerResponseDto {
+        private String loginId;  // 아이디
+        private String name;  // 이름
+        private String nickname;  // 닉네임
         private String schoolName;  // 학교명
     }
 

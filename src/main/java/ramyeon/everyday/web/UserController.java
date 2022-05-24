@@ -3,10 +3,9 @@ package ramyeon.everyday.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.user.UserService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
@@ -41,5 +40,14 @@ public class UserController {
         } else {
             return new ResponseEntity<>(new ResultDto(404, "해당 학교가 없음"), HttpStatus.NOT_FOUND);
         }
+    }
+
+    /**
+     * 회원 정보 배너 조회 API
+     */
+    @GetMapping("/users/banner")
+    public ResponseEntity banner(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        UserDto.BannerResponseDto data = userService.getUserInfoForBanner(principalDetails.getUsername());
+        return new ResponseEntity<>(new ResultDto(200, "회원 정보 배너 조회 성공", data), HttpStatus.OK);
     }
 }

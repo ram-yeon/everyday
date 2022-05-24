@@ -1,14 +1,15 @@
 package ramyeon.everyday.domain.user;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.school.School;
 import ramyeon.everyday.domain.school.SchoolRepository;
+import ramyeon.everyday.dto.UserDto;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -42,5 +43,13 @@ public class UserService {
             return 0;
         }
 
+    }
+
+    /**
+     * 배너에 띄울 회원 정보 조회
+     */
+    public UserDto.BannerResponseDto getUserInfoForBanner(String loginId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);
+        return new UserDto.BannerResponseDto(loginUser.getLoginId(), loginUser.getName(), loginUser.getNickname(), loginUser.getSchool().getSchoolName());
     }
 }
