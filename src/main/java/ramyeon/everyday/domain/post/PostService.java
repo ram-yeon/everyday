@@ -104,7 +104,7 @@ public class PostService {
                 break;
             case "likes":   // 좋아요 한 글
                 List<LikeRepository.TargetIdOnly> postIdList = likeRepository.findTargetIdByTargetTypeAndUser(TargetType.POST, loginUser);  // 좋아요 한 글 ID 조회
-                List<Post> postsAll = postRepository.findAll(Sort.by(Sort.Direction.DESC, "registrationDate"));  // 모든 게시글 최신순 조회
+                List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
                 // 좋아요 한 글 조회
                 for (Post post : postsAll) {
                     for (LikeRepository.TargetIdOnly postId : postIdList) {
