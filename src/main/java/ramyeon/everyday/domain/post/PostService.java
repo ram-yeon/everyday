@@ -69,15 +69,22 @@ public class PostService {
         }
     }
 
-    // 내가 쓴 게시글 목록 조회
+    // 내가 쓴, 댓글 단 게시글 목록 조회
     public List<PostDto.PostsMyResponseDto> getPostsMy(String type, String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-
-        List<Post> posts;
-        if ("posts".equals(type)) {   // 내가 쓴 글
-            posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));// 내가 쓴 글 조회 최신순
-        } else {
+        if (!(type.equals("posts") || type.equals("comments"))) {  // 잘못된 URI
             return null;
+        }
+
+        List<Post> posts = new ArrayList<>();
+        // 무슨 종류의 글 요청인지 구분
+        switch (type) {
+            case "posts":   // 작성한 글  id=나, 삭제X, 정렬 최신순
+                posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
+                break;
+            case "comments":   // 댓글단 글
+                posts = postRepository.findByUserFetchJoinComment(loginUser);  // 댓글 단 글 조회
+                break;
         }
 
         // Post 엔티티를 PostsMyResponseDto로 변환

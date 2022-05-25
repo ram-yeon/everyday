@@ -62,7 +62,7 @@ public class PostDto {
     }
 
     /**
-     * 내가 쓴 게시글 목록 조회 DTO
+     * 내가 쓴, 댓글 단 게시글 목록 조회 DTO
      */
     @Getter
     @AllArgsConstructor
