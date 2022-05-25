@@ -1,5 +1,7 @@
 package ramyeon.everyday.domain.notice;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.Whether;
@@ -7,10 +9,13 @@ import ramyeon.everyday.domain.file.File;
 import ramyeon.everyday.domain.manager.Manager;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @DynamicInsert
+@NoArgsConstructor
+@Getter
 @Entity
 public class Notice extends DateBaseEntity {  // 공지사항
 
@@ -36,4 +41,12 @@ public class Notice extends DateBaseEntity {  // 공지사항
     @OneToMany(mappedBy = "notice")
     private List<File> fileList = new ArrayList<File>();  // 파일
 
+
+    @Transient
+    private LocalDateTime registrationDate;  // 등록일시
+
+    public Notice(LocalDateTime registrationDate, LocalDateTime modificationDate) {
+        super(registrationDate, modificationDate);
+        this.registrationDate = registrationDate;
+    }
 }

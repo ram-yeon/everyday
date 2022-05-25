@@ -1,9 +1,11 @@
 package ramyeon.everyday.domain.manager;
 
+import lombok.Getter;
 import ramyeon.everyday.domain.DateBaseEntity;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 public class Manager extends DateBaseEntity {  // 관리자
 
