@@ -27,9 +27,26 @@ public class PostService {
 
     // 게시판 별 게시글 목록 조회
     public List<PostDto.PostsBoardDto> getPostsBoard(String loginId, String boardType) {
-        BoardType board = BoardType.valueOf(boardType);
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        List<Post> posts = postRepository.findBySchoolAndBoardTypeAndIsDeleted(loginUser.getSchool(), board, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 조회 최근순 정렬
+        User loginUser;
+        List<Post> posts = new ArrayList<>();
+        if (boardType.equals("HOT")) {  // 핫 게시판
+            loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+            List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L);  // 핫 게시글 ID 조회
+            List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
+            // 핫 게시글 조회
+            for (Post post : postsAll) {
+                for (Long hotPostId : hotPostIdList) {
+                    if (post.getId().equals(hotPostId)) {
+                        posts.add(post);
+                    }
+                }
+            }
+        } else {  // 자유, 정보, 동아리 게시판
+            BoardType board = BoardType.valueOf(boardType);
+            loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+            posts = postRepository.findBySchoolAndBoardTypeAndIsDeleted(loginUser.getSchool(), board, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 조회 최근순 정렬
+        }
+
         List<PostDto.PostsBoardDto> postsBoardDtos = new ArrayList<>();
         for (Post post : posts) {
             Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회

@@ -1,10 +1,12 @@
 package ramyeon.everyday.domain.like;
 
+import lombok.Getter;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.user.User;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @Table(name = "likes")
 public class Like extends DateBaseEntity {  // 좋아요
