@@ -45,4 +45,13 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(200, "게시글 상세 조회 성공", data), HttpStatus.OK);
         }
     }
+
+    /**
+     * 내가 쓴 게시글 목록 조회 API
+     */
+    @GetMapping("/posts/my/{type}")
+    public ResponseEntity postsMy(@PathVariable String type, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        List<PostDto.PostsMyResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername());
+        return new ResponseEntity<>(new ResultDto(200, "내가 쓴 게시글 목록 조회 성공", data), HttpStatus.OK);
+    }
 }

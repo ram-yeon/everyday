@@ -69,4 +69,25 @@ public class PostService {
         }
     }
 
+    // 내가 쓴 게시글 목록 조회
+    public List<PostDto.PostsMyResponseDto> getPostsMy(String type, String loginId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+
+        List<Post> posts;
+        if ("posts".equals(type)) {   // 내가 쓴 글
+            posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));// 내가 쓴 글 조회 최신순
+        } else {
+            return null;
+        }
+
+        // Post 엔티티를 PostsMyResponseDto로 변환
+        List<PostDto.PostsMyResponseDto> postDtoList = new ArrayList<>();
+        for (Post post : posts) {
+            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회
+            postDtoList.add(new PostDto.PostsMyResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
+                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), likeCount, post.getFileList().size(), post.getCommentList().size()));
+        }
+        return postDtoList;
+    }
+
 }
