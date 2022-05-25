@@ -48,11 +48,11 @@ public class PostService {
         } else {
             Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회
 
-            // File 엔티티를 FileInPostResponseDto로 변환
+            // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
             List<File> fileList = post.getFileList();
-            List<FileDto.FileInPostResponseDto> fileDtoList = new ArrayList<>();
+            List<FileDto.FileInPostAndNoticeResponseDto> fileDtoList = new ArrayList<>();
             for (File file : fileList) {
-                fileDtoList.add(new FileDto.FileInPostResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
+                fileDtoList.add(new FileDto.FileInPostAndNoticeResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
             }
 
             // Comment 엔티티를 CommentInPostResponseDto로 변환

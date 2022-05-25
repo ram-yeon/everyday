@@ -55,7 +55,7 @@ public class PostDto {
         private Long likeCount;  // 좋아요 수
 
         private int fileCount;  // 파일 수
-        private List<FileDto.FileInPostResponseDto> file;  // 파일
+        private List<FileDto.FileInPostAndNoticeResponseDto> file;  // 파일
 
         private int commentCount;  // 댓글 수
         private List<CommentDto.CommentInPostResponseDto> comment;  // 댓글
