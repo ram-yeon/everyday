@@ -69,10 +69,10 @@ public class PostService {
         }
     }
 
-    // 내가 쓴, 댓글 단 게시글 목록 조회
+    // 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회
     public List<PostDto.PostsMyResponseDto> getPostsMy(String type, String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        if (!(type.equals("posts") || type.equals("comments"))) {  // 잘못된 URI
+        if (!(type.equals("posts") || type.equals("comments") || type.equals("likes"))) {  // 잘못된 URI
             return null;
         }
 
@@ -83,7 +83,19 @@ public class PostService {
                 posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
                 break;
             case "comments":   // 댓글단 글
-                posts = postRepository.findByUserFetchJoinComment(loginUser);  // 댓글 단 글 조회
+                posts = postRepository.findByUserFetchJoinComment(loginUser);  // 댓글 단 글 최신순 조회
+                break;
+            case "likes":   // 좋아요 한 글
+                List<LikeRepository.TargetIdOnly> postIdList = likeRepository.findTargetIdByTargetTypeAndUser(TargetType.POST, loginUser);  // 좋아요 한 글 ID 조회
+                List<Post> postsAll = postRepository.findAll(Sort.by(Sort.Direction.DESC, "registrationDate"));  // 모든 게시글 최신순 조회
+                // 좋아요 한 글 조회
+                for (Post post : postsAll) {
+                    for (LikeRepository.TargetIdOnly postId : postIdList) {
+                        if (post.getId().equals(postId.getTargetId())) {
+                            posts.add(post);
+                        }
+                    }
+                }
                 break;
         }
 
@@ -96,5 +108,4 @@ public class PostService {
         }
         return postDtoList;
     }
-
 }
