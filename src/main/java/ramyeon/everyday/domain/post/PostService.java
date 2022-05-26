@@ -1,9 +1,7 @@
 package ramyeon.everyday.domain.post;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.comment.Comment;
@@ -45,7 +43,7 @@ public class PostService {
 
         // 게시판 별 게시글 조회
         for (BoardType boardType : BoardType.values()) {
-            List<PostDto.PostsMainResponseDto> boardPostList = getBoardPostsMain(loginUser, boardType, pageable)
+            List<PostDto.PostsMainResponseDto> boardPostList = getBoardPosts(loginUser, boardType, pageable)
                     .stream().map(boardPost -> new PostDto.PostsMainResponseDto(boardPost.getId(), boardPost.getTitle(), boardPost.getRegistrationDate())).collect(Collectors.toList());
             postsMainMap.put(boardType.name(), boardPostList);
         }
@@ -59,34 +57,43 @@ public class PostService {
     }
 
     // 게시판 별 게시글 목록 조회
-    public List<PostDto.PostsBoardDto> getPostsBoard(String loginId, String boardType) {
-        User loginUser;
-        List<Post> posts = new ArrayList<>();
+    public Page<PostDto.PostsBoardDto> getPostsBoard(String loginId, String boardType, Pageable pageable) {
         if (boardType.equals("HOT")) {  // 핫 게시판
-            loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+            User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L);  // 핫 게시글 ID 조회
             List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
             // 핫 게시글 조회
+            List<Post> postsHot = new ArrayList<>();
             for (Post post : postsAll) {
                 for (Long hotPostId : hotPostIdList) {
                     if (post.getId().equals(hotPostId)) {
-                        posts.add(post);
+                        postsHot.add(post);
                     }
                 }
             }
+            // Post 엔티티를 PostsBoardDto로 변환
+            List<PostDto.PostsBoardDto> postsBoardDtos = new ArrayList<>();
+            for (Post post : postsHot) {
+                postsBoardDtos.add(new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
+                        post.getIsAnonymous(), post.getViews(), likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId()),  // 좋아요 수 조회
+                        post.getFileList().size(), post.getCommentList().size()));
+            }
+
+            // List를 Page로 변환
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), postsBoardDtos.size());
+            return new PageImpl<>(postsBoardDtos.subList(start, end), pageable, postsBoardDtos.size());
+
         } else {  // 자유, 정보, 동아리 게시판
             BoardType board = BoardType.valueOf(boardType);
-            loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-            posts = postRepository.findBySchoolAndBoardTypeAndIsDeleted(loginUser.getSchool(), board, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 조회 최근순 정렬
+            User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+            Page<Post> posts = getBoardPosts(loginUser, board, pageable);// 게시글 조회 최근순 정렬
+            return posts.map(
+                    post -> new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(), post.getIsAnonymous(), post.getViews(),
+                            likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId()),  // 좋아요 수 조회
+                            post.getFileList().size(), post.getCommentList().size())
+            );
         }
-
-        List<PostDto.PostsBoardDto> postsBoardDtos = new ArrayList<>();
-        for (Post post : posts) {
-            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회
-            postsBoardDtos.add(new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                    post.getIsAnonymous(), post.getViews(), likeCount, post.getFileList().size(), post.getCommentList().size()));
-        }
-        return postsBoardDtos;
     }
 
     // 게시글 상세 조회
@@ -176,9 +183,9 @@ public class PostService {
         return hotPosts;
     }
 
-    // 게시판 별 게시글 조회(메인화면)
-    List<Post> getBoardPostsMain(User user, BoardType boardType, Pageable pageable) {
-        return postRepository.findBySchoolAndBoardTypeAndIsDeleted(user.getSchool(), boardType, Whether.N, pageable);  // 게시글 최신순 조회(메인화면)
+    // 게시판 별 게시글 조회
+    Page<Post> getBoardPosts(User user, BoardType boardType, Pageable pageable) {
+        return postRepository.findBySchoolAndBoardTypeAndIsDeleted(user.getSchool(), boardType, Whether.N, pageable);
     }
 
 }

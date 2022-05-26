@@ -1,6 +1,7 @@
 package ramyeon.everyday.web;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -39,9 +40,10 @@ public class PostController {
      * 게시판 별 게시글 목록 조회 API
      */
     @GetMapping("/posts/list/{boardType}")
-    public ResponseEntity postsBoard(@PathVariable String boardType, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity postsBoard(@PathVariable String boardType, @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                     @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            List<PostDto.PostsBoardDto> data = postService.getPostsBoard(principalDetails.getUsername(), boardType);
+            Page<PostDto.PostsBoardDto> data = postService.getPostsBoard(principalDetails.getUsername(), boardType, pageable);
             return new ResponseEntity<>(new ResultDto(200, boardType + " 게시판 게시글 목록 조회 성공", data), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ResultDto(400, "존재하지 않는 게시판"), HttpStatus.BAD_REQUEST);
