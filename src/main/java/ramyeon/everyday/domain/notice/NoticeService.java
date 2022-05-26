@@ -1,8 +1,8 @@
 package ramyeon.everyday.domain.notice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.file.File;
@@ -22,16 +22,14 @@ public class NoticeService {
     private final LikeRepository likeRepository;
 
     // 공지사항 목록 조회
-    public List<NoticeDto.NoticesResponseDto> getNotices() {
-        List<Notice> notices = noticeRepository.findByIsDeleted(Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));
+    public Page<NoticeDto.NoticesResponseDto> getNotices(Pageable pageable) {
+        Page<Notice> notices = getNoticesPaging(pageable);  // 공지사항 목록 조회
 
-        // Notice 엔티티를 NoticesResponseDto로 변환
-        List<NoticeDto.NoticesResponseDto> noticeDtoList = new ArrayList<>();
-        for (Notice notice : notices) {
-            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId());  // 좋아요 수 조회
-            noticeDtoList.add(new NoticeDto.NoticesResponseDto(notice.getId(), notice.getManager().getName(), notice.getTitle(), notice.getRegistrationDate(), notice.getViews(), likeCount, notice.getFileList().size()));
-        }
-        return noticeDtoList;
+        return notices.map(
+                notice -> new NoticeDto.NoticesResponseDto(notice.getId(), notice.getManager().getName(), notice.getTitle(), notice.getRegistrationDate(), notice.getViews(),
+                        likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId()),  // 좋아요 수 조회
+                        notice.getFileList().size())
+        );
     }
 
     // 공지사항 상세 조회
@@ -54,8 +52,8 @@ public class NoticeService {
         }
     }
 
-    // 공지사항 목록 조회(메인화면)
-    public List<Notice> getNoticesMain(Pageable pageable) {
-        return noticeRepository.findByIsDeleted(Whether.N, pageable);  // 공지사항 최신순 4개 조회
+    // 공지사항 목록 조회
+    public Page<Notice> getNoticesPaging(Pageable pageable) {
+        return noticeRepository.findByIsDeleted(Whether.N, pageable);
     }
 }

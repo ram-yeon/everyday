@@ -51,7 +51,7 @@ public class PostService {
         }
 
         // 공지사항 조회
-        List<PostDto.PostsMainResponseDto> noticeList = noticeService.getNoticesMain(pageable)
+        List<PostDto.PostsMainResponseDto> noticeList = noticeService.getNoticesPaging(pageable)
                 .stream().map(notice -> new PostDto.PostsMainResponseDto(notice.getId(), notice.getTitle(), notice.getRegistrationDate())).collect(Collectors.toList());
         postsMainMap.put("NOTICE", noticeList);
 
