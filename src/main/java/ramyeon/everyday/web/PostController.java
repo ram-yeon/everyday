@@ -1,6 +1,9 @@
 package ramyeon.everyday.web;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,8 +28,10 @@ public class PostController {
      * 메인화면 게시글 목록 조회 API
      */
     @GetMapping("/posts/main")
-    public ResponseEntity postsMain(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Map<String, List<PostDto.PostsMainResponseDto>> data = postService.getPostsMain(principalDetails.getUsername());
+    public ResponseEntity postsMain(
+            @PageableDefault(size = 4, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Map<String, List<PostDto.PostsMainResponseDto>> data = postService.getPostsMain(principalDetails.getUsername(), pageable);
         return new ResponseEntity<>(new ResultDto(200, "메인화면 게시글 목록 조회 성공", data), HttpStatus.OK);
     }
 

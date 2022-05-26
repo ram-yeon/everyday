@@ -2,6 +2,7 @@ package ramyeon.everyday.domain.post;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.Whether;
@@ -32,25 +33,25 @@ public class PostService {
     private final NoticeService noticeService;
 
     // 메인화면 게시글 목록 조회
-    public Map<String, List<PostDto.PostsMainResponseDto>> getPostsMain(String loginId) {
+    public Map<String, List<PostDto.PostsMainResponseDto>> getPostsMain(String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
         Map<String, List<PostDto.PostsMainResponseDto>> postsMainMap = new HashMap<>();
 
         // 핫 게시글 조회
-        List<PostDto.PostsMainResponseDto> hotPostList = getHotPostsMain(loginUser)
+        List<PostDto.PostsMainResponseDto> hotPostList = getHotPostsMain(loginUser, pageable)
                 .stream().map(hotPost -> new PostDto.PostsMainResponseDto(hotPost.getId(), hotPost.getTitle(), hotPost.getRegistrationDate())).collect(Collectors.toList());
         postsMainMap.put("HOT", hotPostList);
 
         // 게시판 별 게시글 조회
         for (BoardType boardType : BoardType.values()) {
-            List<PostDto.PostsMainResponseDto> boardPostList = getBoardPostsMain(loginUser, boardType)
+            List<PostDto.PostsMainResponseDto> boardPostList = getBoardPostsMain(loginUser, boardType, pageable)
                     .stream().map(boardPost -> new PostDto.PostsMainResponseDto(boardPost.getId(), boardPost.getTitle(), boardPost.getRegistrationDate())).collect(Collectors.toList());
             postsMainMap.put(boardType.name(), boardPostList);
         }
 
         // 공지사항 조회
-        List<PostDto.PostsMainResponseDto> noticeList = noticeService.getNoticesMain()
+        List<PostDto.PostsMainResponseDto> noticeList = noticeService.getNoticesMain(pageable)
                 .stream().map(notice -> new PostDto.PostsMainResponseDto(notice.getId(), notice.getTitle(), notice.getRegistrationDate())).collect(Collectors.toList());
         postsMainMap.put("NOTICE", noticeList);
 
@@ -159,10 +160,10 @@ public class PostService {
     }
 
     // 핫 게시글 조회(메인화면)
-    List<Post> getHotPostsMain(User user) {
+    List<Post> getHotPostsMain(User user, Pageable pageable) {
         List<Post> hotPosts = new ArrayList<>();
-        List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L, PageRequest.of(0, 4));  // 핫 게시글 ID 조회(메인화면)
-        List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(user.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
+        List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));  // 핫 게시글 ID 조회(메인화면)
+        List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(user.getSchool(), Whether.N, pageable.getSort());  // 게시글 최신순 조회
 
         // 핫 게시글 조회
         for (Post post : postsAll) {
@@ -176,8 +177,8 @@ public class PostService {
     }
 
     // 게시판 별 게시글 조회(메인화면)
-    List<Post> getBoardPostsMain(User user, BoardType boardType) {
-        return postRepository.findBySchoolAndBoardTypeAndIsDeleted(user.getSchool(), boardType, Whether.N, PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "registrationDate")));  // 게시글 최신순 조회(메인화면)
+    List<Post> getBoardPostsMain(User user, BoardType boardType, Pageable pageable) {
+        return postRepository.findBySchoolAndBoardTypeAndIsDeleted(user.getSchool(), boardType, Whether.N, pageable);  // 게시글 최신순 조회(메인화면)
     }
 
 }
