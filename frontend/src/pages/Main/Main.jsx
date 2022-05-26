@@ -6,6 +6,7 @@ import NavBar from './NavBar';
 import LeftBar from './LeftBar';
 import RightBar from './RightBar';
 import Feed from './Feed';
+import Footer from './Footer/Footer.jsx';
 
 const useStyles = makeStyles((theme) => ({
   right:{
@@ -29,6 +30,7 @@ function Main() {
           <Feed />
         </Grid>
       </Grid>
+      <Footer/>
     </div>
   );
 

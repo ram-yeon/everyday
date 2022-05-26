@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './Main.css';
 import { Link } from 'react-router-dom';
 import { Grid, makeStyles } from "@material-ui/core";
 import { Box, TextField } from '@mui/material/';

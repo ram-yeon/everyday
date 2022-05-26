@@ -2,12 +2,22 @@ import React, { useState } from 'react'
 import './Main.css';
 import { Link } from 'react-router-dom';
 import { Container, makeStyles } from "@material-ui/core";
-import MainBoard from './MainBoard';
-import Board from './Board';
+import MainBoard from './Board/MainBoard';
+import Board from './Board/Board';
+import UseTerms from './Footer/UseTerms';
+import PrivacyPolicy from './Footer/PrivacyPolicy';
+import CommunityRule from './Footer/CommunityRule';
 
 const useStyles = makeStyles((theme) => ({
     container:{
-        paddingTop: theme.spacing(10),
+        paddingLeft:"0rem",
+        margin: "8rem 4rem",
+        textAlign:"center",
+        [theme.breakpoints.down("sm")]: {
+            margin: "3rem auto auto 2rem",
+        },
+        
+        
     }
 }));
 
@@ -18,6 +28,9 @@ function Feed() {
             
             <MainBoard/>
             {/* <Board/> */}
+            {/* <UseTerms />
+            <CommunityRule/>
+            <PrivacyPolicy/> */}
             
         </Container>
     )

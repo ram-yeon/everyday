@@ -12,11 +12,15 @@ import { useHistory, useLocation } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
 
     container: {
-        height: "98vh",
-        boxShadow:"0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57)",
-        paddingTop: theme.spacing(15),
-        top:0,
-        position:"sticky",
+        // border:"2px solid red",
+        paddingLeft: "0rem",
+        height: "100vh",
+        width: "17%",
+        boxShadow: "0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57)",
+        paddingTop: theme.spacing(17),
+        top: 0,
+        left: 0,
+        position: "fixed",
         color: "#555",
         [theme.breakpoints.down("sm")]: {
             backgroundColor: "white",
@@ -26,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
     item: {
         display: "flex",
-        justifyContent:"right",
+        justifyContent: "right",
         marginBottom: theme.spacing(5),
         cursor: "pointer",
         // margin: "4rem auto 2rem 2rem",
@@ -36,19 +40,23 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.down("sm")]: {
             marginBottom: theme.spacing(3),
             cursor: "pointer",
-            marginLeft:"1.8rem",
+            marginLeft: "1.8rem",
         },
+
     },
-   
-    icon:{
+
+
+    icon: {
         marginRight: theme.spacing(1),
+        // color:"#C00000",
+        color:"black",
         [theme.breakpoints.up("sm")]: {
             fontSize: "18px",
         },
     },
     text: {
         fontWeight: "bold",
-        
+        color: "black",
         [theme.breakpoints.down("sm")]: {
             display: "none",
         },
@@ -71,11 +79,11 @@ function LeftBar() {
             <ChatIcon className={classes.icon} />
             <Typography className={classes.text}>자유 게시판</Typography>
         </div>
-        <div className={classes.item}>
+        <div className={classes.item} >
             <CircleNotificationsIcon className={classes.icon} />
             <Typography className={classes.text}>정보 게시판</Typography>
         </div>
-        <div className={classes.item}>
+        <div className={classes.item} >
             <GroupIcon className={classes.icon} />
             <Typography className={classes.text}>동아리 게시판</Typography>
         </div>
