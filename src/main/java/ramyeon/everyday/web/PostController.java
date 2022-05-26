@@ -13,12 +13,22 @@ import ramyeon.everyday.dto.PostDto;
 import ramyeon.everyday.dto.ResultDto;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
+
+    /**
+     * 메인화면 게시글 목록 조회 API
+     */
+    @GetMapping("/posts/main")
+    public ResponseEntity postsMain(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Map<String, List<PostDto.PostsMainResponseDto>> data = postService.getPostsMain(principalDetails.getUsername());
+        return new ResponseEntity<>(new ResultDto(200, "메인화면 게시글 목록 조회 성공", data), HttpStatus.OK);
+    }
 
     /**
      * 게시판 별 게시글 목록 조회 API

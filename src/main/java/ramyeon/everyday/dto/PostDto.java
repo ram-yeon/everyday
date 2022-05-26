@@ -86,4 +86,14 @@ public class PostDto {
 
     }
 
+    /**
+     * 메인화면 게시글 목록 조회 DTO
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class PostsMainResponseDto {
+        private Long id;  // 게시글 ID
+        private String title;  // 제목
+        private LocalDateTime registrationDate;  // 등록일시
+    }
 }

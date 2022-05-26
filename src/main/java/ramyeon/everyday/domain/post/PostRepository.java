@@ -1,5 +1,6 @@
 package ramyeon.everyday.domain.post;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findBySchoolAndBoardTypeAndIsDeleted(School school, BoardType boardType, Whether isDeleted, Sort sort);  // 게시판 별 게시글 목록 조회
+
+    List<Post> findBySchoolAndBoardTypeAndIsDeleted(School school, BoardType boardType, Whether isDeleted, Pageable pageable);  // 게시판 별 게시글 목록 조회(메인화면)
 
     List<Post> findBySchoolAndIsDeleted(School school, Whether isDeleted, Sort sort);  // 학교 게시글 조회
 

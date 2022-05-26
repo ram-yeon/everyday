@@ -1,6 +1,7 @@
 package ramyeon.everyday.domain.notice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.Whether;
@@ -53,4 +54,8 @@ public class NoticeService {
         }
     }
 
+    // 공지사항 목록 조회(메인화면)
+    public List<Notice> getNoticesMain() {
+        return noticeRepository.findByIsDeleted(Whether.N, PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "registrationDate")));  // 공지사항 최신순 4개 조회
+    }
 }
