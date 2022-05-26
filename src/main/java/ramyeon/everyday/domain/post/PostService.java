@@ -75,8 +75,7 @@ public class PostService {
             List<PostDto.PostsBoardDto> postsBoardDtos = new ArrayList<>();
             for (Post post : postsHot) {
                 postsBoardDtos.add(new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                        post.getIsAnonymous(), post.getViews(), likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId()),  // 좋아요 수 조회
-                        post.getFileList().size(), post.getCommentList().size()));
+                        post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size()));
             }
 
             // List를 Page로 변환
@@ -89,9 +88,8 @@ public class PostService {
             User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             Page<Post> posts = getBoardPosts(loginUser, board, pageable);// 게시글 조회 최근순 정렬
             return posts.map(
-                    post -> new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(), post.getIsAnonymous(), post.getViews(),
-                            likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId()),  // 좋아요 수 조회
-                            post.getFileList().size(), post.getCommentList().size())
+                    post -> new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
+                            post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size())
             );
         }
     }
@@ -103,8 +101,6 @@ public class PostService {
         if (post == null) {
             return null;
         } else {
-            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회
-
             // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
             List<File> fileList = post.getFileList();
             List<FileDto.FileInPostAndNoticeResponseDto> fileDtoList = new ArrayList<>();
@@ -121,22 +117,21 @@ public class PostService {
             }
 
             return new PostDto.PostDetailResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), likeCount,
-                    fileDtoList.size(), fileDtoList, commentDtoList.size(), commentDtoList);
+                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), getLikeCount(post), fileDtoList.size(), fileDtoList, commentDtoList.size(), commentDtoList);
         }
     }
 
     // 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회
-    public List<PostDto.PostsMyResponseDto> getPostsMy(String type, String loginId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+    public Page<PostDto.PostsMyResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
         if (!(type.equals("posts") || type.equals("comments") || type.equals("likes"))) {  // 잘못된 URI
             return null;
         }
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
         List<Post> posts = new ArrayList<>();
         // 무슨 종류의 글 요청인지 구분
         switch (type) {
-            case "posts":   // 작성한 글  id=나, 삭제X, 정렬 최신순
+            case "posts":   // 내가 쓴 글
                 posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
                 break;
             case "comments":   // 댓글단 글
@@ -159,11 +154,14 @@ public class PostService {
         // Post 엔티티를 PostsMyResponseDto로 변환
         List<PostDto.PostsMyResponseDto> postDtoList = new ArrayList<>();
         for (Post post : posts) {
-            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());  // 좋아요 수 조회
             postDtoList.add(new PostDto.PostsMyResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), likeCount, post.getFileList().size(), post.getCommentList().size()));
+                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size()));
         }
-        return postDtoList;
+
+        // List를 Page로 변환
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), postDtoList.size());
+        return new PageImpl<>(postDtoList.subList(start, end), pageable, postDtoList.size());
     }
 
     // 핫 게시글 조회(메인화면)
@@ -186,6 +184,11 @@ public class PostService {
     // 게시판 별 게시글 조회
     Page<Post> getBoardPosts(User user, BoardType boardType, Pageable pageable) {
         return postRepository.findBySchoolAndBoardTypeAndIsDeleted(user.getSchool(), boardType, Whether.N, pageable);
+    }
+
+    // 좋아요 수 조회
+    Long getLikeCount(Post post) {
+        return likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());
     }
 
 }

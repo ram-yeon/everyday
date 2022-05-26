@@ -67,8 +67,9 @@ public class PostController {
      * 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회 API
      */
     @GetMapping("/posts/my/{type}")
-    public ResponseEntity postsMy(@PathVariable String type, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<PostDto.PostsMyResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername());
+    public ResponseEntity postsMy(@PathVariable String type, @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                  @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PostDto.PostsMyResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername(), pageable);
         if (data == null) {
             return new ResponseEntity<>(new ResultDto(400, "잘못된 API URI 요청"), HttpStatus.BAD_REQUEST);
         } else {
