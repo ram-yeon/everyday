@@ -44,4 +44,12 @@ public class NoticeDto {
         private List<FileDto.FileInPostAndNoticeResponseDto> file;  // 파일
     }
 
+    /**
+     * 공지사항 조회수 갱신 DTO
+     */
+    @Getter
+    public static class NoticeViewsUpdateDto {
+        private Long views;  // 조회수
+    }
+
 }

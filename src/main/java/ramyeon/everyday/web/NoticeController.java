@@ -7,9 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ramyeon.everyday.domain.notice.NoticeService;
 import ramyeon.everyday.dto.NoticeDto;
 import ramyeon.everyday.dto.ResultDto;
@@ -40,5 +38,14 @@ public class NoticeController {
         } else {
             return new ResponseEntity<>(new ResultDto(200, "공지사항 상세 조회 성공", data), HttpStatus.OK);
         }
+    }
+
+    /**
+     * 공지사항 조회수 갱신 API
+     */
+    @PatchMapping("/notices/{noticeId}/views")
+    public ResponseEntity noticeViewsUpdate(@PathVariable Long noticeId, @RequestBody NoticeDto.NoticeViewsUpdateDto viewsUpdateDto) {
+        noticeService.updateViews(noticeId, viewsUpdateDto.getViews());
+        return new ResponseEntity<>(new ResultDto(200, "공지사항 조회수 갱신 성공"), HttpStatus.OK);
     }
 }

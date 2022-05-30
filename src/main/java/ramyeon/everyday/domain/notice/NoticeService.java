@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.file.File;
 import ramyeon.everyday.domain.like.LikeRepository;
@@ -55,5 +56,13 @@ public class NoticeService {
     // 공지사항 목록 조회
     public Page<Notice> getNoticesPaging(Pageable pageable) {
         return noticeRepository.findByIsDeleted(Whether.N, pageable);
+    }
+
+    // 공지사항 조회수 갱신
+    @Transactional
+    public void updateViews(Long noticeId, Long views) {
+        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);
+        Long totalViews = notice.getViews() + views;  // 기존 조회수에 갱신
+        notice.changeViews(totalViews);
     }
 }
