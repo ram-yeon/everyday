@@ -1,11 +1,14 @@
 package ramyeon.everyday.domain.like;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.user.User;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Getter
 @Entity
 @Table(name = "likes")
@@ -26,4 +29,28 @@ public class Like extends DateBaseEntity {  // 좋아요
     @JoinColumn(name = "user_id")
     private User user;  // 회원
 
+    @Builder
+    public Like(TargetType targetType, Long targetId, User user) {
+        this.targetType = targetType;
+        this.targetId = targetId;
+        this.user = user;
+    }
+
+
+    //== 연관관계 메서드 ==//
+    public void setUser(User user) {
+        this.user = user;
+        user.getLikeList().add(this);
+    }
+
+
+    //== 생성 메서드 ==//
+    public static Like addLike(TargetType targetType, Long targetId, User user) {
+        Like like = Like.builder()
+                .targetType(targetType)
+                .targetId(targetId)
+                .user(user).build();
+        like.setUser(user);
+        return like;
+    }
 }
