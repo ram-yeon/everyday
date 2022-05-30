@@ -76,6 +76,17 @@ public class PostController {
     }
 
     /**
+     * 게시글 검색 API
+     */
+    @GetMapping("/posts/search")
+    public ResponseEntity deletePost(@RequestParam("keyword") String keyword,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                     @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        PostDto.PostsSearchResponseDto data = postService.getPostsSearch(keyword, principalDetails.getUsername(), pageable);
+        return new ResponseEntity<>(new ResultDto(200, "게시글 검색 성공", data), HttpStatus.OK);
+    }
+
+    /**
      * 게시글 삭제 API
      */
     @DeleteMapping("/posts/{postId}")

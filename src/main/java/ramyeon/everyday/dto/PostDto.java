@@ -2,6 +2,7 @@ package ramyeon.everyday.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.post.BoardType;
 
@@ -96,6 +97,17 @@ public class PostDto {
         private String title;  // 제목
         private LocalDateTime registrationDate;  // 등록일시
     }
+
+    /**
+     * 게시글 검색 DTO
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class PostsSearchResponseDto {
+        private String keyword;  // 검색어
+        private Page<PostsMyResponseDto> post;  // 게시글
+    }
+
 
     /**
      * 게시글 조회수 갱신 DTO

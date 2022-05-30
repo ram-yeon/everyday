@@ -29,4 +29,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByUserFetchJoinComment(User user);  // 댓글 단 글 목록 조회
 
     Optional<Post> findByIdAndIsDeleted(Long id, Whether isDeleted);
+
+    Page<Post> findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(String title, String contents, School school, Whether isDeleted, Pageable pageable);  // 게시글 검색
 }

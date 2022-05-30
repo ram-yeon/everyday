@@ -192,6 +192,17 @@ public class PostService {
         return likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());
     }
 
+    // 게시글 검색
+    public PostDto.PostsSearchResponseDto getPostsSearch(String keyword, String loginId, Pageable pageable) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        Page<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(keyword, keyword, loginUser.getSchool(), Whether.N, pageable);
+        Page<PostDto.PostsMyResponseDto> postDtos = posts.map(
+                post -> new PostDto.PostsMyResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
+                        post.getBoardType(), post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size())
+        );
+        return new PostDto.PostsSearchResponseDto(keyword, postDtos);
+    }
+
     // 게시글 삭제
     @Transactional
     public int deletePost(String loginId, Long postId) {
