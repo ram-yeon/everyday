@@ -37,12 +37,23 @@ public class Like extends DateBaseEntity {  // 좋아요
     }
 
 
+    //== 비즈니스 로직 ==//
+
+    // 좋아요 삭제
+    public void delete(User user) {
+        deleteFromUser(user);
+    }
+
+
     //== 연관관계 메서드 ==//
     public void setUser(User user) {
         this.user = user;
         user.getLikeList().add(this);
     }
 
+    public void deleteFromUser(User user) {
+        user.getLikeList().remove(this);
+    }
 
     //== 생성 메서드 ==//
     public static Like addLike(TargetType targetType, Long targetId, User user) {
