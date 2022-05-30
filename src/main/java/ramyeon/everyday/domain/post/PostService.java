@@ -192,6 +192,18 @@ public class PostService {
         return likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());
     }
 
+    // 게시글 삭제
+    @Transactional
+    public int deletePost(String loginId, Long postId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElse(null);  // 게시글 조회
+        if (post.getUser() != loginUser) {  // 다른 회원의 게시글 삭제
+            return 1;
+        }
+        post.delete(loginUser);  // 게시글 삭제
+        return 0;
+    }
+
     // 게시글 조회수 갱신
     @Transactional
     public void updateViews(Long postId, Long views) {

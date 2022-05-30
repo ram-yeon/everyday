@@ -68,8 +68,20 @@ public class Post extends DateBaseEntity {  // 게시글
 
     //== 비즈니스 로직 ==//
 
+    // 게시글 삭제
+    public void delete(User user) {
+        this.isDeleted = Whether.Y;
+        deleteFromUser(user);
+    }
+
     // 게시글 수정 - 조회수 갱신
     public void changeViews(Long views) {
         this.views = views;
+    }
+
+
+    //== 연관관계 메서드 ==//
+    public void deleteFromUser(User user) {
+        user.getPostList().remove(this);
     }
 }

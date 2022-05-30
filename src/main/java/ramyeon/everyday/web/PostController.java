@@ -76,6 +76,20 @@ public class PostController {
     }
 
     /**
+     * 게시글 삭제 API
+     */
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity deletePost(@PathVariable Long postId,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        int result = postService.deletePost(principalDetails.getUsername(), postId);
+        if (result == 0) {
+            return new ResponseEntity<>(new ResultDto(200, "게시글 삭제 성공"), HttpStatus.OK);
+        } else {  // 다른 회원의 게시글 삭제 시도
+            return new ResponseEntity(new ResultDto(403, "해당 게시글의 삭제 권한이 없음"), HttpStatus.FORBIDDEN);
+        }
+    }
+
+    /**
      * 게시글 조회수 갱신 API
      */
     @PatchMapping("/posts/{postId}/views")
