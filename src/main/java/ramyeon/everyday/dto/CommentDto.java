@@ -25,4 +25,16 @@ public class CommentDto {
         private Whether isAnonymous;  // 익명 여부
     }
 
+    /**
+     * 댓글 등록 DTO
+     */
+    @Getter
+    public static class CommentCreateRequestDto {
+        private Long postId;  // 게시글 ID
+
+        private String contents;  // 내용
+        private String commentType;  // 댓글 종류
+        private String isAnonymous;  // 익명 여부
+        private Long preId;  // 상위 번호
+    }
 }

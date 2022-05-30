@@ -28,4 +28,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             " order by p.registrationDate desc")
     List<Post> findByUserFetchJoinComment(User user);  // 댓글 단 글 목록 조회
 
+    Optional<Post> findByIdAndIsDeleted(Long id, Whether isDeleted);
 }

@@ -1,5 +1,6 @@
 package ramyeon.everyday.domain.comment;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
@@ -47,5 +48,42 @@ public class Comment extends DateBaseEntity {  // 댓글
     public Comment(LocalDateTime registrationDate, LocalDateTime modificationDate) {
         super(registrationDate, modificationDate);
         this.registrationDate = registrationDate;
+    }
+
+    @Builder
+    public Comment(String contents, CommentType commentType, Long preId, Whether isAnonymous, User user, Post post) {
+        this.contents = contents;
+        this.commentType = commentType;
+        this.preId = preId;
+        this.isAnonymous = isAnonymous;
+        this.user = user;
+        this.post = post;
+    }
+
+
+    //== 연관관계 메서드 ==//
+    public void setUser(User user) {
+        this.user = user;
+        user.getCommentList().add(this);
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+        post.getCommentList().add(this);
+    }
+
+
+    //== 생성 메서드 ==//
+    public static Comment addComment(String contents, CommentType commentType, Long preId, Whether isAnonymous, User user, Post post) {
+        Comment comment = Comment.builder()
+                .contents(contents)
+                .commentType(commentType)
+                .preId(preId)
+                .isAnonymous(isAnonymous)
+                .user(user)
+                .post(post).build();
+        comment.setUser(user);
+        comment.setPost(post);
+        return comment;
     }
 }
