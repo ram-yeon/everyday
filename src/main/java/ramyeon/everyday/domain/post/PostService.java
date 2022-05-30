@@ -3,6 +3,7 @@ package ramyeon.everyday.domain.post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.file.File;
@@ -191,4 +192,11 @@ public class PostService {
         return likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());
     }
 
+    // 게시글 조회수 갱신
+    @Transactional
+    public void updateViews(Long postId, Long views) {
+        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElse(null);
+        Long totalViews = post.getViews() + views;  // 기존 조회수에 갱신
+        post.changeViews(totalViews);
+    }
 }

@@ -8,9 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.post.PostService;
 import ramyeon.everyday.dto.PostDto;
@@ -75,5 +73,14 @@ public class PostController {
         } else {
             return new ResponseEntity<>(new ResultDto(200, "내가 쓴 or 댓글 단 or 좋아요한 게시글 목록 조회 성공", data), HttpStatus.OK);
         }
+    }
+
+    /**
+     * 게시글 조회수 갱신 API
+     */
+    @PatchMapping("/posts/{postId}/views")
+    public ResponseEntity postViewsUpdate(@PathVariable Long postId, @RequestBody PostDto.PostViewsUpdateDto viewsUpdateDto) {
+        postService.updateViews(postId, viewsUpdateDto.getViews());
+        return new ResponseEntity<>(new ResultDto(200, "게시글 조회수 갱신 성공"), HttpStatus.OK);
     }
 }

@@ -64,4 +64,12 @@ public class Post extends DateBaseEntity {  // 게시글
         super(registrationDate, modificationDate);
         this.registrationDate = registrationDate;
     }
+
+
+    //== 비즈니스 로직 ==//
+
+    // 게시글 수정 - 조회수 갱신
+    public void changeViews(Long views) {
+        this.views = views;
+    }
 }

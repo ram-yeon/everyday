@@ -96,4 +96,12 @@ public class PostDto {
         private String title;  // 제목
         private LocalDateTime registrationDate;  // 등록일시
     }
+
+    /**
+     * 게시글 조회수 갱신 DTO
+     */
+    @Getter
+    public static class PostViewsUpdateDto {
+        private Long views;  // 조회수
+    }
 }
