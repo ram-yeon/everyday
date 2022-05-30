@@ -60,6 +60,14 @@ public class Comment extends DateBaseEntity {  // 댓글
         this.post = post;
     }
 
+    //== 비즈니스 로직 ==//
+
+    // 댓글 삭제
+    public void delete(User user, Post post) {
+        deleteFromUser(user);
+        deleteFromPost(post);
+    }
+
 
     //== 연관관계 메서드 ==//
     public void setUser(User user) {
@@ -70,6 +78,14 @@ public class Comment extends DateBaseEntity {  // 댓글
     public void setPost(Post post) {
         this.post = post;
         post.getCommentList().add(this);
+    }
+
+    public void deleteFromUser(User user) {
+        user.getCommentList().remove(this);
+    }
+
+    public void deleteFromPost(Post post) {
+        post.getCommentList().remove(this);
     }
 
 

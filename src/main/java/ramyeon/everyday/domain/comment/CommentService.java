@@ -28,4 +28,18 @@ public class CommentService {
         commentRepository.save(comment);  // 댓글 등록
     }
 
+    /**
+     * 댓글 삭제
+     */
+    public int deleteComment(String loginId, Long commentId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        Comment comment = commentRepository.findById(commentId).orElse(null);  // 댓글 조회
+        if (comment.getUser() != loginUser) {  // 남의 댓글 삭제
+            return 1;
+        }
+        comment.delete(loginUser, comment.getPost());
+        commentRepository.delete(comment);
+        return 0;
+    }
+
 }
