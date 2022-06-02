@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './Main.css';
 import ModalContainer from './ModalContainer';
 import { Link } from 'react-router-dom';
 import { AppBar, Container, Modal, makeStyles, Toolbar, Typography } from "@material-ui/core";
@@ -111,7 +110,7 @@ function NavBar() {
   return (
     <AppBar position="fixed" style={{ background: 'white', height: "5rem" }}>
       <Toolbar className={classes.Toolbar}>
-        <Link to='/main'><Avatar alt="로고이미지" src={logo} className={classes.imgLogo}></Avatar></Link>
+        <Link to='/main/mainboard'><Avatar alt="로고이미지" src={logo} className={classes.imgLogo}></Avatar></Link>
 
         <p>
           <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>

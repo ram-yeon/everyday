@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './Main.css';
 import { Link } from 'react-router-dom';
 import { Container, makeStyles, Typography } from "@material-ui/core";
 import { Info } from '@material-ui/icons';
@@ -49,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     icon: {
         marginRight: theme.spacing(1),
         // color:"#C00000",
-        color:"black",
+        color: "black",
         [theme.breakpoints.up("sm")]: {
             fontSize: "18px",
         },
@@ -64,6 +63,10 @@ const useStyles = makeStyles((theme) => ({
     // active:{
     //     background:"f4f4f4",
     // },
+    menuLink: {
+        textDecoration: "none",
+        color: "black",
+    },
 }));
 
 function LeftBar() {
@@ -73,23 +76,33 @@ function LeftBar() {
     return <Container className={classes.container}>
         <div className={classes.item}>
             <LocalFireDepartmentIcon className={classes.icon} />
-            <Typography className={classes.text}>HOT 게시물</Typography>
+            <Typography className={classes.text}>
+                <Link to='/main/board' className={classes.menuLink} >HOT 게시물</Link>
+            </Typography>
         </div>
         <div className={classes.item}>
             <ChatIcon className={classes.icon} />
-            <Typography className={classes.text}>자유 게시판</Typography>
+            <Typography className={classes.text}>
+                <Link to='/main/board' className={classes.menuLink} >자유 게시판</Link>
+            </Typography>
         </div>
         <div className={classes.item} >
             <CircleNotificationsIcon className={classes.icon} />
-            <Typography className={classes.text}>정보 게시판</Typography>
+            <Typography className={classes.text}>
+                <Link to='/main/board' className={classes.menuLink} >정보 게시판</Link>
+            </Typography>
         </div>
         <div className={classes.item} >
             <GroupIcon className={classes.icon} />
-            <Typography className={classes.text}>동아리 게시판</Typography>
+            <Typography className={classes.text}>
+            <Link to='/main/board' className={classes.menuLink} >동아리 게시판</Link>
+            </Typography>
         </div>
         <div className={classes.item}>
             <Info className={classes.icon} />
-            <Typography className={classes.text}>공지사항</Typography>
+            <Typography className={classes.text}>
+            <Link to='/main/noticeboard' className={classes.menuLink} >공지사항</Link>
+            </Typography>
         </div>
     </Container>
 }

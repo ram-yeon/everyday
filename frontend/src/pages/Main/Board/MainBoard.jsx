@@ -10,13 +10,14 @@ import ListItemText from '@mui/material/ListItemText';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-        margin: "4rem 6rem",
-        [theme.breakpoints.down("sm")]: {
-            margin: "3rem auto auto 2rem",
-        },
+        // margin: "4rem 6rem",
+        // [theme.breakpoints.down("sm")]: {
+        //     margin: "3rem auto auto 2rem",
+        // },
     },
-    active: {
-        background: "f4f4f4",
+    link: {
+        textDecoration:"none",
+        color:"black",
     },
 }));
 
@@ -127,7 +128,7 @@ function MainBoard() {
             <Grid container spacing={5} >
                 <Grid item xs={12}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                        공지사항
+                        <Link to='/main/noticeboard' className={classes.link}>공지사항</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {noticeItems.map(item => (
@@ -148,7 +149,7 @@ function MainBoard() {
                                         textOverflow:"ellipsis", 
                                         // border:"solid 2px red"
                                     }} />
-                                <ListItemText primary="10분전"
+                                <ListItemText primary="20/02/12/ 21:42"
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -162,7 +163,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                        HOT 게시물
+                    <Link to='/main/board' className={classes.link}>HOT 게시물</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {hotItems.map(item => (
@@ -183,7 +184,7 @@ function MainBoard() {
                                         textOverflow:"ellipsis", 
                                         
                                     }} />
-                                <ListItemText primary="10분전"
+                                <ListItemText primary="20/02/12/ 21:42"
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -197,7 +198,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                        정보 게시판
+                    <Link to='/main/board' className={classes.link}>정보 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {infoItems.map(item => (
@@ -218,7 +219,7 @@ function MainBoard() {
                                         textOverflow:"ellipsis", 
                                         
                                     }} />
-                                <ListItemText primary="10분전"
+                                <ListItemText primary="20/02/12/ 21:42"
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -232,7 +233,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1} >
-                        자유 게시판
+                    <Link to='/main/board' className={classes.link} name="자유 게시판">자유 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {freeItems.map(item => (
@@ -253,7 +254,7 @@ function MainBoard() {
                                         textOverflow:"ellipsis", 
                                         
                                     }} />
-                                <ListItemText primary="10분전"
+                                <ListItemText primary="20/02/12/ 21:42"
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -267,7 +268,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                        동아리 게시판
+                    <Link to='/main/board' className={classes.link}>동아리 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {clubItems.map(item => (
@@ -288,7 +289,7 @@ function MainBoard() {
                                         textOverflow:"ellipsis", 
                                         
                                     }} />
-                                <ListItemText primary="10분전"
+                                <ListItemText primary="20/02/12/ 21:42"
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',

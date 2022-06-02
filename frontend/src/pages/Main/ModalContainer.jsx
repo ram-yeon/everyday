@@ -96,7 +96,6 @@ const ModalContainer = ({
                 open={open}
                 onClose={handleClose}
             >
-
                 <Container className={classes.modal}>
                     
                         {/* <div><KeyboardArrowDownIcon sx={{ color:"gray" }} /></div> */}
@@ -106,13 +105,6 @@ const ModalContainer = ({
                         <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>cjstk4285</div>
                         <hr />
                         
-                        {/* <Box>
-                            <FixedSizeList
-                                height={180}
-                                width={150}
-                                itemSize={40}
-                                itemCount={4}
-                            > */}
                         <List>
                             {myDataList.map(item => (
                                 <ListItem
@@ -126,8 +118,6 @@ const ModalContainer = ({
                                 </ListItem>
                             ))}
                         </List>
-                        {/* </FixedSizeList>
-                        </Box> */}
                     
                 </Container>
 
