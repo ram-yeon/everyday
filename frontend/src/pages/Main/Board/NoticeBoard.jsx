@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import { Grid, makeStyles } from "@material-ui/core";
-import { Box, TextField } from '@mui/material/';
+// import { Link } from 'react-router-dom';
+import { makeStyles } from "@material-ui/core";
+import { Box } from '@mui/material/';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import WriteBox from './WriteBox';
 
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+// import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 
 // import TextsmsIcon from '@mui/icons-material/Textsms';
@@ -120,11 +120,9 @@ function NoticeBoard() {
 
                                 <ListItemText primary={item.writer}
                                     primaryTypographyProps={{
-                                        color: 'black',
                                         fontSize: '0.7rem',
                                         width: "4rem",
                                         color: "#C00000"
-
                                     }} />
                             
                         </div>

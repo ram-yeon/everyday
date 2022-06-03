@@ -1,6 +1,6 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Grid, makeStyles } from "@material-ui/core";
+import { Routes, Route } from "react-router-dom";
+import { Grid } from "@material-ui/core";
 
 import Landing from './pages/Landing/Landing.jsx';
 import Login from './pages/Login/Login.jsx';

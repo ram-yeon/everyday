@@ -1,0 +1,11 @@
+.comment-input{
+    border: lightgray solid 2px;
+    background-color: #F6F6F6;
+    height: 1.5rem;
+    padding:0.5rem;
+    width: 93%;
+    /* margin: auto; */
+}
+.comment-input:focus{
+    outline:none;
+}

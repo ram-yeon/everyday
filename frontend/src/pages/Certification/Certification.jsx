@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './Certification.css'
 import { useTheme } from '@mui/material/styles';
-import { TextField, OutlinedInput, MenuItem, FormControl, Select } from '@mui/material/';
+import { TextField, MenuItem, FormControl, Select } from '@mui/material/';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

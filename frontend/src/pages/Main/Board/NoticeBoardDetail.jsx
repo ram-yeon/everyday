@@ -1,20 +1,20 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { Grid, makeStyles, Typography } from "@material-ui/core";
-import { Box, TextField } from '@mui/material/';
+import { makeStyles, Typography } from "@material-ui/core";
+import { Box } from '@mui/material/';
 // import { Avatar } from 'antd';
 // import myImg from './img/myImg.png';
 // import smallLogo from './img/smallLogo.png';
 
 import { Info } from '@material-ui/icons';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+// import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+// import BorderColorIcon from '@mui/icons-material/BorderColor';
+// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+// import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+// import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 
 

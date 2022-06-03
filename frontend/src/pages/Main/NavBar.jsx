@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ModalContainer from './ModalContainer';
 import { Link } from 'react-router-dom';
-import { AppBar, Container, Modal, makeStyles, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, makeStyles, Toolbar, Typography } from "@material-ui/core";
 
 import { Search } from '@mui/icons-material';
 import { InputBase } from '@mui/material';
@@ -73,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
     // display: "flex",
     marginLeft: "1rem",
     marginTop: "0.3rem",
+    cursor:"pointer",
     [theme.breakpoints.down("sm")]: {
       
     },

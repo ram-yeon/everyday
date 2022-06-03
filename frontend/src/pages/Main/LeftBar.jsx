@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom';
 import { Container, makeStyles, Typography } from "@material-ui/core";
 import { Info } from '@material-ui/icons';
@@ -6,7 +6,7 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import ChatIcon from '@mui/icons-material/Chat';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import GroupIcon from '@mui/icons-material/Group';
-import { useHistory, useLocation } from 'react-router-dom';
+// import { useHistory, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 
 function LeftBar() {
     const classes = useStyles();
-    const location = useLocation();
+    // const location = useLocation();
 
     return <Container className={classes.container}>
         <div className={classes.item}>

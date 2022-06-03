@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import { Grid, makeStyles } from "@material-ui/core";
-import { Box, TextField } from '@mui/material/';
+// import { Link } from 'react-router-dom';
+import { makeStyles } from "@material-ui/core";
+import { Box } from '@mui/material/';
 import WriteBox from './WriteBox';
 
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
