@@ -116,7 +116,7 @@ function Register() {
               </Select>
             </FormControl>
 
-            <Link to='./agreement'><button type="submit" id="signUp-btn">다음</button></Link>
+            <Link to='./agreement'><button type="submit" className="signUpBtnAction">다음</button></Link>
           </form>
         </div>
       </div>

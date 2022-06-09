@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Board.css';
 import WriteReply from './WriteReply';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
 // import { Avatar } from 'antd';
@@ -79,6 +79,18 @@ const useStyles = makeStyles((theme) => ({
         float: "right",
         cursor: "pointer",
         marginTop: "-2.7rem",
+    },
+    listBtn: {
+        width: "10%",
+        height: "2.5rem",
+        background: "#C00000",
+        color: "white",
+        border: "none",
+        cursor: "pointer",
+        boxShadow: "0.1rem 0.1rem 0.3rem 0.1rem gray",
+        borderRadius:"0.5rem",
+        marginTop: "1rem",
+        float:"right",
     },
 
 }));
@@ -221,7 +233,8 @@ function BoardDetail() {
             <FormControlLabel control={<Checkbox color="default" size="small" />}
                 label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "85%" }} />
             <BorderColorIcon className={classes.registerBtn} />
-
+            
+            <Link to='/main/board'><button className={classes.listBtn}>목록</button></Link>
         </div>
     )
 }

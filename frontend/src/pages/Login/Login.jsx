@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import './Login.css'
 import { Link } from 'react-router-dom';
-import logo from '../img/logo.png';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
 
@@ -21,7 +20,7 @@ function Login() {
                 <div className="login-content">
                     <div >
                         <div className="login-header img-class">
-                            <img src={logo} id="img-id" alt="로고이미지" />
+                            <img src={"/images/logo.png"} id="img-id" alt="로고이미지" />
                         </div>
                         <div className="login-header">
                             <p style={{ color: 'dimgray', fontWeight: 'bold', fontStyle: 'italic' }}>지금 에브리데이를 시작해보세요!</p>

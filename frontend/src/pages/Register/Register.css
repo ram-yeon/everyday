@@ -100,7 +100,7 @@
 #searchSchool-input:hover{
     outline: none;
 } */
-#signUp-btn{
+.signUpBtnAction{
     width: 70%;
     height: 2.5rem;
     border-radius: 0.5rem;
@@ -113,8 +113,21 @@
     margin-top: 1rem;
     
 }
-#signUp-btn:hover{
+.signUpBtnAction:hover{
     box-shadow: 4px 3px 9px -1px gray;
+}
+.signUpBtnInaction{
+    width: 70%;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background: lightgray;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
+    margin-left: 4.5rem;
+    margin-top: 1rem;
+    
 }
 .emailAuth-btn{
     width: 70%;

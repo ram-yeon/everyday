@@ -12,12 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import { FixedSizeList } from 'react-window';
 
-import bannerPage1 from '../img/bannerPage1.jpg';
-import bannerPage2 from '../img/bannerPage2.jpg';
-import bannerPage3 from '../img/bannerPage3.jpg';
-import bannerPage4 from '../img/bannerPage4.jpg';
-import logo from '../img/logo.png';
-
 import { Link } from 'react-router-dom';
 
 function schoolNameRenderRow(props) {
@@ -51,29 +45,29 @@ function Landing() {
   return (
     
       <Layout>
-        <Content style={{ position: 'relative', zIndex: '1', width: '146.5vh', marginTop:'1rem'}}>
+        <Content style={{ position: 'absolute', top:0, left:0, zIndex: '1', width: '150vh' }}>
           <Slider {...bannerSetting} >
             <div>
-              <img style={{ width: '100%', height: '95vh' }} src={bannerPage1} alt="배너 이미지1" />
+              <img style={{ width: '100%', height: '95vh' }} src={"/images/bannerPage1.jpg"} alt="배너 이미지1" />
             </div>
             <div>
-              <img style={{ width: '100%', height: '95vh' }} src={bannerPage2} alt="배너 이미지2" />
+              <img style={{ width: '100%', height: '95vh' }} src="/images/bannerPage2.jpg" alt="배너 이미지2" />
             </div>
             <div>
-              <img style={{width: '100%', height: '95vh' }} src={bannerPage3} alt="배너 이미지3" />
+              <img style={{width: '100%', height: '95vh' }} src="/images/bannerPage3.jpg" alt="배너 이미지3" />
             </div>
             <div>
-              <img style={{ width: '100%', height: '95vh' }} src={bannerPage4} alt="배너 이미지4" />
+              <img style={{ width: '100%', height: '95vh' }} src="/images/bannerPage4.jpg" alt="배너 이미지4" />
             </div>
           </Slider>
 
         </Content>
-        <Sider style={{ position: 'absolute', zIndex: '2', top: '1rem', right: '5rem' }}>
+        <Sider style={{ position: 'absolute', zIndex: '2', top: 0, right: '4.4rem' }}>
           <div>
             <div className="landing-loginContain">
               <div className="landing-loginContent">
                 <div className="landing-header img-class">
-                  <img src={logo} id="img-id" alt="로고이미지" />
+                  <img src="/images/logo.png" id="img-id" alt="로고이미지" />
                 </div>
                 
                 <Link to='./login'><button type="submit" id="landing-loginBtn">로그인</button></Link>

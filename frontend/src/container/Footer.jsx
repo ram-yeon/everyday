@@ -37,7 +37,7 @@ function Footer() {
             <Link className={classes.link} to='/main/privacypolicy'>개인정보처리방침</Link>
             <Link className={classes.link} to='/main/communityrule'>커뮤니티이용규칙</Link>
             <Link className={classes.link} to='/main/noticeBoard'>공지사항</Link>
-            <Link className={classes.link} to='/main/mainboard'><strong>©에브리데이</strong></Link>
+            <Link className={classes.link} to='/main'><strong>©에브리데이</strong></Link>
         </div>
     );
 }

@@ -44,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
 
     },
 
-
     icon: {
         marginRight: theme.spacing(1),
         // color:"#C00000",
@@ -74,36 +73,38 @@ function LeftBar() {
     // const location = useLocation();
 
     return <Container className={classes.container}>
+
         <div className={classes.item}>
             <LocalFireDepartmentIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/board' className={classes.menuLink} >HOT 게시물</Link>
+                <Link to='/main/hotboard' className={classes.menuLink} >HOT 게시물</Link>
             </Typography>
         </div>
         <div className={classes.item}>
             <ChatIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/board' className={classes.menuLink} >자유 게시판</Link>
+                <Link to='/main/freeboard' className={classes.menuLink} >자유 게시판</Link>
             </Typography>
         </div>
         <div className={classes.item} >
             <CircleNotificationsIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/board' className={classes.menuLink} >정보 게시판</Link>
+                <Link to='/main/informationboard' className={classes.menuLink} >정보 게시판</Link>
             </Typography>
         </div>
         <div className={classes.item} >
             <GroupIcon className={classes.icon} />
             <Typography className={classes.text}>
-            <Link to='/main/board' className={classes.menuLink} >동아리 게시판</Link>
+                <Link to='/main/clubboard' className={classes.menuLink} >동아리 게시판</Link>
             </Typography>
         </div>
         <div className={classes.item}>
             <Info className={classes.icon} />
             <Typography className={classes.text}>
-            <Link to='/main/noticeboard' className={classes.menuLink} >공지사항</Link>
+                <Link to='/main/noticeboard' className={classes.menuLink} >공지사항</Link>
             </Typography>
         </div>
+
     </Container>
 }
 

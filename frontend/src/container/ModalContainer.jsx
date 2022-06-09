@@ -4,7 +4,6 @@ import ChatIcon from '@mui/icons-material/Chat';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import myImg from '../img/myImg.png';
 import { Avatar } from 'antd';
 
 import List from '@mui/material/List';
@@ -99,7 +98,7 @@ const ModalContainer = ({
                 <Container className={classes.modal}>
                     
                         {/* <div><KeyboardArrowDownIcon sx={{ color:"gray" }} /></div> */}
-                        <Avatar alt="My계정 이미지" src={myImg} />
+                        <Avatar alt="My계정 이미지" src={"/images/myImg"} />
                         <p style={{ fontWeight: "bold" }}>닉네임이다악</p>
                         <div style={{ color: "gray", fontSize: "0.8rem" }}>정보람</div>
                         <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>cjstk4285</div>
