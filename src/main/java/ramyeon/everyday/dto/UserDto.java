@@ -46,4 +46,11 @@ public class UserDto {
         private String schoolName;  // 학교명
     }
 
+    @Getter
+    public static class LoginRequestDto {
+        private String loginId;  // 아이디
+        private String password;  // 비밀번호
+        private String type;  // 로그인 요청자 종류 [사용자, 관리자]
+    }
+
 }

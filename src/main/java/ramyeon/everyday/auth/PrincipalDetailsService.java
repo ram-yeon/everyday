@@ -20,7 +20,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> optionalUser = userRepository.findByLoginId(username);
 
-        return new PrincipalDetails(optionalUser.orElseThrow(() -> new UsernameNotFoundException("ID Not Match")));
+        return new PrincipalDetails(optionalUser.orElseThrow(() -> new UsernameNotFoundException("아이디가 틀립니다.")));
     }
 
 }
