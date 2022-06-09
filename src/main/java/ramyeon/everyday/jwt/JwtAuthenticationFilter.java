@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ramyeon.everyday.auth.CustomAuthenticationProvider;
+import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
@@ -35,6 +36,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper objectMapper = new ObjectMapper();
             UserDto.LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), UserDto.LoginRequestDto.class);
 
+            // 로그인 요청자 구분하여 저장
+            request.setAttribute("loginRequestType", loginRequestDto.getType());
+
             // 토큰 생성
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDto.getLoginId(), loginRequestDto.getPassword());
 
@@ -54,8 +58,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // 인증 성공시 실행
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
-        String jwtToken = jwtTokenProvider.createToken(principalDetails.getUsername(), principalDetails.getUser().getId());  // JWT 토큰 생성
+        String jwtToken = null;
+        String loginRequestType = String.valueOf(request.getAttribute("loginRequestType"));  // 사용자인지 관리자인지 구분
+
+        if (loginRequestType.equals("User")) {  // 사용자 로그인
+            PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+            jwtToken = jwtTokenProvider.createToken(principalDetails.getUsername(), principalDetails.getUser().getId());  // JWT 토큰 생성
+        } else if (loginRequestType.equals("Manager")) {  // 관리자 로그인
+            ManagerDetails managerDetails = (ManagerDetails) authResult.getPrincipal();
+            jwtToken = jwtTokenProvider.createToken(managerDetails.getUsername(), managerDetails.getManager().getId());  // JWT 토큰 생성
+        }
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");

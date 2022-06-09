@@ -14,11 +14,13 @@ import org.springframework.stereotype.Component;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private PrincipalDetailsService principalDetailsService;
+    private ManagerDetailsService managerDetailsService;
     private BCryptPasswordEncoder passwordEncoder;
 
-    public CustomAuthenticationProvider(@Lazy BCryptPasswordEncoder passwordEncoder, PrincipalDetailsService principalDetailsService) {
+    public CustomAuthenticationProvider(@Lazy BCryptPasswordEncoder passwordEncoder, PrincipalDetailsService principalDetailsService, ManagerDetailsService managerDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.principalDetailsService = principalDetailsService;
+        this.managerDetailsService = managerDetailsService;
     }
 
     @Override
@@ -36,6 +38,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             UserDetails user = principalDetailsService.loadUserByUsername(loginId);
 
             if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new BadCredentialsException("비밀번호가 틀립니다.");
+            }
+
+            return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
+        }
+
+        if (type.equals("Manager")) {  // 관리자 로그인 요청
+            UserDetails user = managerDetailsService.loadUserByUsername(loginId);
+
+            if (!user.getPassword().equals(password)) {
                 throw new BadCredentialsException("비밀번호가 틀립니다.");
             }
 
