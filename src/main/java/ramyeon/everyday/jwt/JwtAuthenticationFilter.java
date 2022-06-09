@@ -60,6 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String jwtToken = null;
         String loginRequestType = String.valueOf(request.getAttribute("loginRequestType"));  // 사용자인지 관리자인지 구분
+        jwtTokenProvider.setLoginRequestType(loginRequestType);
 
         if (loginRequestType.equals("User")) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();

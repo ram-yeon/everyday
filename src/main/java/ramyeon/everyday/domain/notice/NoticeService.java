@@ -9,6 +9,8 @@ import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.file.File;
 import ramyeon.everyday.domain.like.LikeRepository;
 import ramyeon.everyday.domain.like.TargetType;
+import ramyeon.everyday.domain.manager.Manager;
+import ramyeon.everyday.domain.manager.ManagerRepository;
 import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.NoticeDto;
 
@@ -21,6 +23,7 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final LikeRepository likeRepository;
+    private final ManagerRepository managerRepository;
 
     // 공지사항 목록 조회
     public Page<NoticeDto.NoticesResponseDto> getNotices(Pageable pageable) {
@@ -56,6 +59,18 @@ public class NoticeService {
     // 공지사항 목록 조회
     public Page<Notice> getNoticesPaging(Pageable pageable) {
         return noticeRepository.findByIsDeleted(Whether.N, pageable);
+    }
+
+    // 공지사항 삭제
+    @Transactional
+    public int deleteNotice(String loginId, Long noticeId) {
+        Manager manager = managerRepository.findByLoginId(loginId).orElse(null);  // 관리자 조회
+        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);  // 공지사항 조회
+        if (notice.getManager() != manager) {  // 다른 관리자의 공지사항 삭제
+            return 1;
+        }
+        notice.delete();  // 공지사항 삭제
+        return 0;
     }
 
     // 공지사항 조회수 갱신

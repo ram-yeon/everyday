@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import ramyeon.everyday.auth.ManagerDetails;
+import ramyeon.everyday.auth.ManagerDetailsService;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.auth.PrincipalDetailsService;
 
@@ -20,13 +22,21 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final PrincipalDetailsService principalDetailsService;
+    private final ManagerDetailsService managerDetailsService;
 
     private String secretKey = JwtProperties.SECRET_KEY;
+
+    private String loginRequestType = null;
 
     // 객체 초기화, secretKey를 Base64로 인코딩
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    }
+
+    // 로그인 종류 설정
+    public void setLoginRequestType(String loginRequestType) {
+        this.loginRequestType = loginRequestType;
     }
 
     // JWT 토큰 생성
@@ -45,8 +55,14 @@ public class JwtTokenProvider {
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(this.getSubject(token));
-        return new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+        if (loginRequestType.equals("User")) {  // 사용자 로그인
+            PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(this.getSubject(token));
+            return new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+        } else if (loginRequestType.equals("Manager")) {  // 관리자 로그인
+            ManagerDetails managerDetails = (ManagerDetails) managerDetailsService.loadUserByUsername(this.getSubject(token));
+            return new UsernamePasswordAuthenticationToken(managerDetails, null, managerDetails.getAuthorities());
+        }
+        return null;
     }
 
     // JWT 토큰 이름 추출

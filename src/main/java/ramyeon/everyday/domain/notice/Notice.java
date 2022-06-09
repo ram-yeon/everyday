@@ -53,6 +53,11 @@ public class Notice extends DateBaseEntity {  // 공지사항
 
     //== 비즈니스 로직 ==//
 
+    // 공지사항 삭제
+    public void delete() {
+        this.isDeleted = Whether.Y;
+    }
+
     // 공지사항 수정 - 조회수 갱신
     public void changeViews(Long views) {
         this.views = views;
