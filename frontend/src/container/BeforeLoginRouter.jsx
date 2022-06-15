@@ -1,19 +1,20 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import Landing from './pages/Landing/Landing.jsx';
-import Login from './pages/Login/Login.jsx';
-import Forgot from './pages/Forgot/Forgot.jsx';
-import Password from './pages/Forgot/password/Password.jsx';
-import ChangePW from './pages/Forgot/password/ChangePW';
-import Register from './pages/Register/Register.jsx';
-import Agreement from './pages/Register/Agreement.jsx';
-import Info from './pages/Register/Info.jsx';
-import Certification from './pages/certification/Certification.jsx';
+import Landing from '../pages/Landing/Landing.jsx';
+import Login from '../pages/Login/Login.jsx';
+import AdminLogin from '../pages/Login/AdminLogin.jsx';
+import Forgot from '../pages/Forgot/Forgot.jsx';
+import Password from '../pages/Forgot/password/Password.jsx';
+import ChangePW from '../pages/Forgot/password/ChangePW';
+import Register from '../pages/Register/Register.jsx';
+import Agreement from '../pages/Register/Agreement.jsx';
+import Info from '../pages/Register/Info.jsx';
+import Certification from '../pages/Certification/Certification.jsx';
 
-import TestApi from './TestApi/TestApi';
+import TestApi from '../TestApi/TestApi';
 
-import Error from "./component/Error";
+import Error from "../component/Error";
 
 
 function AfterLoginRouter() {
@@ -22,6 +23,7 @@ function AfterLoginRouter() {
             <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/adminlogin" element={<AdminLogin />} />
                 <Route path="/forgot" element={<Forgot />} />
                 <Route path="/forgot/password" element={<Password />} />
                 <Route path="/forgot/password/changepw" element={<ChangePW />} />

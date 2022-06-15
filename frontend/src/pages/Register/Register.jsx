@@ -65,14 +65,15 @@ function Register() {
   };
 
   return (
-    <div className="main-register">
-      <div className="register-contain">
-        <div className="register-content">
+    <>
+    {/* // <div className="main-register">
+    //   <div className="register-contain">*/}
+        <div className="register-content"> 
           <div style={{ marginLeft: '2rem', marginBottom: '6rem' }}>
             <h2><strong>에브리데이 회원가입</strong></h2>
             <p>에브리데이 계정으로 <strong>캠퍼스픽, 에브리데이</strong> 등 <br />다양한 대학생 서비스를 모두 이용하실 수 있습니다.</p>
           </div>
-          <h2 style={{ fontWeight: 'bold', marginTop: '0rem', textAlign: 'center' }}>학교 선택</h2>
+          <h2 style={{ fontWeight: 'bold', marginLeft: '2rem', textAlign: 'left' }}>학교 선택</h2>
           <form onSubmit={handlesubmit}>
 
           <Box
@@ -80,13 +81,13 @@ function Register() {
               noValidate
               autoComplete="off"
             >
-              <TextField label="학교를 검색해보세요." variant="standard" sx={{ml:'7.7rem'}} />
+              <TextField label="학교를 검색해보세요." variant="standard" sx={{ width: 330, ml:'2.5rem'}} />
               <IconButton type="submit" aria-label="search">
-                <SearchIcon  sx={{ height:'2.5rem'}} />
+                <SearchIcon  sx={{height:'2.5rem'}} />
               </IconButton>
             </Box>
 
-            <FormControl sx={{ width: 280, backgroundColor: 'white', ml: '6rem', mt:'0.5rem', mb:'2.2rem' }}>
+            <FormControl sx={{ width: 360, backgroundColor: 'white', ml: '2.5rem', mt:'0.5rem', mb:'2.2rem' }}>
               <Select
                 displayEmpty
                 value={admissionYearVal}
@@ -118,9 +119,11 @@ function Register() {
 
             <Link to='./agreement'><button type="submit" className="signUpBtnAction">다음</button></Link>
           </form>
-        </div>
-      </div>
-    </div>
+          </div>
+    {/* //     </div>
+    //   </div>
+    // </div> */}
+    </>
 
   )
 }

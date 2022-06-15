@@ -13,8 +13,6 @@ import ListItemText from '@mui/material/ListItemText';
 // import { FixedSizeList } from 'react-window';
 // import { Box, TextField } from '@mui/material/';
 
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
 // function myDataRenderRow(props) {
 //     const { index, style } = props;
 
@@ -97,8 +95,7 @@ const ModalContainer = ({
             >
                 <Container className={classes.modal}>
                     
-                        {/* <div><KeyboardArrowDownIcon sx={{ color:"gray" }} /></div> */}
-                        <Avatar alt="My계정 이미지" src={"/images/myImg"} />
+                        <Avatar alt="My계정 이미지" src={"/images/myImg.png"} />
                         <p style={{ fontWeight: "bold" }}>닉네임이다악</p>
                         <div style={{ color: "gray", fontSize: "0.8rem" }}>정보람</div>
                         <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>cjstk4285</div>

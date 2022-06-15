@@ -1,3 +1,5 @@
+//대댓글 작성
+
 import React from 'react';
 import './Board.css';
 // import { Link } from 'react-router-dom';
@@ -20,20 +22,20 @@ const useStyles = makeStyles((theme) => ({
     },
 
 }));
-
+//
 function WriteReply() {
     const classes = useStyles();
-    const comment = [
+    const reply = [
         {
             writer: "익명",
-            content: "댓글 달고 갑니다~~~",
+            content: "대댓글 달고 갑니다~~~",
             date: "20/02/12/ 21:42",
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeCount: "0",      
         },
         {
             writer: "익명",
-            content: "나도 나두 나도 도나도나도나도나 ",
+            content: "대댓나도 나두 나도 도나도나도나도나 ",
             date: "20/02/12/ 21:42",
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeCount: "0",        
@@ -43,7 +45,7 @@ function WriteReply() {
     return (
         <div>
             <List sx={{ marginTop: "-1rem" }}>
-                {comment.map(item => (
+                {reply.map(item => (
                     <ListItem
                         sx={{ border: "2px gray dotted", height: "13vh", backgroundColor:"#F6F6F6" }}
                     // button

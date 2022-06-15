@@ -128,7 +128,7 @@ function MainBoard() {
             <Grid container spacing={5} >
                 <Grid item xs={12}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                        <Link to='/main/noticeboard' className={classes.link}>공지사항</Link>
+                        <Link to='/noticeboard' className={classes.link}>공지사항</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {noticeItems.map(item => (
@@ -163,7 +163,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                    <Link to='/main/board' className={classes.link}>HOT 게시물</Link>
+                    <Link to='/hotboard' className={classes.link}>HOT 게시물</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {hotItems.map(item => (
@@ -198,7 +198,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                    <Link to='/main/board' className={classes.link}>정보 게시판</Link>
+                    <Link to='/informationboard' className={classes.link}>정보 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {infoItems.map(item => (
@@ -233,7 +233,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1} >
-                    <Link to='/main/board' className={classes.link} name="자유 게시판">자유 게시판</Link>
+                    <Link to='/freeboard' className={classes.link} name="자유 게시판">자유 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {freeItems.map(item => (
@@ -268,7 +268,7 @@ function MainBoard() {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                    <Link to='/main/board' className={classes.link}>동아리 게시판</Link>
+                    <Link to='/clubboard' className={classes.link}>동아리 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                         {clubItems.map(item => (

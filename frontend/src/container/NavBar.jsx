@@ -104,7 +104,7 @@ function NavBar() {
   return (
     <AppBar position="fixed" style={{ background: 'white', height: "5rem" }}>
       <Toolbar className={classes.Toolbar}>
-        <Link to='/main'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
+        <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
         
         <p>
           <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>

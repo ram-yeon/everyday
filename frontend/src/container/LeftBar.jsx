@@ -77,31 +77,31 @@ function LeftBar() {
         <div className={classes.item}>
             <LocalFireDepartmentIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/hotboard' className={classes.menuLink} >HOT 게시물</Link>
+                <Link to='/hotboard' className={classes.menuLink} >HOT 게시물</Link>
             </Typography>
         </div>
         <div className={classes.item}>
             <ChatIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/freeboard' className={classes.menuLink} >자유 게시판</Link>
+                <Link to='/freeboard' className={classes.menuLink} >자유 게시판</Link>
             </Typography>
         </div>
         <div className={classes.item} >
             <CircleNotificationsIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/informationboard' className={classes.menuLink} >정보 게시판</Link>
+                <Link to='/informationboard' className={classes.menuLink} >정보 게시판</Link>
             </Typography>
         </div>
         <div className={classes.item} >
             <GroupIcon className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/clubboard' className={classes.menuLink} >동아리 게시판</Link>
+                <Link to='/clubboard' className={classes.menuLink} >동아리 게시판</Link>
             </Typography>
         </div>
         <div className={classes.item}>
             <Info className={classes.icon} />
             <Typography className={classes.text}>
-                <Link to='/main/noticeboard' className={classes.menuLink} >공지사항</Link>
+                <Link to='/noticeboard' className={classes.menuLink} >공지사항</Link>
             </Typography>
         </div>
 

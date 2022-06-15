@@ -1,5 +1,5 @@
 import React from 'react';
-import BeforeLoginRouter from '../BeforeLoginRouter';
+import BeforeLoginRouter from './BeforeLoginRouter';
 
 function BeforeLoginContainer() {
     return (

@@ -4,9 +4,6 @@ import WriteReply from './WriteReply';
 import { Link } from 'react-router-dom';
 import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
-// import { Avatar } from 'antd';
-// import myImg from './img/myImg.png';
-// import smallLogo from './img/smallLogo.png';
 
 // import { Info } from '@material-ui/icons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -88,56 +85,39 @@ const useStyles = makeStyles((theme) => ({
         border: "none",
         cursor: "pointer",
         boxShadow: "0.1rem 0.1rem 0.3rem 0.1rem gray",
-        borderRadius:"0.5rem",
+        borderRadius: "0.5rem",
         marginTop: "1rem",
-        float:"right",
+        float: "right",
     },
 
 }));
 
-function BoardDetail() {
-    const classes = useStyles();
-    const [commentVal, setCommentVal] = useState("");
+function BoardDetail(props) {
 
     const comment = [
         {
             writer: "익명",
-            content: "나나나나나나",
+            content: "댓글입니다아",
             date: "20/02/12/ 21:42",
+            reply: "답글달기",
+            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeCount: "0",
-            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '0.8rem' }} />,
-            reply: "답글 달기"
         },
         {
             writer: "익명",
-            content: "나 남자 ",
+            content: "ㄴㅇ라ㅣ넝라ㅣ멍ㄹㅇ러ㅣ아ㅓ댓글임",
             date: "20/02/12/ 21:42",
+            reply: "답글달기",
+            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeCount: "0",
-            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '0.8rem' }} />,
-            reply: "답글 달기"
         },
-        {
-            writer: "익명",
-            content: "가나다라 마바사 아자차카타파하",
-            date: "20/02/12/ 21:42",
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '0.8rem' }} />,
-            reply: "답글 달기"
-        },
-        {
-            writer: "익명",
-            content: "어디임어디임어디임어디임나나나ㅏ어디임어디임어디임어디임나나나ㅏ어디임어디임어디임어디임나나나ㅏ어디임어디임어디임어디임나나나ㅏ어디임어디임어디임어디임나나나ㅏ어디임어디임어디임어디임나나나ㅏ",
-            date: "20/02/12/ 21:42",
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '0.8rem' }} />,
-            reply: "답글 달기"
-        }
-
     ]
+
+    const classes = useStyles();
+    const [commentVal, setCommentVal] = useState("");
+
 
     return (
         <div>
@@ -199,15 +179,15 @@ function BoardDetail() {
                                     width: "5rem",
                                 }} />
                             <div style={{ display: "inline-flex" }}>
-                                <ListItemIcon sx={{ color: '#0CDAE0', cursor: "pointer" }}>{item.replyIcon}</ListItemIcon>
                                 <ListItemText primary={item.reply}
                                     primaryTypographyProps={{
                                         fontSize: '0.7rem',
                                         width: "5rem",
                                         color: '#0CDAE0',
                                         cursor: "pointer",
-                                        margin: "-0.35rem auto auto -2.3rem"
+                                        
                                     }} />
+                                <ListItemIcon sx={{ color: '#0CDAE0', cursor: "pointer", margin: "auto auto auto -2rem" }}>{item.replyIcon}</ListItemIcon>
                             </div>
 
                             <Typography className={classes.replyDelete}>삭제</Typography>
@@ -233,8 +213,9 @@ function BoardDetail() {
             <FormControlLabel control={<Checkbox color="default" size="small" />}
                 label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "85%" }} />
             <BorderColorIcon className={classes.registerBtn} />
-            
-            <Link to='/main/board'><button className={classes.listBtn}>목록</button></Link>
+
+            {/* 게시판따라경로분기처리필요 */}
+            <Link to='/freeboard'><button className={classes.listBtn}>목록</button></Link>
         </div>
     )
 }

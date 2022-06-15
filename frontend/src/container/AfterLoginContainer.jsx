@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import AfterLoginRouter from '../AfterLoginRouter';
+import AfterLoginRouter from './AfterLoginRouter';
 import NavBar from './NavBar';
 import LeftBar from './LeftBar';
 import Footer from './Footer';

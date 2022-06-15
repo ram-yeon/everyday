@@ -1,89 +1,76 @@
-
 :root {
     --main-color: #C00000;
     --sub-color: #e8b9c9;
 }
 
-.main-login {
-    min-height: 100vh;
-    min-width: 100vh;
-    overflow-x: hidden;
-    text-align: center;
-    align-items: center;
-}
-
 .login-contain {
-    height: 75vh;
-    width: 40%;
-    background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
-    border-radius: 3rem;
-    margin: 4rem auto;
-    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    
 }
 
 .login-content {
-    margin: 3rem;
-    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
-    height: 80%;
-    width: 100%;
+    text-align: center;
+    margin: 12rem 34rem;
+    width: 25%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
-
-.login-header{
+.login-header {
     display: inline-block;
-    margin-right: 1rem;   
+    margin-right: 1rem;
     margin-left: 1rem;
 }
-.img-class{
-    height: 3rem; 
+
+.img-class {
+    height: 4rem;
 }
-#img-id{
+
+#img-id {
     height: 100%;
     object-fit: cover;
 }
 
-#register-link{
+#register-link {
     color: var(--main-color);
-    font-weight: bold;  
+    font-weight: bold;
     text-decoration: none;
 }
-#register-link:hover{
+
+#register-link:hover {
     color: var(--main-color);
 }
-#forgot-link{
+
+#forgot-link {
     color: gray;
     text-decoration: none;
     font-size: 0.8rem;
 }
-#forgot-link:hover{
+
+#forgot-link:hover {
     color: gray;
 }
 
-.login-input{
+.login-input {
     display: block;
-    border: none;
-    height: 3rem;
-    width: 60%;
+    border: lightgray 1px solid;
+    height: 2.5rem;
+    width: 90%;
     color: gray;
-    margin: 1.5rem auto 1rem auto;
-}
-.login-input:focus{
-    outline:none;
-    border:none;
-}
-.login-input:hover{
-    outline: 0.5px solid var(--main-color);
-    box-shadow: 4px 3px 9px -1px gray;
+    margin: 0.5rem auto auto auto;
 }
 
-#login-btn{
-    width: 65%;
+.login-input:focus {
+    outline: none;
+    /* border: none; */
+}
+
+.login-input:hover {
+    outline: 0.5px solid var(--main-color);
+    box-shadow: 3px 2px 4px -1px gray;
+}
+
+#login-btn {
+    width: 95%;
     height: 2.5rem;
     background: var(--main-color);
     color: white;
@@ -92,13 +79,14 @@
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
     margin-top: 1rem;
 }
-#login-btn:hover{
+
+#login-btn:hover {
     box-shadow: 4px 3px 9px -1px gray;
     /* transform: translateY(-5px); */
 }
 
-.login-footer{
+.login-footer {
     display: inline-block;
     margin: 0.5rem 1.5rem 0.5rem 1.5rem;
-    
+
 }

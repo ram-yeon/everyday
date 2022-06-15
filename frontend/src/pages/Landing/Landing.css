@@ -1,5 +1,5 @@
 
-.landing-loginContain {
+/* .landing-loginContain {
     height: 16rem;
     width: 16rem;
     background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
@@ -9,16 +9,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
+}*/
 .landing-loginContent {
-    margin: 1.5rem;
-    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
-    height: 80%;
-    width: 14rem;
+    margin-top: 2rem;
+    height: 100%;
+    width: 16rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
+} 
 
 .landing-header{
     text-align: center;
@@ -64,12 +63,24 @@
 #landing-signUpBtn:hover {
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
 }
+.admin-login{
+    color: rgb(99, 98, 98);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.7rem;
+    float: right;
+    margin-top: 7px;
+    margin-right: 5px;
+}
+.admin-login:hover{
+    text-decoration: underline;
+}
 
 .schoolSearch-contain{
-    margin-top: 1.5rem;
+    margin-top: 3rem;
     border: none;
-    border-radius: 2rem;
-    height: 28rem;
+    border-radius: 1rem;
+    height: 29rem;
     width: 16rem;
     box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
     justify-content: center;
@@ -79,5 +90,5 @@
     margin-left: 0.5rem;
     justify-content: center;
     align-items: center;
-    padding-top: 0.5rem;
+    padding-top: 1rem;
 }

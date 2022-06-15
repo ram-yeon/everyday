@@ -30,59 +30,22 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function NoticeBoard() {
+function NoticeBoardList(props) {
+    const {
+        title,
+        post,
+    } = props;
+
+
     const classes = useStyles();
     const [show, setShow] = useState(false);
 
-    const post = [
-        {
-            writer: "에브리타임",
-            postTitle: "주기적 재인증에 관한 안내",
-            date: "20/02/12/ 21:42",
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            commentIcon: <TextsmsOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            commentCount: "0",
-            path: '/'
-
-        },
-        {
-            writer: "에브리타임",
-            postTitle: "오픈채팅을 이용한 각종 피해 예방 안내",
-            date: "20/02/12/ 21:42",
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            commentIcon: <TextsmsOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            commentCount: "0",
-            path: '/'
-        },
-        {
-            writer: "에브리타임",
-            postTitle: "6/21(월) 게시판 오류에 따른 롤백 안내",
-            date: "20/02/12/ 21:42",
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            commentIcon: <TextsmsOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            commentCount: "0",
-            path: '/'
-        },
-        {
-            writer: "에브리타임",
-            postTitle: "에브리타임 커뮤니티 이용규칙 업데이트 안내",
-            date: "20/02/12/ 21:42",
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            commentIcon: <TextsmsOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            commentCount: "0",
-            path: '/'
-        }
-
-    ]
+    
 
     return (
         <div>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
-                공지사항
+                {title}
             </Box>
             <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
                 공지사항을 등록해주세요. //일반사용자는 이 칸 안보임
@@ -98,7 +61,7 @@ function NoticeBoard() {
                     <ListItem
                         sx={{ border: "1px gray solid", height: "12vh" }}
                         button
-                        key={item.date}
+                        key={item.postTitle}
                     // onClick={() => history.push(item.path)}
                     // className={location.pathname == item.path ? classes.active : null}
                     >
@@ -144,4 +107,4 @@ function NoticeBoard() {
     )
 }
 
-export default NoticeBoard
+export default NoticeBoardList

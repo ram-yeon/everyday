@@ -82,18 +82,18 @@ function Agreement() {
   }
 
   return (
-    <div className="main-register">
-      <div className="register-longContain">
+    // <div className="main-register">
+    //   <div className="register-longContain">
         <div className="register-content">
           <form onSubmit={handlesubmit}>
 
-            <h2 style={{ textAlign: 'center' }}>약관 동의</h2>
+            <h2 style={{ textAlign: 'left', marginLeft:"2rem" }}>약관 동의</h2>
             <div>
               <div>
                 {/* <input type="checkbox" id="all-check" checked={allCheck} onChange={allBtnEvent} />
                   <label for="all-check">전체동의</label> */}
                 <FormControlLabel control={<Checkbox value="all-check" color="default" size="small" checked={allCheck} onChange={allBtnEvent} />}
-                  label="아래 약관에 모두 동의합니다." style={{ marginLeft: '2rem' }} />
+                  label="아래 약관에 모두 동의합니다." style={{ margin: '0.5rem 2rem'}} />
               </div>
               <div>
                 <FormControlLabel control={<Checkbox value="service-check" color="default" size="small" checked={serviceCheck} onChange={serviceBtnEvent} />}
@@ -153,8 +153,8 @@ function Agreement() {
 
           </form>
         </div>
-      </div>
-    </div>
+    //   </div>
+    // </div>
   )
 }
 

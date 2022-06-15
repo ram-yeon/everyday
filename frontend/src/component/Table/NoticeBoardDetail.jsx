@@ -90,11 +90,11 @@ function NoticeBoardDetail() {
                     에브리타임은 반수, 편입 등 학적이 변동된 재학생, 계정 매매 및 다중 계정 이용자의 인증을 해제하기 위해 주기적 재인증을 진행하고 있습니다</Typography>
 
                 <div style={{ margin: "2rem auto auto 0.3rem" }}>
-                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} /><Typography variant="" style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>0</Typography>
+                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} /><Typography style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>0</Typography>
 
                 </div>
             </Box>
-            <Link to='/main/noticeboard'><button className={classes.listBtn}>목록</button></Link>
+            <Link to='/noticeboard'><button className={classes.listBtn}>목록</button></Link>
         </div>
     )
 }
