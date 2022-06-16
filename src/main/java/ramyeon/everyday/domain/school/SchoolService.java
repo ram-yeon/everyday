@@ -23,4 +23,8 @@ public class SchoolService {
         return schoolInfo;
     }
 
+    public String getSchoolNameByUserId(Long userId) {
+        return schoolRepository.findSchoolNameByUserId(userId);
+    }
+
 }

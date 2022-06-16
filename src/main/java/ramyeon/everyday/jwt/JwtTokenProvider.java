@@ -9,6 +9,7 @@ import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.ManagerDetailsService;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.auth.PrincipalDetailsService;
+import ramyeon.everyday.domain.school.SchoolService;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ public class JwtTokenProvider {
 
     private final PrincipalDetailsService principalDetailsService;
     private final ManagerDetailsService managerDetailsService;
+    private final SchoolService schoolService;
 
     private String secretKey = JwtProperties.SECRET_KEY;
 
@@ -41,9 +43,12 @@ public class JwtTokenProvider {
 
     // JWT 토큰 생성
     public String createToken(String userLoginId, Long userId) {
-
         Claims claims = Jwts.claims().setSubject(userLoginId);  // claim: JWT payload 에 저장되는 정보단위
-        claims.put("id", userId);
+        claims.put("pk", userId);  // 기본키 추가
+        claims.put("authority", loginRequestType);  // 사용자인지 관리자인지 구분 정보 추가
+        if (loginRequestType.equals("User")) {  // 사용자 로그인이면
+            claims.put("school", schoolService.getSchoolNameByUserId(userId));  // 사용자의 학교이름 추가
+        }
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)  // 정보 저장
@@ -81,11 +86,11 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (ExpiredJwtException eje) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 만료된 토큰입니다.");// + eje.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 만료된 토큰입니다.");
             eje.printStackTrace();
             return false;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException jwtE) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");// + jwtE.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
             jwtE.printStackTrace();
             return false;
         } catch (Exception e) {
