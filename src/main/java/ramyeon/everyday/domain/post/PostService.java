@@ -136,7 +136,7 @@ public class PostService {
                 posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
                 break;
             case "comments":   // 댓글단 글
-                posts = postRepository.findByUserFetchJoinComment(loginUser);  // 댓글 단 글 최신순 조회
+                posts = postRepository.findByUserFetchJoinComment(loginUser, Whether.N);  // 댓글 단 글 최신순 조회
                 break;
             case "likes":   // 좋아요 한 글
                 List<LikeRepository.TargetIdOnly> postIdList = likeRepository.findTargetIdByTargetTypeAndUser(TargetType.POST, loginUser);  // 좋아요 한 글 ID 조회

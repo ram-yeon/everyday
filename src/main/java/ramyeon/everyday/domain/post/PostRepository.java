@@ -25,8 +25,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select distinct p from Post p" +
             " join fetch p.commentList c" +
             " where c.user = ?1" +
+            " and p.isDeleted = ?2" +
             " order by p.registrationDate desc")
-    List<Post> findByUserFetchJoinComment(User user);  // 댓글 단 글 목록 조회
+    List<Post> findByUserFetchJoinComment(User user, Whether isDeleted);  // 댓글 단 글 목록 조회
 
     Optional<Post> findByIdAndIsDeleted(Long id, Whether isDeleted);
 
