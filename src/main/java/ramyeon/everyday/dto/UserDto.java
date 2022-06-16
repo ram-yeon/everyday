@@ -11,6 +11,13 @@ public class UserDto {
         private String email;  // 이메일
     }
 
+    // 인증코드 확인 DTO
+    @Getter
+    public static class CheckAuthenticationCodeRequestDto {
+        private String email;  // 이메일
+        private String authenticationCode;  // 인증코드
+    }
+
     // 비밀번호 찾기 DTO
     @Getter
     public static class FindPasswordRequestDto {
