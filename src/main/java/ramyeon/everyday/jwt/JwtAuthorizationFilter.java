@@ -17,7 +17,8 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 인증이나 권한이 필요한 주소 요청이 있을 때 해당 필터를 거침
 
-    private static final String[] whitelist = {"/schools", "/email-authenticate", "/find-id", "/find-password", "/users/password/edit", "/users"};  // 필터를 제외할 리소스
+    // 필터를 제외할 리소스
+    private static final String[] whitelist = {"/schools", "/login", "/email-authenticate", "/check-authenticationcode", "/find-id", "/find-password", "/users/password/edit", "/users"};
 
     private UserRepository userRepository;
     private JwtTokenProvider jwtTokenProvider;
