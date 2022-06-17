@@ -8,10 +8,10 @@ import WriteBox from './WriteBox';
 // import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 // import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 // import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+// import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 
 // import TextsmsIcon from '@mui/icons-material/Textsms';
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+// import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';

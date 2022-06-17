@@ -7,8 +7,8 @@ import WriteBox from './WriteBox';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 
 // import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+// import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+// import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';

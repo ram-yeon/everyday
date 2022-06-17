@@ -2,21 +2,67 @@ import React, { useState } from 'react'
 import './Certification.css'
 import { TextField } from '@mui/material/';
 
+import * as UserAPI from '../../api/Users';
+import { Message } from '../../component/Message';
+import { useNavigate } from 'react-router-dom';
+
 
 function Certification() {
 
-    // const [emailVal, setEmailVal] = useState("");
+    const [emailVal, setEmailVal] = useState("");
     const [codeVal, setCodeVal] = useState("");
 
-    const handlesubmit = (event) => {
-        event.preventDefualt();
+    // '@', '.' 모두 포함
+    const isValidEmail = emailVal.includes('@') && emailVal.includes('.');
+    let code = "";
+    let referrer = document.referrer;
+    const navigate = useNavigate();
+
+    //인증번호 받기 버튼 클릭시
+    const handleGetButton = () => {
+        if (!isValidEmail)
+            alert('정확히 입력되었는지 다시 확인해주세요.');
+        else {
+            const data = {
+                email: emailVal,
+            }
+            UserAPI.authenticate(data).then(response => {
+                console.log(JSON.stringify(response));
+                Message.success(response.message);
+                code = Message.success(response.authenticationCode);
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            });
+
+        }
+    };
+    //확인 버튼 클릭시
+    const handleConfirmButton = () => {
+        // const data = {
+        //     email: emailVal,
+        //     code: codeVal,
+        // }
+        // UserAPI.authenticate(data).then(response => {
+        //     console.log(JSON.stringify(response));
+        //     Message.success(response.message);
+        //      if (referrer) {
+        //         navigate('/register/info');
+        //      }
+        //      else if (referrer) {
+        //         navigate('/forgot/password/changepw');
+        //      }
+        // }).catch(error => {
+        //     console.log(JSON.stringify(error));
+        //     Message.error(error.message);
+        // });
+
     };
 
     return (
         <div className="certification-content">
-            <form onSubmit={handlesubmit}>
-                <h2 style={{ fontWeight: 'bold', marginLeft: "2rem" }}>이메일 인증</h2>
-                {/* <div className="certification-inputGroup">
+            <h2 style={{ fontWeight: 'bold', marginLeft: "2rem" }}>이메일 인증</h2>
+            {/* <div className="certification-inputGroup">
                     <TextField label="이메일 아이디" variant="standard" id="email1" type="text" name="email"
                         className="email-txf" value={emailVal} onChange={(e) => { setEmailVal(e.target.value) }}
                         style={{ marginTop: "-1rem" }} />
@@ -58,32 +104,31 @@ function Certification() {
                     </div>
                 </div> */}
 
-                <div style={{ marginTop: '2rem', marginLeft: '2rem' }}>
-                    <TextField
-                        label="이메일을 입력하세요"
-                        InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
-                        style={{ width: '66%' }}
-                        variant="outlined"
-                        name="email"
-                        helperText="에러메시지 노출예정"
-                        onChange={(e) => { setCodeVal(e.target.value) }} />
+            <div style={{ marginTop: '2rem', marginLeft: '2rem' }}>
+                <TextField
+                    label="이메일을 입력하세요"
+                    InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
+                    style={{ width: '66%' }}
+                    variant="outlined"
+                    name="email"
+                    helperText="에러메시지 노출예정"
+                    onChange={(e) => { setEmailVal(e.target.value) }} />
 
-                    <button type="submit" id="send-btn" >인증번호 받기</button>
-                </div>
-                <div style={{ margin: '0.5rem 2rem' }}>
-                    <TextField
-                        fullWidth
-                        label="인증번호를 입력하세요"
-                        InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
-                        variant="outlined"
-                        name="code"
-                        onChange={(e) => { setCodeVal(e.target.value) }} />
-                </div>
+                <button onClick={handleGetButton} type="submit" id="send-btn" >인증번호 받기</button>
+            </div>
+            <div style={{ margin: '0.5rem 2rem' }}>
+                <TextField
+                    fullWidth
+                    label="인증번호를 입력하세요"
+                    InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
+                    variant="outlined"
+                    name="code"
+                    onChange={(e) => { setCodeVal(e.target.value) }} />
+            </div>
 
-                <div>
-                    <button type="submit" id="confirm-btn" >확인</button>
-                </div>
-            </form>
+            <div>
+                <button onClick={handleConfirmButton} type="submit" id="confirm-btn" >확인</button>
+            </div>
         </div>
     )
 }

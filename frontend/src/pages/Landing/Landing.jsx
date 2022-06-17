@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import './Landing.css';
 import { Layout } from 'antd';
 import Slider from 'react-slick';
@@ -13,9 +13,36 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Landing() {
   const { Sider, Content } = Layout;
+  const navigate = useNavigate();
+
+  const schoolList = [
+    { text: '경희대', }, { text: '중앙대', }, { text: '연세대 신촌캠', }, { text: '경북대', }, { text: '성균관대', }, { text: '부산대', },
+    { text: '고려대 서울캠', }, { text: '단국대', }, { text: '영남대', }, { text: '서울대', }, { text: '계명대', }, { text: '전남대', },
+    { text: '강원대', }, { text: '한양대 서울캠', }, { text: '전북대', }, { text: '동아대', }, { text: '한국외대', }, { text: '가천대', },
+    { text: '인하대', }, { text: '건국대 서울캠', },
+  ];
+
+  const [searchSchool, setSearchSchool] = useState(''); // 현재 검색학교
+  const [searchSchoolList, setSearchSchoolList] = useState(schoolList); // 검색된 학교
+  const onChangeSchool = useCallback(e => {
+    // 현재 입력된 값을 schoolList에서 찾아서 setSearchSchoolList 하기
+    const text = e.target.value;
+    const result = [];
+    schoolList.map((school) => {
+      if(school.text.indexOf(text) >= 0) {
+        result.push({text: school.text});
+      } 
+    });
+    if (text === '') {
+      setSearchSchoolList(schoolList);
+    } else {
+      setSearchSchoolList(result);
+    }
+  });
 
   const bannerSetting = {
     fade: true,
@@ -27,92 +54,8 @@ function Landing() {
     autoplaySpeed: 1000,
 
   };
-  const sdchoolList = [
-    {
-      text: '경희대',
-      path: '/'
-    },
-    {
-      text: '중앙대',
-      path: '/'
-    },
-    {
-      text: '연세대 신촌캠',
-      path: '/'
-    },
-    {
-      text: '경북대',
-      path: '/'
-    },
-    {
-      text: '성균관대',
-      path: '/'
-    },
-    {
-      text: '부산대',
-      path: '/'
-    },
-    {
-      text: '고려대 서울캠',
-      path: '/'
-    },
-    {
-      text: '단국대',
-      path: '/'
-    },
-    {
-      text: '영남대',
-      path: '/'
-    },
-    {
-      text: '계명대',
-      path: '/'
-    },
-    {
-      text: '서울대',
-      path: '/'
-    },
-    {
-      text: '전남대',
-      path: '/'
-    },
-    {
-      text: '강원대',
-      path: '/'
-    },
-    {
-      text: '한양대 서울캠',
-      path: '/'
-    },
-    {
-      text: '전북대',
-      path: '/'
-    },
-    {
-      text: '동아대',
-      path: '/'
-    },
-    {
-      text: '한국외대',
-      path: '/'
-    },
-    {
-      text: '가천대',
-      path: '/'
-    },
-    {
-      text: '인하대',
-      path: '/'
-    },
-    {
-      text: '건국대 서울캠',
-      path: '/'
-    },
-
-  ]
 
   return (
-
     <Layout>
       <Content style={{ position: 'absolute', top: 0, left: 0, zIndex: '1', width: '150vh' }}>
         <Slider {...bannerSetting} >
@@ -133,7 +76,6 @@ function Landing() {
       </Content>
       <Sider style={{ position: 'absolute', zIndex: '2', top: 0, right: '4.4rem' }}>
         <div>
-
           <div className="landing-loginContent">
             <div className="landing-header img-class">
               <img src="/images/logo.png" id="img-id" alt="로고이미지" />
@@ -148,24 +90,24 @@ function Landing() {
 
           <div className="schoolSearch-contain">
             <div className="schoolSearch-content">
-              {/* <strong style={{margin:'auto 1.5rem', fontSize:'0.9rem'}}>우리 학교 커뮤니티 둘러보기</strong> */}
               <Box
                 component="form"
                 noValidate
                 autoComplete="off"
               >
-                <TextField label="나의 학교를 검색해보세요." variant="standard" sx={{ marginLeft: '0.5rem', width: '80%' }} />
+                <TextField label="나의 학교를 검색해보세요." variant="standard" sx={{ marginLeft: '0.5rem', width: '80%' }}
+                  onChange={onChangeSchool}
+                />
                 <IconButton type="submit" aria-label="search" disabled>
                   <SearchIcon sx={{ height: '3rem' }} />
                 </IconButton>
 
                 <List style={{ maxHeight: '22rem', overflowY: "auto" }}>
-                  {sdchoolList.map(item => (
+                  {searchSchoolList.map(item => (
                     <ListItem
                       button
                       key={item.text}
-                    // onClick={() => history.push(item.path)}
-                    // className={location.pathname == item.path ? classes.active : null}
+                      onClick={() => navigate('/login')}
                     >
                       <ListItemText primary={item.text}
                         primaryTypographyProps={{
@@ -176,17 +118,12 @@ function Landing() {
                     </ListItem>
                   ))}
                 </List>
-
               </Box>
             </div>
-
           </div>
         </div>
       </Sider>
-
     </Layout>
-
-
   );
 }
 

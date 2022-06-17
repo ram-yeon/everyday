@@ -3,21 +3,40 @@ import './Login.css'
 import { Link } from 'react-router-dom';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
+import * as UserAPI from '../../api/Users';
+import { Message } from '../../component/Message';
+import { useNavigate } from 'react-router-dom';
+
 
 function Login() {
 
-    const [idval, setidval] = useState("");
-    const [pwval, setpwval] = useState("");
+    const [idVal, setIdVal] = useState("");
+    const [pwVal, setPwVal] = useState("");
+    //사용자 로그인인지 관리자 로그인인지 
+    let type='';
 
     const handlesubmit = (event) => {
         event.preventDefualt();
+
+        const data = {
+            loginId: idVal,
+            password: pwVal,
+            type: type,
+          }
+        //   UserAPI.login(data).then(response => {
+        //     console.log(JSON.stringify(response));
+               //로그인토큰발급받고 isLogin=true로 해야함
+        //     navigate("/");
+        //   }).catch(error => {
+        //     console.log(JSON.stringify(error));
+        //     Message.error(error.message);
+        //   });
+    
     }
 
 
     return (
-
         <div className="login-contain">
-
             <div className="login-content">
                 <div >
                     <div className="login-header img-class">
@@ -29,9 +48,9 @@ function Login() {
                 </div>
                 <form onSubmit={handlesubmit}>
                     <input type="id" className="login-input" placeholder="아이디"
-                        value={idval} onChange={(e) => { setidval(e.target.value) }} />
+                        value={idVal} onChange={(e) => { setIdVal(e.target.value) }} />
                     <input type="password" className="login-input" placeholder="비밀번호"
-                        value={pwval} onChange={(e) => setpwval(e.target.value)} />
+                        value={pwVal} onChange={(e) => setPwVal(e.target.value)} />
                     <button type="submit" id="login-btn">로그인</button>
                 </form>
 
@@ -50,9 +69,6 @@ function Login() {
                 </div>
             </div>
 
-
-
-
         </div>
 
     )
@@ -61,85 +77,5 @@ function Login() {
 export default Login
 
 
-    // MUI code
-    // import TextField from '@mui/material/TextField';
-    // import { Button, Checkbox, Grid } from '@mui/material';
-    // import FormControlLabel from '@mui/material/FormControlLabel';
-    // import Link from '@mui/material/Link';
-    // import Typography from '@mui/material/Typography';
-    //      < Typography component = "h1" variant = "h5" >
-    //          Sign in
-    //       </Typography >
-    //         <TextField label="Email Address" required fullWidth name="email" autoComplete="email" autoFocus />
-    //         <TextField label="Password" type="password" required fullWidth name="password" autoComplete="current-password" />
-    //         <FormControlLabel control={<Checkbox value="remember" color="primary" />}
-    //             label="Remember me" />
-    //         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }} >Sign in</Button>
-    //         <Grid container>
-    //             <Grid item xs>
-    //                 <Link>Forgot password?</Link>
-    //             </Grid>
-
-    //             <Grid item>
-    //                 <Link>Sign Up</Link>
-    //             </Grid>
-    //         </Grid>
-
-    // antdesign code
-    // import 'antd/dist/antd.css';
-    // import { Form, Input, Button, Checkbox } from 'antd';
-    // < div className = "form" >
-    //     <Form
-    //         name="basic"
-    //         labelCol={{
-    //             span: 8,
-    //         }}
-    //         wrapperCol={{
-    //             span: 16,
-    //         }}
-    //         initialValues={{
-    //             remember: false,
-    //         }}
-    //         autoComplete="off"
-    //     >
-    //         <Form.Item
-    //             label="아이디"
-    //             name="id"
-    //             rules={[
-    //                 {
-    //                     required: true,
-    //                     message: '아이디를 입력해주세요!',
-    //                 },
-    //             ]}
-    //         >
-    //             <Input placeholder="입력해주세요" />
-    //         </Form.Item>
-
-    //         <Form.Item
-    //             label="비밀번호"
-    //             name="password"
-    //             rules={[
-    //                 {
-    //                     required: true,
-    //                     message: '비밀번호를 입력해주세요!',
-    //                 },
-    //             ]}
-    //         >
-    //             <Input.Password placeholder="입력해주세요" />
-    //         </Form.Item>
-
-    //         <Form.Item
-    //             wrapperCol={{
-    //                 offset: 8,
-    //                 span: 16,
-    //             }}
-    //         >
-    //             <Button type="primary" htmlType="submit">
-    //                 로그인
-    //             </Button>
-    //         </Form.Item>
-
-    //     </Form>
-    //                 </div >
-
+   
 
