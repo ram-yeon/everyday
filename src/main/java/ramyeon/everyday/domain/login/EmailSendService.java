@@ -21,7 +21,7 @@ public class EmailSendService {
     private Map<String, StringBuilder> emailAndCodeStore = new HashMap<>();  // 인증할 이메일과 인증코드 저장소
 
     // 이메일 인증을 위한 인증코드 전송
-    public String sendCode(String email) {
+    public String sendCode(String email, String type) {
         Random random = new Random();
         StringBuilder code = new StringBuilder();
 
@@ -36,7 +36,7 @@ public class EmailSendService {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(email);
-        message.setSubject("[에브리데이] 회원가입 인증코드 안내");
+        message.setSubject("[에브리데이] " + Type.valueOf(type).getContents() + " 인증코드 안내");
         message.setText("아래 인증코드를 인증코드 기입란에 입력하시기 바랍니다.\n\n인증 코드 : " + code);
         javaMailSender.send(message);
 
@@ -82,4 +82,19 @@ public class EmailSendService {
             return 1;
         }
     }
+
+    public enum Type {
+        JOIN("회원가입"), FINDPW("비밀번호 찾기");
+
+        private final String contents;  // 내용
+
+        Type(String contents) {
+            this.contents = contents;
+        }
+
+        public String getContents() {
+            return contents;
+        }
+    }
+
 }

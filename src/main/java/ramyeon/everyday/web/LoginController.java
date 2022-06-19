@@ -25,9 +25,9 @@ public class LoginController {
      * 이메일 인증 API
      */
     @PostMapping("/email-authenticate")
-    public ResponseEntity emailAuthenticate(@RequestBody UserDto.EmailRequestDto emailRequestDto) {
+    public ResponseEntity emailAuthenticate(@RequestBody UserDto.EmailAuthenticationRequestDto emailAuthenticationRequestDto) {
 
-        String code = emailSendService.sendCode(emailRequestDto.getEmail());  // 인증코드 발송
+        String code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType());  // 인증코드 발송
 
         Map<String, String> data = new HashMap<>();
         data.put("authenticationCode", code);

@@ -5,10 +5,17 @@ import lombok.Getter;
 
 public class UserDto {
 
-    // 이메일 인증 DTO
+    // 아이디 찾기 DTO
     @Getter
     public static class EmailRequestDto {
         private String email;  // 이메일
+    }
+
+    // 이메일 인증 DTO
+    @Getter
+    public static class EmailAuthenticationRequestDto {
+        private String email;  // 이메일
+        private String type;  // 인증 종류 [회원가입, 비밀번호 찾기]
     }
 
     // 인증코드 확인 DTO
