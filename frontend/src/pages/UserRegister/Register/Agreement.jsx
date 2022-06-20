@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useLocation } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Register.css'
 import { FormControlLabel, Checkbox } from '@mui/material';
 import TextareaAutosize from '@mui/base/TextareaAutosize';
-import { useNavigate } from 'react-router-dom';
 
-function Agreement() {
-
-  // const { schoolName, admissionYear } = useLocation();
-  // console.log(schoolName, admissionYear);
+function Agreement(props) {
 
   const [allCheck, setAllCheck] = useState(false);
   const [serviceCheck, setServiceCheck] = useState(false);
@@ -15,7 +11,6 @@ function Agreement() {
   const [marketingCheck, setMarketingCheck] = useState(false);
   const [progressCheck, setProgressCheck] = useState(false);
   const [fourteenCheck, setFourteenCheck] = useState(false);
-  const navigate = useNavigate();
 
   const allBtnEvent = () => {
     if (allCheck === false) {
@@ -81,16 +76,21 @@ function Agreement() {
     }
   }, [serviceCheck, infoCollectionCheck, marketingCheck, progressCheck, fourteenCheck])
 
+
+  let type = "JOIN";    //해당 기능의 플로우가 어떤페이지인지 따라 api요청해줄 타입(가입)
+  const isNext = false;                      //다음페이지로 넘어갈지 여부체크
   const handleButton = () => {
     if (serviceCheck && infoCollectionCheck && progressCheck && fourteenCheck) {
-      navigate('/certification');
+      props.propFunction(type, !isNext);
     }
     else {
       alert('필수 항목을 모두 체크해주세요.');
     }
+
   }
 
   return (
+
     <div className="register-content">
       <h2 style={{ textAlign: 'left', marginLeft: "2rem" }}>약관 동의</h2>
       <div>

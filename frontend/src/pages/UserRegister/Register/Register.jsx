@@ -3,7 +3,6 @@ import './Register.css'
 import { useTheme } from '@mui/material/styles';
 import { TextField, OutlinedInput, MenuItem, FormControl, Select } from '@mui/material/';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { useNavigate } from 'react-router-dom';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -11,7 +10,7 @@ const MenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: '250',
+      width: 250,
     },
   },
 };
@@ -35,12 +34,12 @@ function getStyles(yearValue, admissionYearVal, theme) {
   };
 }
 
-function Register() {
-  const navigate = useNavigate();
-  const [selectedSchool, setSelectedSchool] = useState('');
+function Register(props) {
 
+  const [selectedSchool, setSelectedSchool] = useState('');
   const theme = useTheme();
   const [admissionYearVal, setAdmissionYearVal] = useState('');
+
   const handleChange = (event) => {
     const {
       target: { value },
@@ -48,15 +47,15 @@ function Register() {
     setAdmissionYearVal(value);
   };
 
+
+  const isNext = false;   //다음페이지로 넘어갈지 여부체크
   const handlebtn = () => {
-    
     if (!selectedSchool || !selectedSchool.hasOwnProperty('name') || !selectedSchool.name || !admissionYearVal) {
       alert('값을 모두 선택해주세요.');
-    }  
-    else {
-      navigate('/register/agreement');
     }
-    // , {schoolName: selectedSchool.name, admissionYear: admissionYearVal}
+    else {
+      props.propFunction(selectedSchool.name, admissionYearVal, !isNext);
+    }
   }
 
   return (

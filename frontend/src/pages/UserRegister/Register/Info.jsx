@@ -7,23 +7,23 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import * as UserAPI from '../../api/Users';
-import { Message } from '../../component/Message';
-import { useNavigate } from 'react-router-dom';
+import * as UserAPI from '../../../api/Users';
+import { Message } from '../../../component/Message';
+import { useNavigate } from "react-router-dom";
 
-function Info() {
+function Info(props) {
+  const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState({
     userName: '',
     id: '',
     password: '',
     confirmPassword: '',
-    email: '',
     nickName: '',
   });
+
   const [showPassword, setShowPassword] = useState(false);
-  const { userName, id, password, confirmPassword, email, nickName } = inputValue;
-  const navigate = useNavigate();
+  const { userName, id, password, confirmPassword, nickName } = inputValue;
 
   const handleInput = event => {
     const { name, value } = event.target;
@@ -33,8 +33,7 @@ function Info() {
     });
   };
 
-  // '@', '.' 모두 포함
-  const isValidEmail = email.includes('@') && email.includes('.');
+  // *** Validation check ***
   // 아이디 검사(영문, 숫자 4-20자)
   const idNumLetter = id.search(/[0-9]/g);
   // const idEngLetter = id.search(/[a-z]/ig);
@@ -52,21 +51,21 @@ function Info() {
 
   // 검사한 모든 로직의 유효성 검사가 true가 될때 getIsActive가 작동
   const getIsActive =
-    isValidEmail && isValidPassword && isValidConfirmPassword && isValidInput && isValidId === true;
+    isValidPassword && isValidConfirmPassword && isValidInput && isValidId === true;
 
   // 유효성 검사 중 하나라도 만족하지못할때 즉, 버튼이 비활성화 될 때 버튼을 클릭하면 아래와 같은 경고창이 뜸
   const handleButton = () => {
-    if (!isValidInput || !isValidId || !isValidEmail || !isValidPassword || !isValidConfirmPassword)
+    if (!isValidInput || !isValidId || !isValidPassword || !isValidConfirmPassword)
       alert('정확히 입력되었는지 다시 확인해주세요.');
     else {
       const data = {
         loginId: id,
         password: password,
         name: userName,
-        email: email,
+        email: props.email,
         nickname: nickName,
-        admissionYear: "2018",
-        schoolName: "명지전문대"
+        admissionYear: props.admissionYear,
+        schoolName: props.schoolName
       }
       UserAPI.join(data).then(response => {
         console.log(JSON.stringify(response));
@@ -91,20 +90,20 @@ function Info() {
           InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
           variant="outlined"
           name="userName"
-          helperText="에러메시지 노출예정"
+          helperText=""
           onChange={handleInput} />
       </div>
-      <div style={{ marginTop: '0.5rem' }}>
+      <div style={{ marginTop: '0.8rem' }}>
         <TextField
           fullWidth
           label="아이디 (*영문, 숫자 4~20자)"
           InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
           variant="outlined"
           name="id"
-          helperText="에러메시지 노출예정"
+          helperText=""
           onChange={handleInput} />
       </div>
-      <div style={{ marginTop: '0.5rem' }}>
+      <div style={{ marginTop: '0.8rem' }}>
         <TextField
           fullWidth
           label="비밀번호 (*영문, 숫자, 특문이 2종류 이상 조합된 8~20자)"
@@ -112,7 +111,7 @@ function Info() {
           variant="outlined"
           type={showPassword ? 'text' : 'password'}
           name="password"
-          helperText="에러메시지 노출예정"
+          helperText=""
           onChange={handleInput}
           InputProps={{
             endAdornment: (
@@ -127,8 +126,7 @@ function Info() {
           }}
         />
       </div>
-      <div style={{ marginTop: '0.5rem' }}>
-        {/* <FormHelperText sx={{ float: "right" }}></FormHelperText> */}
+      <div style={{ marginTop: '0.8rem' }}>
         <TextField
           fullWidth
           label="비밀번호 확인"
@@ -136,29 +134,31 @@ function Info() {
           variant="outlined"
           type="password"
           name="confirmPassword"
-          helperText="에러메시지 노출예정"
+          helperText=""
           onChange={handleInput} />
       </div>
-      <div style={{ marginTop: '0.5rem' }}>
-        <TextField
-          fullWidth
-          label="이메일 (*아이디/비밀번호 찾기에 필요)"
-          InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
-          variant="outlined"
-          name="email"
-          helperText="에러메시지 노출예정"
-          onChange={handleInput} />
-      </div>
-      {/* <FormHelperTexts>{emailError}</FormHelperTexts> */}
-      <div style={{ marginTop: '0.5rem' }}>
+      <div style={{ marginTop: '0.8rem' }}>
         <TextField
           fullWidth
           label="닉네임 (*커뮤니티 활동에 필요)"
           InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
           variant="outlined"
           name="nickName"
-          helperText="에러메시지 노출예정"
+          helperText=""
           onChange={handleInput} />
+      </div>
+      <div style={{ marginTop: '0.8rem' }}>
+        <TextField
+          disabled
+          fullWidth
+          label="이메일 (*아이디/비밀번호 찾기에 필요)"
+          style={{ background: "#F6F6F6" }}
+          InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
+          variant="outlined"
+          name="email"
+          helperText=""
+          defaultValue={props.email}
+        />
       </div>
       <button
         type="submit"
@@ -173,7 +173,7 @@ function Info() {
       <div>
         <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem' }}>이미 에브리데이 계정이 있으신가요? <Link id="login-link" to='../login'>로그인</Link></p>
       </div>
-      
+
     </div >
   )
 }
