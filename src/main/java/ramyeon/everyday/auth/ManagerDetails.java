@@ -20,7 +20,7 @@ public class ManagerDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
+        authorities.add(new SimpleGrantedAuthority(manager.getAuthority().name()));
 
         return authorities;
     }

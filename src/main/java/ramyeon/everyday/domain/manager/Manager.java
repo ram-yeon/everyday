@@ -19,6 +19,9 @@ public class Manager extends DateBaseEntity {  // 관리자
 
     private String name;  // 이름
 
+    @Enumerated(EnumType.STRING)
+    private ManagerAuthority authority;  // 권한
+
     private String registrant;  // 등록자
     private String modifier;  // 수정자
 
