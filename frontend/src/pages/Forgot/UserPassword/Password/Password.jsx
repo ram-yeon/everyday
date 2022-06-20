@@ -3,13 +3,11 @@ import '../../Forgot.css';
 import { Link } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { useNavigate } from 'react-router-dom';
 
 import * as UserAPI from '../../../../api/Users';
 import { Message } from '../../../../component/Message';
 
 function Password(props) {
-  const navigate = useNavigate();
 
   const [idVal, setIdVal] = useState("");
   const [value, setValue] = useState('two');
@@ -23,10 +21,9 @@ function Password(props) {
   // const idEngLetter = idVal.search(/[a-z]/ig);
   const isValidId = idVal.length >= 4 && idVal.length <= 20 && idNumLetter >= 1; //&& idEngLetter >= 1
 
-  let type = "FINDPW";  //해당 기능의 플로우가 어떤페이지인지 따라 api요청해줄 타입(비번찾기)
-  const nextPath="/forgot/password/changepw"; //다다음페이지경로
-  const isNext = false;                       //다음페이지로 넘어갈지 여부체크
 
+  let type = "FINDPW";  //해당 기능의 플로우가 어떤페이지인지 따라 api요청해줄 타입(비번찾기)
+  const isNext = false;                       //다음페이지로 넘어갈지 여부체크
   const handleBtn = () => {
     if (!isValidId)
       alert('아이디를 다시 확인해주세요(영문, 숫자 4-20자)');
@@ -37,9 +34,7 @@ function Password(props) {
       UserAPI.findPW(data).then(response => {
         console.log(JSON.stringify(response));
         Message.success(response.message);
-        props.propFunction(type, nextPath, !isNext);
-        navigate('/certification');
-
+        props.propFunction(type, !isNext);
       }).catch(error => {
         console.log(JSON.stringify(error));
         Message.error(error.message);

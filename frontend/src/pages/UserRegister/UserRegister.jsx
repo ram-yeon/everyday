@@ -11,7 +11,7 @@ function UserRegister() {
     const [schoolName, setSchoolName] = useState('');              //학교이름
     const [admissionYear, setAdmissionYear] = useState('');        //입학년도 
     const [email, setEmail] = useState('');                        //이메일
-    const [type, setType] = useState('');                          //이전페이지가 어떤페이지인지 따라 api요청해줄 타입     
+    const [type, setType] = useState('');                          //이전페이지가 어떤기능의 페이지인지 따라 api요청해줄 타입     
 
     //학교이름,입학년도 받아오기
     const getData1 = (schoolNameData, admissionYearData, isNextData) => {

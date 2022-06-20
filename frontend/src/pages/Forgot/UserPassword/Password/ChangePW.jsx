@@ -13,12 +13,7 @@ import { Message } from '../../../../component/Message';
 import { useNavigate } from "react-router-dom";
 
 function ChangePW(props) {
-    //이전페이지에서 가입에 필요한값 받아오기
     const navigate = useNavigate();
-    // const location = useLocation();
-    // const email = location.state.email;
-    // console.log(email);
-
     const [showPassword, setShowPassword] = useState(false);
     const [pwVal1, setPwVal1] = useState("");
     const [pwVal2, setPwVal2] = useState("");
@@ -49,7 +44,6 @@ function ChangePW(props) {
                 Message.error(error.message);
             });
         }
-
     }
 
     return (

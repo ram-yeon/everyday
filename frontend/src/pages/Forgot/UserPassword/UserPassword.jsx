@@ -5,23 +5,20 @@ import Certification from '../../Certification/Certification';
 
 function UserPassword() {
     const [currentLevel, setCurrentLevel] = useState(1);
-    let type = "";
-    let nextPath = "";
-    let email = "";
+
+    const [type, setType] = useState('');    //이전페이지가 어떤기능의 페이지인지 따라 api요청해줄 타입
+    const [email, setEmail] = useState('');  //이메일
 
     //타입,다음경로 받아오기
-    const getData1 = (typeData, nextPathData, isNextData) => {
-        console.log(typeData, nextPathData, isNextData);
-        type = typeData;
-        nextPath = nextPathData;
+    const getData1 = (typeData, isNextData) => {
+        setType(typeData);
         if (isNextData) {
             setCurrentLevel(2);
         }
     };
     //이메일 받아오기
     const getData2 = (emailData, isNextData) => {
-        console.log(emailData, isNextData);
-        email = emailData;
+        setEmail(emailData);
         if (isNextData) {
             setCurrentLevel(3);
         }
@@ -33,7 +30,7 @@ function UserPassword() {
                 currentLevel === 1 && <Password propFunction={getData1} />
             }
             {
-                currentLevel === 2 && <Certification propFunction={getData2} type={type} nextPath={nextPath} />
+                currentLevel === 2 && <Certification propFunction={getData2} type={type} />
             }
             {
                 currentLevel === 3 && <ChangePW email={email} />
