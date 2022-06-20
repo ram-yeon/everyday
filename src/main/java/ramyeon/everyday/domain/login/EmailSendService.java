@@ -6,10 +6,16 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.user.User;
 import ramyeon.everyday.domain.user.UserRepository;
+import ramyeon.everyday.exception.NotFoundEnumException;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -21,7 +27,13 @@ public class EmailSendService {
     private Map<String, StringBuilder> emailAndCodeStore = new HashMap<>();  // 인증할 이메일과 인증코드 저장소
 
     // 이메일 인증을 위한 인증코드 전송
-    public String sendCode(String email, String type) {
+    public String sendCode(String email, String authType, String loginId) {
+
+        Type type = Type.findType(authType);  // 회원가입, 비밀번호 찾기 구분
+
+        if (type == Type.FINDPW)  // 비밀번호 찾기 시 아이디와 이메일 정보가 맞는지 확인
+            userRepository.findByLoginIdAndEmail(loginId, email).orElseThrow(NotFoundResourceException::new);
+
         Random random = new Random();
         StringBuilder code = new StringBuilder();
 
@@ -36,7 +48,7 @@ public class EmailSendService {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(email);
-        message.setSubject("[에브리데이] " + Type.valueOf(type).getContents() + " 인증코드 안내");
+        message.setSubject("[에브리데이] " + type.getContents() + " 인증코드 안내");
         message.setText("아래 인증코드를 인증코드 기입란에 입력하시기 바랍니다.\n\n인증 코드 : " + code);
         javaMailSender.send(message);
 
@@ -95,6 +107,13 @@ public class EmailSendService {
         public String getContents() {
             return contents;
         }
+
+        private static final Map<String, Type> typeMap = Stream.of(values()).collect(Collectors.toMap(Type::name, Function.identity()));
+
+        public static Type findType(String type) {
+            return Optional.ofNullable(typeMap.get(type)).orElseThrow(NotFoundEnumException::new);
+        }
+
     }
 
 }

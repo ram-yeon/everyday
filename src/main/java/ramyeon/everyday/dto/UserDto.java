@@ -16,6 +16,7 @@ public class UserDto {
     public static class EmailAuthenticationRequestDto {
         private String email;  // 이메일
         private String type;  // 인증 종류 [회원가입, 비밀번호 찾기]
+        private String loginId;  // 아이디
     }
 
     // 인증코드 확인 DTO

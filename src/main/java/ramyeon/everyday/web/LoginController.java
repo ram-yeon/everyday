@@ -10,6 +10,8 @@ import ramyeon.everyday.domain.login.EmailSendService;
 import ramyeon.everyday.domain.login.LoginService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
+import ramyeon.everyday.exception.NotFoundEnumException;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +28,14 @@ public class LoginController {
      */
     @PostMapping("/email-authenticate")
     public ResponseEntity emailAuthenticate(@RequestBody UserDto.EmailAuthenticationRequestDto emailAuthenticationRequestDto) {
-
-        String code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType());  // 인증코드 발송
+        String code;
+        try {
+            code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType(), emailAuthenticationRequestDto.getLoginId());  // 인증코드 발송
+        } catch (NotFoundResourceException re) {
+            return new ResponseEntity<>(new ResultDto(404, "아이디와 이메일 정보가 다름"), HttpStatus.NOT_FOUND);
+        } catch (NotFoundEnumException ee) {
+            return new ResponseEntity<>(new ResultDto(404, "잘못된 [type] 값"), HttpStatus.NOT_FOUND);
+        }
 
         Map<String, String> data = new HashMap<>();
         data.put("authenticationCode", code);
