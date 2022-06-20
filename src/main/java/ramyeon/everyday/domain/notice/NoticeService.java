@@ -26,18 +26,24 @@ public class NoticeService {
     private final ManagerRepository managerRepository;
 
     // 공지사항 목록 조회
-    public Page<NoticeDto.NoticesResponseDto> getNotices(Pageable pageable) {
+    public Page<NoticeDto.NoticeResponseDto> getNotices(Pageable pageable) {
         Page<Notice> notices = getNoticesPaging(pageable);  // 공지사항 목록 조회
 
         return notices.map(
-                notice -> new NoticeDto.NoticesResponseDto(notice.getId(), notice.getManager().getName(), notice.getTitle(), notice.getRegistrationDate(), notice.getViews(),
-                        likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId()),  // 좋아요 수 조회
-                        notice.getFileList().size())
+                notice -> NoticeDto.NoticeResponseDto.builder()
+                        .id(notice.getId())
+                        .writer(notice.getManager().getName())
+                        .title(notice.getTitle())
+                        .registrationDate(notice.getRegistrationDate())
+                        .views(notice.getViews())
+                        .likeCount(likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId()))  // 좋아요 수 조회
+                        .fileCount(notice.getFileList().size())
+                        .build()
         );
     }
 
     // 공지사항 상세 조회
-    public NoticeDto.NoticeDetailResponseDto getNoticeDetail(Long noticeId) {
+    public NoticeDto.NoticeResponseDto getNoticeDetail(Long noticeId) {
         Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);  // 공지사항 조회
         if (notice == null) {
             return null;
@@ -51,8 +57,17 @@ public class NoticeService {
                 fileDtoList.add(new FileDto.FileInPostAndNoticeResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
             }
 
-            return new NoticeDto.NoticeDetailResponseDto(notice.getId(), notice.getManager().getName(), notice.getTitle(), notice.getContents(),
-                    notice.getRegistrationDate(), notice.getViews(), likeCount, fileDtoList.size(), fileDtoList);
+            return NoticeDto.NoticeResponseDto.builder()
+                    .id(notice.getId())
+                    .writer(notice.getManager().getName())
+                    .title(notice.getTitle())
+                    .contents(notice.getContents())
+                    .registrationDate(notice.getRegistrationDate())
+                    .views(notice.getViews())
+                    .likeCount(likeCount)
+                    .fileCount(notice.getFileList().size())
+                    .file(fileDtoList)
+                    .build();
         }
     }
 

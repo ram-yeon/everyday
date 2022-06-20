@@ -25,7 +25,7 @@ public class NoticeController {
      */
     @GetMapping("/notices")
     public ResponseEntity notices(@PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<NoticeDto.NoticesResponseDto> data = noticeService.getNotices(pageable);
+        Page<NoticeDto.NoticeResponseDto> data = noticeService.getNotices(pageable);
         return new ResponseEntity<>(new ResultDto(200, "공지사항 목록 조회 성공", data), HttpStatus.OK);
     }
 
@@ -34,7 +34,7 @@ public class NoticeController {
      */
     @GetMapping("/notices/{noticeId}")
     public ResponseEntity noticeDetail(@PathVariable Long noticeId) {
-        NoticeDto.NoticeDetailResponseDto data = noticeService.getNoticeDetail(noticeId);
+        NoticeDto.NoticeResponseDto data = noticeService.getNoticeDetail(noticeId);
         if (data == null) {
             return new ResponseEntity<>(new ResultDto(404, "존재하지 않는 공지사항"), HttpStatus.NOT_FOUND);
         } else {
