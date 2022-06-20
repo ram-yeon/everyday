@@ -30,11 +30,11 @@ function Password(props) {
     else {
       const data = {
         loginId: idVal,
-      }
+      }  
       UserAPI.findPW(data).then(response => {
         console.log(JSON.stringify(response));
         Message.success(response.message);
-        props.propFunction(type, !isNext);
+        props.propFunction(type, idVal, !isNext);
       }).catch(error => {
         console.log(JSON.stringify(error));
         Message.error(error.message);

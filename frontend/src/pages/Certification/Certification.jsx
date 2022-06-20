@@ -20,6 +20,10 @@ function Certification(props) {
         else {
             const data = {
                 email: emailVal,
+                type: props.type,
+            }
+            if (props.id) {
+                data['loginId'] = props.id;
             }
             UserAPI.authenticate(data).then(response => {
                 console.log(JSON.stringify(response));
@@ -31,13 +35,12 @@ function Certification(props) {
         }
     };
 
-    const isNext = false;               //다음페이지로 넘어갈지 여부체크
+    const isNext = false;  //다음페이지로 넘어갈지 여부체크
     //확인 버튼 클릭시
     const handleConfirmButton = () => {
         const data = {
             email: emailVal,
-            authenticationCode: codeVal,
-            type: props.type,
+            authenticationCode: codeVal, 
         }
         UserAPI.authenticateCodeCheck(data).then(response => {
             console.log(JSON.stringify(response));
