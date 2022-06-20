@@ -177,32 +177,25 @@ public class PostService {
 
     // 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회
     public Page<PostDto.PostResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
-        if (!(type.equals("posts") || type.equals("comments") || type.equals("likes"))) {  // 잘못된 URI
-            return null;
-        }
+        MyPostType myPostType = MyPostType.valueOf(type);  // 요청 글 종류
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
         List<Post> posts = new ArrayList<>();
-        // 무슨 종류의 글 요청인지 구분
-        switch (type) {
-            case "posts":   // 내가 쓴 글
-                posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
-                break;
-            case "comments":   // 댓글단 글
-                posts = postRepository.findByUserFetchJoinComment(loginUser, Whether.N);  // 댓글 단 글 최신순 조회
-                break;
-            case "likes":   // 좋아요 한 글
-                List<LikeRepository.TargetIdOnly> postIdList = likeRepository.findTargetIdByTargetTypeAndUser(TargetType.POST, loginUser);  // 좋아요 한 글 ID 조회
-                List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
-                // 좋아요 한 글 조회
-                for (Post post : postsAll) {
-                    for (LikeRepository.TargetIdOnly postId : postIdList) {
-                        if (post.getId().equals(postId.getTargetId())) {
-                            posts.add(post);
-                        }
+        if (myPostType == MyPostType.POST) {   // 내가 쓴 글
+            posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
+        } else if (myPostType == MyPostType.COMMENT) {   // 댓글단 글
+            posts = postRepository.findByUserFetchJoinComment(loginUser, Whether.N);  // 댓글 단 글 최신순 조회
+        } else if (myPostType == MyPostType.LIKE) {   // 좋아요 한 글
+            List<LikeRepository.TargetIdOnly> postIdList = likeRepository.findTargetIdByTargetTypeAndUser(TargetType.POST, loginUser);  // 좋아요 한 글 ID 조회
+            List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
+            // 좋아요 한 글 조회
+            for (Post post : postsAll) {
+                for (LikeRepository.TargetIdOnly postId : postIdList) {
+                    if (post.getId().equals(postId.getTargetId())) {
+                        posts.add(post);
                     }
                 }
-                break;
+            }
         }
 
         // Post 엔티티를 PostsMyResponseDto로 변환

@@ -67,11 +67,11 @@ public class PostController {
     @GetMapping("/posts/my/{type}")
     public ResponseEntity postsMy(@PathVariable String type, @AuthenticationPrincipal PrincipalDetails principalDetails,
                                   @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostDto.PostResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername(), pageable);
-        if (data == null) {
-            return new ResponseEntity<>(new ResultDto(400, "잘못된 API URI 요청"), HttpStatus.BAD_REQUEST);
-        } else {
+        try {
+            Page<PostDto.PostResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername(), pageable);
             return new ResponseEntity<>(new ResultDto(200, "내가 쓴 or 댓글 단 or 좋아요한 게시글 목록 조회 성공", data), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new ResultDto(400, "잘못된 API URI 요청"), HttpStatus.BAD_REQUEST);
         }
     }
 
