@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ramyeon.everyday.AccountAuthority;
 import ramyeon.everyday.auth.CustomAuthenticationProvider;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
@@ -37,13 +38,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             UserDto.LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), UserDto.LoginRequestDto.class);
 
             // 로그인 요청자 구분하여 저장
-            request.setAttribute("loginRequestType", loginRequestDto.getType());
+            AccountAuthority accountAuthority = AccountAuthority.valueOf(loginRequestDto.getType());
+            request.setAttribute("accountAuthority", accountAuthority);
 
             // 토큰 생성
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDto.getLoginId(), loginRequestDto.getPassword());
 
             // 로그인 시도
-            Authentication authentication = customAuthenticationProvider.authenticate(authenticationToken, loginRequestDto.getType());
+            Authentication authentication = customAuthenticationProvider.authenticate(authenticationToken, accountAuthority);
 
             // authentication session 영역에 저장
             return authentication;
@@ -59,13 +61,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 인증 성공시 실행
 
         String jwtToken = null;
-        String loginRequestType = String.valueOf(request.getAttribute("loginRequestType"));  // 사용자인지 관리자인지 구분
-        jwtTokenProvider.setLoginRequestType(loginRequestType);
+        AccountAuthority accountAuthority = (AccountAuthority) request.getAttribute("accountAuthority");  // 사용자인지 관리자인지 구분
+        jwtTokenProvider.setAccountAuthority(accountAuthority);
 
-        if (loginRequestType.equals("User")) {  // 사용자 로그인
+        if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
             jwtToken = jwtTokenProvider.createToken(principalDetails.getUsername(), principalDetails.getUser().getId());  // JWT 토큰 생성
-        } else if (loginRequestType.equals("Manager")) {  // 관리자 로그인
+        } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인
             ManagerDetails managerDetails = (ManagerDetails) authResult.getPrincipal();
             jwtToken = jwtTokenProvider.createToken(managerDetails.getUsername(), managerDetails.getManager().getId());  // JWT 토큰 생성
         }

@@ -9,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import ramyeon.everyday.AccountAuthority;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -28,13 +29,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return null;
     }
 
-    public Authentication authenticate(Authentication authentication, String type) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication, AccountAuthority accountAuthority) throws AuthenticationException {
 
         String loginId = String.valueOf(authentication.getPrincipal());
         String password = String.valueOf(authentication.getCredentials());
 
 
-        if (type.equals("User")) {  // 사용자 로그인 요청
+        if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인 요청
             UserDetails user = principalDetailsService.loadUserByUsername(loginId);
 
             if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -44,7 +45,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
         }
 
-        if (type.equals("Manager")) {  // 관리자 로그인 요청
+        if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인 요청
             UserDetails user = managerDetailsService.loadUserByUsername(loginId);
 
             if (!user.getPassword().equals(password)) {

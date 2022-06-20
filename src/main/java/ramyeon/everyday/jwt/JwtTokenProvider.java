@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import ramyeon.everyday.AccountAuthority;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.ManagerDetailsService;
 import ramyeon.everyday.auth.PrincipalDetails;
@@ -28,7 +29,7 @@ public class JwtTokenProvider {
 
     private String secretKey = JwtProperties.SECRET_KEY;
 
-    private String loginRequestType = null;
+    private AccountAuthority accountAuthority;
 
     // 객체 초기화, secretKey를 Base64로 인코딩
     @PostConstruct
@@ -37,16 +38,16 @@ public class JwtTokenProvider {
     }
 
     // 로그인 종류 설정
-    public void setLoginRequestType(String loginRequestType) {
-        this.loginRequestType = loginRequestType;
+    public void setAccountAuthority(AccountAuthority accountAuthority) {
+        this.accountAuthority = accountAuthority;
     }
 
     // JWT 토큰 생성
     public String createToken(String userLoginId, Long userId) {
         Claims claims = Jwts.claims().setSubject(userLoginId);  // claim: JWT payload 에 저장되는 정보단위
         claims.put("pk", userId);  // 기본키 추가
-        claims.put("authority", loginRequestType);  // 사용자인지 관리자인지 구분 정보 추가
-        if (loginRequestType.equals("User")) {  // 사용자 로그인이면
+        claims.put("authority", accountAuthority);  // 사용자인지 관리자인지 구분 정보 추가
+        if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인이면
             claims.put("school", schoolService.getSchoolNameByUserId(userId));  // 사용자의 학교이름 추가
         }
         Date now = new Date();
@@ -60,10 +61,10 @@ public class JwtTokenProvider {
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        if (loginRequestType.equals("User")) {  // 사용자 로그인
+        if (getAuthority(token) == AccountAuthority.USER) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(this.getSubject(token));
             return new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-        } else if (loginRequestType.equals("Manager")) {  // 관리자 로그인
+        } else if (getAuthority(token) == AccountAuthority.MANAGER) {  // 관리자 로그인
             ManagerDetails managerDetails = (ManagerDetails) managerDetailsService.loadUserByUsername(this.getSubject(token));
             return new UsernamePasswordAuthenticationToken(managerDetails, null, managerDetails.getAuthorities());
         }
@@ -73,6 +74,10 @@ public class JwtTokenProvider {
     // JWT 토큰 이름 추출
     public String getSubject(String token) {
         return String.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+    }
+
+    public AccountAuthority getAuthority(String token) {
+        return AccountAuthority.valueOf(String.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("authority")));
     }
 
     // Header에서 token 값 추출
