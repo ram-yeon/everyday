@@ -32,7 +32,7 @@ public class User extends DateBaseEntity {  // 회원
     private String admissionYear;  // 입학 연도
 
     @Enumerated(EnumType.STRING)
-    private Authority authority;  // 권한
+    private UserAuthority authority;  // 권한
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,7 +50,7 @@ public class User extends DateBaseEntity {  // 회원
     private List<Like> likeList = new ArrayList<Like>();  // 좋아요
 
     @Builder
-    public User(String loginId, String password, String name, String email, String nickname, String admissionYear, Authority authority, School school) {
+    public User(String loginId, String password, String name, String email, String nickname, String admissionYear, UserAuthority authority, School school) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -87,7 +87,7 @@ public class User extends DateBaseEntity {  // 회원
                 .email(email)
                 .nickname(nickname)
                 .admissionYear(admissionYear)
-                .authority(Authority.ROLE_BASIC)
+                .authority(UserAuthority.ROLE_BASIC)
                 .school(school).build();
         user.setSchool(school);
         return user;
