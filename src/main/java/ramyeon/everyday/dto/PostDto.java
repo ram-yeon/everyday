@@ -1,6 +1,8 @@
 package ramyeon.everyday.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 import ramyeon.everyday.domain.Whether;
@@ -12,35 +14,12 @@ import java.util.List;
 public class PostDto {
 
     /**
-     * 게시판 별 게시글 목록 조회 DTO
+     * 게시글 조회 DTO
      */
     @Getter
-    @AllArgsConstructor
-    public static class PostsBoardDto {
-
-        private Long id;  // 게시글 ID
-        private String writer;  // 작성자
-
-        private String title;  // 제목
-        private String contents;  // 내용
-
-        private LocalDateTime registrationDate;  // 등록일시
-        private Whether isAnonymous;  // 익명 여부
-        private Long views;  // 조회수
-
-        private Long likeCount;  // 좋아요 수
-
-        private int fileCount;  // 파일 수
-        private int commentCount;  // 댓글 수
-
-    }
-
-    /**
-     * 게시글 상세 조회 DTO
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class PostDetailResponseDto {
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class PostResponseDto {
 
         private Long id;  // 게시글 ID
         private String writer;  // 작성자
@@ -55,47 +34,11 @@ public class PostDto {
 
         private Long likeCount;  // 좋아요 수
 
-        private int fileCount;  // 파일 수
+        private Integer fileCount;  // 파일 수
         private List<FileDto.FileInPostAndNoticeResponseDto> file;  // 파일
 
-        private int commentCount;  // 댓글 수
+        private Integer commentCount;  // 댓글 수
         private List<CommentDto.CommentInPostResponseDto> comment;  // 댓글
-    }
-
-    /**
-     * 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회 DTO
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class PostsMyResponseDto {
-
-        private Long id;  // 게시글 ID
-        private String writer;  // 작성자
-
-        private String title;  // 제목
-        private String contents;  // 내용
-
-        private LocalDateTime registrationDate;  // 등록일시
-        private BoardType boardType;  // 게시판 종류
-        private Whether isAnonymous;  // 익명 여부
-        private Long views;  // 조회수
-
-        private Long likeCount;  // 좋아요 수
-
-        private int fileCount;  // 파일 수
-        private int commentCount;  // 댓글 수
-
-    }
-
-    /**
-     * 메인화면 게시글 목록 조회 DTO
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class PostsMainResponseDto {
-        private Long id;  // 게시글 ID
-        private String title;  // 제목
-        private LocalDateTime registrationDate;  // 등록일시
     }
 
     /**
@@ -105,7 +48,7 @@ public class PostDto {
     @AllArgsConstructor
     public static class PostsSearchResponseDto {
         private String keyword;  // 검색어
-        private Page<PostsMyResponseDto> post;  // 게시글
+        private Page<PostResponseDto> post;  // 게시글
     }
 
 

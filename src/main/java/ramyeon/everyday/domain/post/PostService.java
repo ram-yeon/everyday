@@ -32,33 +32,51 @@ public class PostService {
     private final NoticeService noticeService;
 
     // 메인화면 게시글 목록 조회
-    public Map<String, List<PostDto.PostsMainResponseDto>> getPostsMain(String loginId, Pageable pageable) {
+    public Map<String, List<PostDto.PostResponseDto>> getPostsMain(String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
-        Map<String, List<PostDto.PostsMainResponseDto>> postsMainMap = new HashMap<>();
+        Map<String, List<PostDto.PostResponseDto>> postsMainMap = new HashMap<>();
 
         // 핫 게시글 조회
-        List<PostDto.PostsMainResponseDto> hotPostList = getHotPostsMain(loginUser, pageable)
-                .stream().map(hotPost -> new PostDto.PostsMainResponseDto(hotPost.getId(), hotPost.getTitle(), hotPost.getRegistrationDate())).collect(Collectors.toList());
+        List<PostDto.PostResponseDto> hotPostList = getHotPostsMain(loginUser, pageable)
+                .stream().map(
+                        hotPost -> PostDto.PostResponseDto.builder()
+                                .id(hotPost.getId())
+                                .title(hotPost.getTitle())
+                                .registrationDate(hotPost.getRegistrationDate())
+                                .build()
+                ).collect(Collectors.toList());
         postsMainMap.put("HOT", hotPostList);
 
         // 게시판 별 게시글 조회
         for (BoardType boardType : BoardType.values()) {
-            List<PostDto.PostsMainResponseDto> boardPostList = getBoardPosts(loginUser, boardType, pageable)
-                    .stream().map(boardPost -> new PostDto.PostsMainResponseDto(boardPost.getId(), boardPost.getTitle(), boardPost.getRegistrationDate())).collect(Collectors.toList());
+            List<PostDto.PostResponseDto> boardPostList = getBoardPosts(loginUser, boardType, pageable)
+                    .stream().map(
+                            boardPost -> PostDto.PostResponseDto.builder()
+                                    .id(boardPost.getId())
+                                    .title(boardPost.getTitle())
+                                    .registrationDate(boardPost.getRegistrationDate())
+                                    .build()
+                    ).collect(Collectors.toList());
             postsMainMap.put(boardType.name(), boardPostList);
         }
 
         // 공지사항 조회
-        List<PostDto.PostsMainResponseDto> noticeList = noticeService.getNoticesPaging(pageable)
-                .stream().map(notice -> new PostDto.PostsMainResponseDto(notice.getId(), notice.getTitle(), notice.getRegistrationDate())).collect(Collectors.toList());
+        List<PostDto.PostResponseDto> noticeList = noticeService.getNoticesPaging(pageable)
+                .stream().map(
+                        notice -> PostDto.PostResponseDto.builder()
+                                .id(notice.getId())
+                                .title(notice.getTitle())
+                                .registrationDate(notice.getRegistrationDate())
+                                .build()
+                ).collect(Collectors.toList());
         postsMainMap.put("NOTICE", noticeList);
 
         return postsMainMap;
     }
 
     // 게시판 별 게시글 목록 조회
-    public Page<PostDto.PostsBoardDto> getPostsBoard(String loginId, String boardType, Pageable pageable) {
+    public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String boardType, Pageable pageable) {
         if (boardType.equals("HOT")) {  // 핫 게시판
             User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L);  // 핫 게시글 ID 조회
@@ -73,10 +91,22 @@ public class PostService {
                 }
             }
             // Post 엔티티를 PostsBoardDto로 변환
-            List<PostDto.PostsBoardDto> postsBoardDtos = new ArrayList<>();
+            List<PostDto.PostResponseDto> postsBoardDtos = new ArrayList<>();
             for (Post post : postsHot) {
-                postsBoardDtos.add(new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                        post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size()));
+                postsBoardDtos.add(
+                        PostDto.PostResponseDto.builder()
+                                .id(post.getId())
+                                .writer(post.getUser().getNickname())
+                                .title(post.getTitle())
+                                .contents(post.getContents())
+                                .registrationDate(post.getRegistrationDate())
+                                .isAnonymous(post.getIsAnonymous())
+                                .views(post.getViews())
+                                .likeCount(getLikeCount(post))
+                                .fileCount(post.getFileList().size())
+                                .commentCount(post.getCommentList().size())
+                                .build()
+                );
             }
 
             // List를 Page로 변환
@@ -89,14 +119,24 @@ public class PostService {
             User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             Page<Post> posts = getBoardPosts(loginUser, board, pageable);// 게시글 조회 최근순 정렬
             return posts.map(
-                    post -> new PostDto.PostsBoardDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                            post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size())
+                    post -> PostDto.PostResponseDto.builder()
+                            .id(post.getId())
+                            .writer(post.getUser().getNickname())
+                            .title(post.getTitle())
+                            .contents(post.getContents())
+                            .registrationDate(post.getRegistrationDate())
+                            .isAnonymous(post.getIsAnonymous())
+                            .views(post.getViews())
+                            .likeCount(getLikeCount(post))
+                            .fileCount(post.getFileList().size())
+                            .commentCount(post.getCommentList().size())
+                            .build()
             );
         }
     }
 
     // 게시글 상세 조회
-    public PostDto.PostDetailResponseDto getPostDetail(Long postId, String loginId) {
+    public PostDto.PostResponseDto getPostDetail(Long postId, String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         Post post = postRepository.findByIdAndSchoolAndIsDeleted(postId, loginUser.getSchool(), Whether.N).orElse(null);  // 게시글 조회
         if (post == null) {
@@ -117,13 +157,26 @@ public class PostService {
                         comment.getCommentType(), comment.getPreId(), comment.getIsAnonymous()));
             }
 
-            return new PostDto.PostDetailResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), getLikeCount(post), fileDtoList.size(), fileDtoList, commentDtoList.size(), commentDtoList);
+            return PostDto.PostResponseDto.builder()
+                    .id(post.getId())
+                    .writer(post.getUser().getNickname())
+                    .title(post.getTitle())
+                    .contents(post.getContents())
+                    .registrationDate(post.getRegistrationDate())
+                    .boardType(post.getBoardType())
+                    .isAnonymous(post.getIsAnonymous())
+                    .views(post.getViews())
+                    .likeCount(getLikeCount(post))
+                    .fileCount(fileDtoList.size())
+                    .file(fileDtoList)
+                    .commentCount(commentDtoList.size())
+                    .comment(commentDtoList)
+                    .build();
         }
     }
 
     // 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회
-    public Page<PostDto.PostsMyResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
+    public Page<PostDto.PostResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
         if (!(type.equals("posts") || type.equals("comments") || type.equals("likes"))) {  // 잘못된 URI
             return null;
         }
@@ -153,10 +206,23 @@ public class PostService {
         }
 
         // Post 엔티티를 PostsMyResponseDto로 변환
-        List<PostDto.PostsMyResponseDto> postDtoList = new ArrayList<>();
+        List<PostDto.PostResponseDto> postDtoList = new ArrayList<>();
         for (Post post : posts) {
-            postDtoList.add(new PostDto.PostsMyResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                    post.getBoardType(), post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size()));
+            postDtoList.add(
+                    PostDto.PostResponseDto.builder()
+                            .id(post.getId())
+                            .writer(post.getUser().getNickname())
+                            .title(post.getTitle())
+                            .contents(post.getContents())
+                            .registrationDate(post.getRegistrationDate())
+                            .boardType(post.getBoardType())
+                            .isAnonymous(post.getIsAnonymous())
+                            .views(post.getViews())
+                            .likeCount(getLikeCount(post))
+                            .fileCount(post.getFileList().size())
+                            .commentCount(post.getCommentList().size())
+                            .build()
+            );
         }
 
         // List를 Page로 변환
@@ -196,9 +262,20 @@ public class PostService {
     public PostDto.PostsSearchResponseDto getPostsSearch(String keyword, String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         Page<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(keyword, keyword, loginUser.getSchool(), Whether.N, pageable);
-        Page<PostDto.PostsMyResponseDto> postDtos = posts.map(
-                post -> new PostDto.PostsMyResponseDto(post.getId(), post.getUser().getNickname(), post.getTitle(), post.getContents(), post.getRegistrationDate(),
-                        post.getBoardType(), post.getIsAnonymous(), post.getViews(), getLikeCount(post), post.getFileList().size(), post.getCommentList().size())
+        Page<PostDto.PostResponseDto> postDtos = posts.map(
+                post -> PostDto.PostResponseDto.builder()
+                        .id(post.getId())
+                        .writer(post.getUser().getNickname())
+                        .title(post.getTitle())
+                        .contents(post.getContents())
+                        .registrationDate(post.getRegistrationDate())
+                        .boardType(post.getBoardType())
+                        .isAnonymous(post.getIsAnonymous())
+                        .views(post.getViews())
+                        .likeCount(getLikeCount(post))
+                        .fileCount(post.getFileList().size())
+                        .commentCount(post.getCommentList().size())
+                        .build()
         );
         return new PostDto.PostsSearchResponseDto(keyword, postDtos);
     }

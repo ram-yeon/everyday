@@ -30,7 +30,7 @@ public class PostController {
     public ResponseEntity postsMain(
             @PageableDefault(size = 4, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Map<String, List<PostDto.PostsMainResponseDto>> data = postService.getPostsMain(principalDetails.getUsername(), pageable);
+        Map<String, List<PostDto.PostResponseDto>> data = postService.getPostsMain(principalDetails.getUsername(), pageable);
         return new ResponseEntity<>(new ResultDto(200, "메인화면 게시글 목록 조회 성공", data), HttpStatus.OK);
     }
 
@@ -41,7 +41,7 @@ public class PostController {
     public ResponseEntity postsBoard(@PathVariable String boardType, @AuthenticationPrincipal PrincipalDetails principalDetails,
                                      @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            Page<PostDto.PostsBoardDto> data = postService.getPostsBoard(principalDetails.getUsername(), boardType, pageable);
+            Page<PostDto.PostResponseDto> data = postService.getPostsBoard(principalDetails.getUsername(), boardType, pageable);
             return new ResponseEntity<>(new ResultDto(200, boardType + " 게시판 게시글 목록 조회 성공", data), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ResultDto(400, "존재하지 않는 게시판"), HttpStatus.BAD_REQUEST);
@@ -53,7 +53,7 @@ public class PostController {
      */
     @GetMapping("/posts/{postId}")
     public ResponseEntity postDetail(@PathVariable Long postId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        PostDto.PostDetailResponseDto data = postService.getPostDetail(postId, principalDetails.getUsername());
+        PostDto.PostResponseDto data = postService.getPostDetail(postId, principalDetails.getUsername());
         if (data == null) {
             return new ResponseEntity<>(new ResultDto(404, "존재하지 않는 게시글"), HttpStatus.NOT_FOUND);
         } else {
@@ -67,7 +67,7 @@ public class PostController {
     @GetMapping("/posts/my/{type}")
     public ResponseEntity postsMy(@PathVariable String type, @AuthenticationPrincipal PrincipalDetails principalDetails,
                                   @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostDto.PostsMyResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername(), pageable);
+        Page<PostDto.PostResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername(), pageable);
         if (data == null) {
             return new ResponseEntity<>(new ResultDto(400, "잘못된 API URI 요청"), HttpStatus.BAD_REQUEST);
         } else {
