@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ramyeon.everyday.auth.PrincipalDetails;
+import ramyeon.everyday.domain.post.BoardType;
 import ramyeon.everyday.domain.post.PostService;
 import ramyeon.everyday.dto.PostDto;
 import ramyeon.everyday.dto.ResultDto;
@@ -30,7 +31,7 @@ public class PostController {
     public ResponseEntity postsMain(
             @PageableDefault(size = 4, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Map<String, List<PostDto.PostResponseDto>> data = postService.getPostsMain(principalDetails.getUsername(), pageable);
+        Map<BoardType, List<PostDto.PostResponseDto>> data = postService.getPostsMain(principalDetails.getUsername(), pageable);
         return new ResponseEntity<>(new ResultDto(200, "메인화면 게시글 목록 조회 성공", data), HttpStatus.OK);
     }
 

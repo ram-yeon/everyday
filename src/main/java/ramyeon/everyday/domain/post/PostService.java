@@ -32,10 +32,10 @@ public class PostService {
     private final NoticeService noticeService;
 
     // 메인화면 게시글 목록 조회
-    public Map<String, List<PostDto.PostResponseDto>> getPostsMain(String loginId, Pageable pageable) {
+    public Map<BoardType, List<PostDto.PostResponseDto>> getPostsMain(String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
-        Map<String, List<PostDto.PostResponseDto>> postsMainMap = new HashMap<>();
+        Map<BoardType, List<PostDto.PostResponseDto>> postsMainMap = new HashMap<>();
 
         // 핫 게시글 조회
         List<PostDto.PostResponseDto> hotPostList = getHotPostsMain(loginUser, pageable)
@@ -46,7 +46,7 @@ public class PostService {
                                 .registrationDate(hotPost.getRegistrationDate())
                                 .build()
                 ).collect(Collectors.toList());
-        postsMainMap.put("HOT", hotPostList);
+        postsMainMap.put(BoardType.HOT, hotPostList);
 
         // 게시판 별 게시글 조회
         for (BoardType boardType : BoardType.values()) {
@@ -58,7 +58,7 @@ public class PostService {
                                     .registrationDate(boardPost.getRegistrationDate())
                                     .build()
                     ).collect(Collectors.toList());
-            postsMainMap.put(boardType.name(), boardPostList);
+            postsMainMap.put(boardType, boardPostList);
         }
 
         // 공지사항 조회
@@ -70,14 +70,15 @@ public class PostService {
                                 .registrationDate(notice.getRegistrationDate())
                                 .build()
                 ).collect(Collectors.toList());
-        postsMainMap.put("NOTICE", noticeList);
+        postsMainMap.put(BoardType.NOTICE, noticeList);
 
         return postsMainMap;
     }
 
     // 게시판 별 게시글 목록 조회
-    public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String boardType, Pageable pageable) {
-        if (boardType.equals("HOT")) {  // 핫 게시판
+    public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String type, Pageable pageable) {
+        BoardType boardType = BoardType.valueOf(type);  // 게시판 종류
+        if (boardType == BoardType.HOT) {  // 핫 게시판
             User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L);  // 핫 게시글 ID 조회
             List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
@@ -115,9 +116,8 @@ public class PostService {
             return new PageImpl<>(postsBoardDtos.subList(start, end), pageable, postsBoardDtos.size());
 
         } else {  // 자유, 정보, 동아리 게시판
-            BoardType board = BoardType.valueOf(boardType);
             User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-            Page<Post> posts = getBoardPosts(loginUser, board, pageable);// 게시글 조회 최근순 정렬
+            Page<Post> posts = getBoardPosts(loginUser, boardType, pageable);// 게시글 조회 최근순 정렬
             return posts.map(
                     post -> PostDto.PostResponseDto.builder()
                             .id(post.getId())
