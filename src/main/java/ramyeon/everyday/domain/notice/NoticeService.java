@@ -88,6 +88,11 @@ public class NoticeService {
         return 0;
     }
 
+    // 좋아요 수 조회
+    public Long getLikeCount(Notice notice) {
+        return likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId());
+    }
+
     // 공지사항 조회수 갱신
     @Transactional
     public void updateViews(Long noticeId, Long views) {

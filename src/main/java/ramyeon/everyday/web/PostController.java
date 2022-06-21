@@ -63,17 +63,27 @@ public class PostController {
     }
 
     /**
-     * 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회 API
+     * 내가 쓴, 댓글 단 게시글 목록 조회 API
      */
     @GetMapping("/posts/my/{type}")
     public ResponseEntity postsMy(@PathVariable String type, @AuthenticationPrincipal PrincipalDetails principalDetails,
                                   @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
             Page<PostDto.PostResponseDto> data = postService.getPostsMy(type, principalDetails.getUsername(), pageable);
-            return new ResponseEntity<>(new ResultDto(200, "내가 쓴 or 댓글 단 or 좋아요한 게시글 목록 조회 성공", data), HttpStatus.OK);
+            return new ResponseEntity<>(new ResultDto(200, "내가 쓴 or 댓글 단 게시글 목록 조회 성공", data), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ResultDto(400, "잘못된 API URI 요청"), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * 좋아요한 게시글, 공지사항 목록 조회 API
+     */
+    @GetMapping("/posts/notices/like")
+    public ResponseEntity likePostsAndNotice(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                             @PageableDefault(size = 20, sort = "registrationDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PostDto.PostResponseDto> data = postService.getLikePostsAndNotices(principalDetails.getUsername(), pageable);
+        return new ResponseEntity<>(new ResultDto(200, "좋아요한 게시글, 공지사항 목록 조회 성공", data), HttpStatus.OK);
     }
 
     /**

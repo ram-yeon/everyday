@@ -9,6 +9,8 @@ import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.file.File;
 import ramyeon.everyday.domain.like.LikeRepository;
 import ramyeon.everyday.domain.like.TargetType;
+import ramyeon.everyday.domain.notice.Notice;
+import ramyeon.everyday.domain.notice.NoticeRepository;
 import ramyeon.everyday.domain.notice.NoticeService;
 import ramyeon.everyday.domain.user.User;
 import ramyeon.everyday.domain.user.UserRepository;
@@ -16,10 +18,7 @@ import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.PostDto;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +29,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final NoticeService noticeService;
+    private final NoticeRepository noticeRepository;
 
     // 메인화면 게시글 목록 조회
     public Map<BoardType, List<PostDto.PostResponseDto>> getPostsMain(String loginId, Pageable pageable) {
@@ -184,7 +184,62 @@ public class PostService {
         }
     }
 
-    // 내가 쓴, 댓글 단, 좋아요한 게시글 목록 조회
+    // 좋아요한 게시글, 공지사항 목록 조회
+    public Page<PostDto.PostResponseDto> getLikePostsAndNotices(String loginId, Pageable pageable) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+
+        List<PostDto.PostResponseDto> postAndNoticeDtoList = new ArrayList<>();
+
+        // 좋아요 한 게시글 조회
+        List<Post> likePosts = postRepository.findByUserAndBoardTypeAndIsDeleted(loginUser, TargetType.POST, Whether.N);
+        for (Post post : likePosts) {
+            postAndNoticeDtoList.add(
+                    // Post 엔티티를 PostResponseDto로 변환
+                    PostDto.PostResponseDto.builder()
+                            .id(post.getId())
+                            .writer(post.getUser().getNickname())
+                            .title(post.getTitle())
+                            .contents(post.getContents())
+                            .registrationDate(post.getRegistrationDate())
+                            .boardType(post.getBoardType())
+                            .isAnonymous(post.getIsAnonymous())
+                            .views(post.getViews())
+                            .likeCount(getLikeCount(post))
+                            .fileCount(post.getFileList().size())
+                            .commentCount(post.getCommentList().size())
+                            .build()
+            );
+        }
+
+        // 좋아요 한 공지사항 조회
+        List<Notice> likeNotices = noticeRepository.findByUserAndBoardTypeAndIsDeleted(loginUser, TargetType.NOTICE, Whether.N);
+        for (Notice notice : likeNotices) {
+            postAndNoticeDtoList.add(
+                    // Notice 엔티티를 PostResponseDto로 변환
+                    PostDto.PostResponseDto.builder()
+                            .id(notice.getId())
+                            .writer(notice.getManager().getName())
+                            .title(notice.getTitle())
+                            .contents(notice.getContents())
+                            .registrationDate(notice.getRegistrationDate())
+                            .boardType(BoardType.NOTICE)
+                            .views(notice.getViews())
+                            .likeCount(noticeService.getLikeCount(notice))
+                            .fileCount(notice.getFileList().size())
+                            .build()
+            );
+        }
+
+        // 게시글과 공지사항을 최신순 정렬
+        postAndNoticeDtoList = postAndNoticeDtoList.stream().sorted(Comparator.comparing(PostDto.PostResponseDto::getRegistrationDate).reversed()).collect(Collectors.toList());
+
+        // List를 Page로 변환
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), postAndNoticeDtoList.size());
+        return new PageImpl<>(postAndNoticeDtoList.subList(start, end), pageable, postAndNoticeDtoList.size());
+    }
+
+    // 내가 쓴, 댓글 단 게시글 목록 조회
     public Page<PostDto.PostResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
         MyPostType myPostType = MyPostType.valueOf(type);  // 요청 글 종류
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
@@ -194,17 +249,6 @@ public class PostService {
             posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
         } else if (myPostType == MyPostType.COMMENT) {   // 댓글단 글
             posts = postRepository.findByUserFetchJoinComment(loginUser, Whether.N);  // 댓글 단 글 최신순 조회
-        } else if (myPostType == MyPostType.LIKE) {   // 좋아요 한 글
-            List<LikeRepository.TargetIdOnly> postIdList = likeRepository.findTargetIdByTargetTypeAndUser(TargetType.POST, loginUser);  // 좋아요 한 글 ID 조회
-            List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
-            // 좋아요 한 글 조회
-            for (Post post : postsAll) {
-                for (LikeRepository.TargetIdOnly postId : postIdList) {
-                    if (post.getId().equals(postId.getTargetId())) {
-                        posts.add(post);
-                    }
-                }
-            }
         }
 
         // Post 엔티티를 PostsMyResponseDto로 변환
