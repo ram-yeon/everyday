@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.school.School;
 import ramyeon.everyday.domain.school.SchoolRepository;
 import ramyeon.everyday.dto.UserDto;
+import ramyeon.everyday.exception.DuplicateResourceException;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,16 +35,24 @@ public class UserService {
     /**
      * 회원 가입
      */
-    public int register(String loginId, String password, String name, String email, String nickname, String admissionYear, String schoolName) {
-        School findSchool = schoolRepository.findBySchoolName(schoolName).orElse(null);
-        if (findSchool == null) {  // 학교가 존재하지 않음
-            return 1;
-        } else {
-            User user = User.registerUser(loginId, bCryptPasswordEncoder.encode(password), name, email, nickname, admissionYear, findSchool);
-            userRepository.save(user);  // 회원 등록
-            return 0;
-        }
+    public void register(String loginId, String password, String name, String email, String nickname, String admissionYear, String schoolName) {
+        // 아이디 중복 체크
+        if (userRepository.findByLoginId(loginId).isPresent())
+            throw new DuplicateResourceException("이미 존재하는 아이디");
 
+        // 이메일 중복 체크
+        if (userRepository.findByEmail(email).isPresent())
+            throw new DuplicateResourceException("이미 존재하는 이메일");
+
+        // 닉네임 중복 체크
+        if (userRepository.findByNickname(nickname).isPresent())
+            throw new DuplicateResourceException("이미 존재하는 닉네임");
+
+        School findSchool = schoolRepository.findBySchoolName(schoolName).orElseThrow(NotFoundResourceException::new);  // 학교 조회
+
+        // 회원 등록
+        User user = User.registerUser(loginId, bCryptPasswordEncoder.encode(password), name, email, nickname, admissionYear, findSchool);
+        userRepository.save(user);
     }
 
     /**

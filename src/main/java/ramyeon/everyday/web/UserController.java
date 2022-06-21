@@ -9,6 +9,8 @@ import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.user.UserService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
+import ramyeon.everyday.exception.DuplicateResourceException;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,12 +36,14 @@ public class UserController {
      */
     @PostMapping("/users")
     public ResponseEntity register(@RequestBody UserDto.RegisterRequestDto registerRequestDto) {
-        int result = userService.register(registerRequestDto.getLoginId(), registerRequestDto.getPassword(), registerRequestDto.getName(), registerRequestDto.getEmail(), registerRequestDto.getNickname(), registerRequestDto.getAdmissionYear(), registerRequestDto.getSchoolName());
-        if (result == 0) {
-            return new ResponseEntity<>(new ResultDto(200, "회원가입 성공"), HttpStatus.OK);
-        } else {
+        try {
+            userService.register(registerRequestDto.getLoginId(), registerRequestDto.getPassword(), registerRequestDto.getName(), registerRequestDto.getEmail(), registerRequestDto.getNickname(), registerRequestDto.getAdmissionYear(), registerRequestDto.getSchoolName());
+        } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, "해당 학교가 없음"), HttpStatus.NOT_FOUND);
+        } catch (DuplicateResourceException dre) {
+            return new ResponseEntity<>(new ResultDto(404, dre.getMessage()), HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(new ResultDto(200, "회원가입 성공"), HttpStatus.OK);
     }
 
     /**
