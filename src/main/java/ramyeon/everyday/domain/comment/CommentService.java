@@ -20,12 +20,14 @@ public class CommentService {
     /**
      * 댓글 등록
      */
-    public void createComment(String loginId, CommentDto.CommentCreateRequestDto createRequestDto) {
+    public CommentDto.CommentResponseDto createComment(String loginId, CommentDto.CommentCreateRequestDto createRequestDto) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(createRequestDto.getPostId(), Whether.N).orElse(null);  // 게시글 조회
         Comment comment = Comment.addComment(createRequestDto.getContents(), CommentType.valueOf(createRequestDto.getCommentType()), createRequestDto.getPreId(),
                 Whether.valueOf(createRequestDto.getIsAnonymous()), loginUser, post);
-        commentRepository.save(comment);  // 댓글 등록
+        return CommentDto.CommentResponseDto.builder()
+                .id(commentRepository.save(comment).getId())  // 댓글 등록
+                .build();
     }
 
     /**

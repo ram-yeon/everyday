@@ -25,8 +25,8 @@ public class CommentController {
     @PostMapping("/comments")
     public ResponseEntity createComment(@RequestBody CommentDto.CommentCreateRequestDto createRequestDto,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        commentService.createComment(principalDetails.getUsername(), createRequestDto);
-        return new ResponseEntity<>(new ResultDto(200, "댓글 등록 성공"), HttpStatus.OK);
+        CommentDto.CommentResponseDto data = commentService.createComment(principalDetails.getUsername(), createRequestDto);
+        return new ResponseEntity<>(new ResultDto(200, "댓글 등록 성공", data), HttpStatus.OK);
     }
 
     /**
