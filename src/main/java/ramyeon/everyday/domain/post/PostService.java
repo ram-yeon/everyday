@@ -151,10 +151,19 @@ public class PostService {
 
             // Comment 엔티티를 CommentInPostResponseDto로 변환
             List<Comment> commentList = post.getCommentList();
-            List<CommentDto.CommentInPostResponseDto> commentDtoList = new ArrayList<>();
+            List<CommentDto.CommentResponseDto> commentDtoList = new ArrayList<>();
             for (Comment comment : commentList) {
-                commentDtoList.add(new CommentDto.CommentInPostResponseDto(comment.getId(), comment.getUser().getNickname(), comment.getContents(), comment.getRegistrationDate(),
-                        comment.getCommentType(), comment.getPreId(), comment.getIsAnonymous()));
+                commentDtoList.add(
+                        CommentDto.CommentResponseDto.builder()
+                                .id(comment.getId())
+                                .writer(comment.getUser().getNickname())
+                                .contents(comment.getContents())
+                                .registrationDate(comment.getRegistrationDate())
+                                .commentType(comment.getCommentType())
+                                .preId(comment.getPreId())
+                                .isAnonymous(comment.getIsAnonymous())
+                                .build()
+                );
             }
 
             return PostDto.PostResponseDto.builder()

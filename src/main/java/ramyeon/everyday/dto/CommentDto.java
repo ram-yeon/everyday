@@ -1,6 +1,7 @@
 package ramyeon.everyday.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Getter;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.comment.CommentType;
@@ -13,8 +14,9 @@ public class CommentDto {
      * 게시글 상세 조회의 댓글 DTO
      */
     @Getter
-    @AllArgsConstructor
-    public static class CommentInPostResponseDto {
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class CommentResponseDto {
 
         private Long id;  // 댓글 ID
         private String writer;  // 작성자

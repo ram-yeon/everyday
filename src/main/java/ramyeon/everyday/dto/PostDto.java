@@ -38,7 +38,7 @@ public class PostDto {
         private List<FileDto.FileInPostAndNoticeResponseDto> file;  // 파일
 
         private Integer commentCount;  // 댓글 수
-        private List<CommentDto.CommentInPostResponseDto> comment;  // 댓글
+        private List<CommentDto.CommentResponseDto> comment;  // 댓글
     }
 
     /**
