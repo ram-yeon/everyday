@@ -53,6 +53,13 @@ public class TokenService {
     }
 
     /**
+     * 토큰 문자열로 토큰 조회
+     */
+    public Token getToken(String token) {
+        return tokenRepository.findByAccessToken(token).orElseThrow(NotFoundResourceException::new);
+    }
+
+    /**
      * 토큰 삭제
      */
     @Transactional

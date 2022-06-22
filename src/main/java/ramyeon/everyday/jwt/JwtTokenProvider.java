@@ -11,6 +11,9 @@ import ramyeon.everyday.auth.ManagerDetailsService;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.auth.PrincipalDetailsService;
 import ramyeon.everyday.domain.school.SchoolService;
+import ramyeon.everyday.domain.token.Token;
+import ramyeon.everyday.domain.token.TokenService;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +29,7 @@ public class JwtTokenProvider {
     private final PrincipalDetailsService principalDetailsService;
     private final ManagerDetailsService managerDetailsService;
     private final SchoolService schoolService;
+    private final TokenService tokenService;
 
     private String secretKey = JwtProperties.SECRET_KEY;
 
@@ -87,10 +91,20 @@ public class JwtTokenProvider {
 
     // 토큰의 유효성, 만료일자 확인
     public boolean validateToken(String jwtToken, HttpServletResponse response) throws IOException {
+        Token token = null;
         try {
+            // DB에서 토큰 존재하는지 조회
+            token = tokenService.getToken(jwtToken);
+
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
+        } catch (NotFoundResourceException nfre) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 토큰입니다.");
+            return false;
         } catch (ExpiredJwtException eje) {
+
+            tokenService.deleteToken(token);  // 만료된 토큰이므로 DB에서 삭제
+
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 만료된 토큰입니다.");
             eje.printStackTrace();
             return false;
