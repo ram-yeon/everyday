@@ -30,7 +30,7 @@ public class TokenService {
 
                 // 토큰이 이미 존재하면
                 if (isUserTokenExisted(user)) {
-                    deleteUserToken(user.getToken());  // 토큰 삭제
+                    deleteToken(user.getToken());  // 토큰 삭제
                 }
                 // 토큰 등록
                 tokenRepository.save(Token.createUserToken(accessToken, user));
@@ -43,7 +43,7 @@ public class TokenService {
 
                 // 토큰이 이미 존재하면
                 if (isManagerTokenExisted(manager)) {
-                    deleteManagerToken(manager.getToken());  // 토큰 삭제
+                    deleteToken(manager.getToken());  // 토큰 삭제
                 }
                 // 토큰 등록
                 tokenRepository.save(Token.createManagerToken(accessToken, manager));
@@ -53,21 +53,17 @@ public class TokenService {
     }
 
     /**
-     * 사용자의 토큰 삭제
+     * 토큰 삭제
      */
     @Transactional
-    public void deleteUserToken(Token token) {
-        token.getUser().setToken(null);
+    public void deleteToken(Token token) {
         tokenRepository.delete(token);
-    }
-
-    /**
-     * 관리자의 토큰 삭제
-     */
-    @Transactional
-    public void deleteManagerToken(Token token) {
-        token.getManager().setToken(null);
-        tokenRepository.delete(token);
+        User user = token.getUser();
+        if (user != null) {  // 사용자의 토큰이면
+            user.setToken(null);  // 사용자가 참조한 토큰 제거
+        } else {
+            token.getManager().setToken(null);  // 관리자가 참조한 토큰 제거
+        }
     }
 
     /**
