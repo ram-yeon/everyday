@@ -2,6 +2,7 @@ package ramyeon.everyday.domain.manager;
 
 import lombok.Getter;
 import ramyeon.everyday.domain.DateBaseEntity;
+import ramyeon.everyday.domain.token.Token;
 
 import javax.persistence.*;
 
@@ -25,4 +26,7 @@ public class Manager extends DateBaseEntity {  // 관리자
     private String registrant;  // 등록자
     private String modifier;  // 수정자
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "token_id")
+    private Token token;  // 토큰
 }

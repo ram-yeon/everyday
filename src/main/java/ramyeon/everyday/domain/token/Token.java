@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
+import ramyeon.everyday.domain.manager.Manager;
 import ramyeon.everyday.domain.user.User;
 
 import javax.persistence.*;
@@ -22,6 +23,9 @@ public class Token extends DateBaseEntity {  // 토큰
 
     @OneToOne(mappedBy = "token", fetch = FetchType.LAZY)
     private User user;  // 회원
+
+    @OneToOne(mappedBy = "token", fetch = FetchType.LAZY)
+    private Manager manager;  // 관리자
 
     @Builder
     public Token(String accessToken, User user) {
