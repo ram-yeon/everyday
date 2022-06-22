@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(corsFilter)
                 .formLogin().disable()  // formLogin 사용하지 않음
+                .logout().disable()
                 .httpBasic().disable()  // 기본적인 http 로그인 방식을 사용하지 않음
                 .addFilter(new JwtAuthenticationFilter(customAuthenticationProvider, jwtTokenProvider, tokenService))  // JwtAuthenticationFilter 추가
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository, jwtTokenProvider, principalDetailsService))  // JwtAuthorizationFilter 추가
