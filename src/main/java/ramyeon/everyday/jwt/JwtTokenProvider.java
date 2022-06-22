@@ -10,6 +10,7 @@ import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.ManagerDetailsService;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.auth.PrincipalDetailsService;
+import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.school.SchoolService;
 import ramyeon.everyday.domain.token.Token;
 import ramyeon.everyday.domain.token.TokenService;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -47,7 +49,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createAccessToken(String userLoginId, Long userId) {
+    public String createAccessToken(String userLoginId, Long userId, Whether isKeptLogin) {
         Claims claims = Jwts.claims().setSubject(userLoginId);  // claim: JWT payload 에 저장되는 정보단위
         claims.put("pk", userId);  // 기본키 추가
         claims.put("authority", accountAuthority);  // 사용자인지 관리자인지 구분 정보 추가
@@ -58,9 +60,20 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)  // 정보 저장
                 .setIssuedAt(now)  // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + JwtProperties.EXPIRATION_TIME))  // 토큰 만료시간 설정
+                .setExpiration(getExpirationTime(isKeptLogin))  // 토큰 만료시간 설정
                 .signWith(SignatureAlgorithm.HS256, Base64.getEncoder().encodeToString(JwtProperties.SECRET_KEY.getBytes()))  // 사용할 암호화 알고리즘과 signature에 들어갈 secret 값 세팅
                 .compact();
+    }
+
+    // 토큰 만료시간 설정
+    private Date getExpirationTime(Whether isKeptLogin) {
+        Calendar now = Calendar.getInstance();  // 현재 시간
+        if (isKeptLogin == Whether.Y) {  // 로그인 유지 시
+            now.add(Calendar.DATE, JwtProperties.TOKEN_EXPIRATION_DATE_FOR_KEEP_LOGIN);
+        } else {
+            now.add(Calendar.MINUTE, JwtProperties.TOKEN_EXPIRATION_MINUTE);
+        }
+        return new Date(now.getTimeInMillis());
     }
 
     // JWT 토큰에서 인증 정보 조회
