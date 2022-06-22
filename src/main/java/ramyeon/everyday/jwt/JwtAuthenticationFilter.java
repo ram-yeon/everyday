@@ -13,6 +13,7 @@ import ramyeon.everyday.AccountAuthority;
 import ramyeon.everyday.auth.CustomAuthenticationProvider;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
+import ramyeon.everyday.domain.token.TokenService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
 
@@ -28,6 +29,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
 
     // 인증을 위해 실행되는 함수
     @Override
@@ -66,10 +68,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
-            jwtToken = jwtTokenProvider.createToken(principalDetails.getUsername(), principalDetails.getUser().getId());  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId());  // JWT 토큰 생성
+
+            tokenService.addToken(jwtToken, principalDetails.getUsername());  // DB에 토큰 저장
+
         } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인
             ManagerDetails managerDetails = (ManagerDetails) authResult.getPrincipal();
-            jwtToken = jwtTokenProvider.createToken(managerDetails.getUsername(), managerDetails.getManager().getId());  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId());  // JWT 토큰 생성
         }
 
         response.setContentType("application/json");

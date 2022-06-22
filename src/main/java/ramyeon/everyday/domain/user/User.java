@@ -81,6 +81,10 @@ public class User extends DateBaseEntity {  // 회원
         school.getUserList().add(this);
     }
 
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
 
     //== 생성 메서드 ==//
 

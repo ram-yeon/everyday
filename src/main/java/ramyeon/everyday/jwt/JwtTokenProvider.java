@@ -43,7 +43,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String userLoginId, Long userId) {
+    public String createAccessToken(String userLoginId, Long userId) {
         Claims claims = Jwts.claims().setSubject(userLoginId);  // claim: JWT payload 에 저장되는 정보단위
         claims.put("pk", userId);  // 기본키 추가
         claims.put("authority", accountAuthority);  // 사용자인지 관리자인지 구분 정보 추가
