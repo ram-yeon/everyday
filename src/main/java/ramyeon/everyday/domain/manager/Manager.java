@@ -29,4 +29,11 @@ public class Manager extends DateBaseEntity {  // 관리자
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "token_id")
     private Token token;  // 토큰
+
+
+    //== 연관관계 메서드 ==//
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
 }

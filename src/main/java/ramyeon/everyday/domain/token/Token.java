@@ -28,18 +28,30 @@ public class Token extends DateBaseEntity {  // 토큰
     private Manager manager;  // 관리자
 
     @Builder
-    public Token(String accessToken, User user) {
+    public Token(String accessToken, User user, Manager manager) {
         this.accessToken = accessToken;
         this.user = user;
+        this.manager = manager;
     }
 
 
     //== 생성 메서드 ==//
-    public static Token createToken(String accessToken, User user) {
+
+    // 사용자의 토큰 생성
+    public static Token createUserToken(String accessToken, User user) {
         Token token = Token.builder()
                 .accessToken(accessToken)
                 .user(user).build();
         user.setToken(token);
+        return token;
+    }
+
+    // 관리자의 토큰 생성
+    public static Token createManagerToken(String accessToken, Manager manager) {
+        Token token = Token.builder()
+                .accessToken(accessToken)
+                .manager(manager).build();
+        manager.setToken(token);
         return token;
     }
 }

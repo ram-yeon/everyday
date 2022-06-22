@@ -70,11 +70,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
             jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId());  // JWT 토큰 생성
 
-            tokenService.addToken(jwtToken, principalDetails.getUsername());  // DB에 토큰 저장
+            tokenService.addToken(jwtToken, principalDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
 
         } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인
             ManagerDetails managerDetails = (ManagerDetails) authResult.getPrincipal();
             jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId());  // JWT 토큰 생성
+
+            tokenService.addToken(jwtToken, managerDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
+
         }
 
         response.setContentType("application/json");
