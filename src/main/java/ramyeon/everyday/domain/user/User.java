@@ -8,6 +8,7 @@ import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.like.Like;
 import ramyeon.everyday.domain.post.Post;
 import ramyeon.everyday.domain.school.School;
+import ramyeon.everyday.domain.token.Token;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,6 +49,10 @@ public class User extends DateBaseEntity {  // 회원
 
     @OneToMany(mappedBy = "user")
     private List<Like> likeList = new ArrayList<Like>();  // 좋아요
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "token_id")
+    private Token token;  // 토큰
 
     @Builder
     public User(String loginId, String password, String name, String email, String nickname, String admissionYear, UserAuthority authority, School school) {
