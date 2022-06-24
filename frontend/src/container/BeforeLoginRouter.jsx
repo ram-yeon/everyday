@@ -13,12 +13,12 @@ import Certification from '../pages/Certification/Certification.jsx';
 import Error from "../component/Error";
 
 
-function AfterLoginRouter() {
+function BeforeLoginRouter(props) {
     return (
         <div>
             <Routes>
                 <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login loginCallBack={props.loginCallBack} />} />
                 <Route path="/adminlogin" element={<AdminLogin />} />
                 <Route path="/forgot" element={<Forgot />} />
 
@@ -33,4 +33,4 @@ function AfterLoginRouter() {
     )
 }
 
-export default AfterLoginRouter
+export default BeforeLoginRouter

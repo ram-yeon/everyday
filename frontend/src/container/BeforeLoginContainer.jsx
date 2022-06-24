@@ -1,10 +1,10 @@
 import React from 'react';
 import BeforeLoginRouter from './BeforeLoginRouter';
 
-function BeforeLoginContainer() {
+function BeforeLoginContainer(props) {
     return (
         <div>
-            <BeforeLoginRouter />
+            <BeforeLoginRouter loginCallBack={props.loginCallBack} />
         </div>
     )
 }

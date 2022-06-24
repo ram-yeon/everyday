@@ -97,7 +97,6 @@ function NavBar() {
   };
 
   const handleClose = () => {
-    console.log('testing')
     setOpen(false);
   };
 

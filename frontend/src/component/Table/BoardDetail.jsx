@@ -131,11 +131,8 @@ function BoardDetail(props) {
                     <Typography className={classes.postUpdate}>수정</Typography>
                     <Typography className={classes.postDelete}>삭제</Typography>
                 </div>
-
                 <Typography className={classes.writer}>익명</Typography>
                 <Typography className={classes.date}>20/02/12/ 21:42</Typography>
-
-
                 <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>학교주변</strong></Typography>
                 <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>만날사람~</Typography>
 
@@ -145,13 +142,12 @@ function BoardDetail(props) {
                 </div>
             </Box>
 
+            {/* 댓글 */}
             <List sx={{ marginTop: "-0.4rem" }}>
                 {comment.map(item => (
                     <ListItem
                         sx={{ border: "1px gray solid", height: "17vh" }}
-                    // button
                     // key={item.date}
-                    // onClick={() => history.push(item.path)}
                     // className={location.pathname == item.path ? classes.active : null}
                     >
                         <div>
@@ -185,7 +181,7 @@ function BoardDetail(props) {
                                         width: "5rem",
                                         color: '#0CDAE0',
                                         cursor: "pointer",
-                                        
+
                                     }} />
                                 <ListItemIcon sx={{ color: '#0CDAE0', cursor: "pointer", margin: "auto auto auto -2rem" }}>{item.replyIcon}</ListItemIcon>
                             </div>

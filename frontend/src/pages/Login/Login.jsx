@@ -3,37 +3,58 @@ import './Login.css'
 import { Link } from 'react-router-dom';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../_actions/user_action';
 import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Axios from '../../component/Axios/Axios';
 
-
-function Login() {
-
+function Login(props) {
     const [idVal, setIdVal] = useState("");
     const [pwVal, setPwVal] = useState("");
-    //사용자 로그인인지 관리자 로그인인지 
-    let type='';
+    const [checked, setChecked] = useState(false);
+    const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const handlesubmit = (event) => {
-        event.preventDefualt();
-
+    const handleBtn = (event) => {
+        // event.preventDefualt();
+        let isKeptLogin = '';
+        if (checked) {
+            isKeptLogin = 'Y'
+        } else {
+            isKeptLogin = 'N'
+        }
         const data = {
             loginId: idVal,
             password: pwVal,
-            type: type,
-          }
-        //   UserAPI.login(data).then(response => {
-        //     console.log(JSON.stringify(response));
-               //로그인토큰발급받고 isLogin=true로 해야함
-        //     navigate("/");
-        //   }).catch(error => {
-        //     console.log(JSON.stringify(error));
-        //     Message.error(error.message);
-        //   });
-    
-    }
+            type: state,
+            isKeptLogin: isKeptLogin,
+        }
+        UserAPI.login(data).then(response => {
+            console.log(JSON.stringify(response));
+            localStorage.setItem(Axios.SESSION_TOKEN_KEY, response.data);   //토큰키에 응답받은 토큰값 set
+            props.loginCallBack(true);
+            navigate("/");
+            // API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정
+            // axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data;
+        }).catch(error => {
+            console.log(JSON.stringify(error));
+            Message.error(error.message);
+        });
 
+        // redux사용
+        // dispatch(loginUser(data))
+        //     .then(response => {
+        //         if(response.payload.loginSuccess){
+        //             props.history.phsh('/')
+        //             // navigate("/");
+        //         } else{
+        //             alert('Error');
+        //         }
+        //     })
+    }
 
     return (
         <div className="login-contain">
@@ -46,17 +67,14 @@ function Login() {
                         <p style={{ color: 'dimgray', fontWeight: 'bold', fontStyle: 'italic' }}>지금 에브리데이를 시작해보세요!</p>
                     </div>
                 </div>
-                <form onSubmit={handlesubmit}>
-                    <input type="id" className="login-input" placeholder="아이디"
-                        value={idVal} onChange={(e) => { setIdVal(e.target.value) }} />
-                    <input type="password" className="login-input" placeholder="비밀번호"
-                        value={pwVal} onChange={(e) => setPwVal(e.target.value)} />
-                    <button type="submit" id="login-btn">로그인</button>
-                </form>
-
+                <input type="id" className="login-input" placeholder="아이디"
+                    value={idVal} onChange={(e) => { setIdVal(e.target.value) }} />
+                <input type="password" className="login-input" placeholder="비밀번호"
+                    value={pwVal} onChange={(e) => setPwVal(e.target.value)} />
+                <button onClick={handleBtn} type="submit" id="login-btn">로그인</button>
                 <div>
                     <div className="login-footer">
-                        <FormControlLabel control={<Checkbox value="remember" color="default" size="small" />}
+                        <FormControlLabel control={<Checkbox value="remember" color="default" size="small" checked={checked} />}
                             label="로그인 유지" />
                     </div>
                     <div className="login-footer">
@@ -68,14 +86,12 @@ function Login() {
                     <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem' }}>에브리데이에 처음이신가요? <Link id="register-link" to='/register'>회원가입</Link></p>
                 </div>
             </div>
-
         </div>
-
     )
 }
 
 export default Login
 
 
-   
+
 

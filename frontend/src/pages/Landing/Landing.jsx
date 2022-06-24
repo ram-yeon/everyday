@@ -19,31 +19,7 @@ function Landing() {
   const { Sider, Content } = Layout;
   const navigate = useNavigate();
 
-  const schoolList = [
-    { text: '경희대', }, { text: '중앙대', }, { text: '연세대 신촌캠', }, { text: '경북대', }, { text: '성균관대', }, { text: '부산대', },
-    { text: '고려대 서울캠', }, { text: '단국대', }, { text: '영남대', }, { text: '서울대', }, { text: '계명대', }, { text: '전남대', },
-    { text: '강원대', }, { text: '한양대 서울캠', }, { text: '전북대', }, { text: '동아대', }, { text: '한국외대', }, { text: '가천대', },
-    { text: '인하대', }, { text: '건국대 서울캠', },
-  ];
-
-  const [searchSchool, setSearchSchool] = useState(''); // 현재 검색학교
-  const [searchSchoolList, setSearchSchoolList] = useState(schoolList); // 검색된 학교
-  const onChangeSchool = useCallback(e => {
-    // 현재 입력된 값을 schoolList에서 찾아서 setSearchSchoolList 하기
-    const text = e.target.value;
-    const result = [];
-    schoolList.map((school) => {
-      if(school.text.indexOf(text) >= 0) {
-        result.push({text: school.text});
-      } 
-    });
-    if (text === '') {
-      setSearchSchoolList(schoolList);
-    } else {
-      setSearchSchoolList(result);
-    }
-  });
-
+  //배너세팅
   const bannerSetting = {
     fade: true,
     infinite: true,
@@ -52,8 +28,39 @@ function Landing() {
     autoplay: true,
     speed: 1000,
     autoplaySpeed: 1000,
-
   };
+
+  //로그인관련함수
+  const loginClick = () => {
+    navigate('/login', { state: 'USER' });
+  }
+  const adminLoginClick = () => {
+    navigate('/adminlogin', { state: 'MANAGER' });
+  }
+
+  //학교검색
+  const schoolList = [
+    { text: '경희대', }, { text: '중앙대', }, { text: '연세대 신촌캠', }, { text: '경북대', }, { text: '성균관대', }, { text: '부산대', },
+    { text: '고려대 서울캠', }, { text: '단국대', }, { text: '영남대', }, { text: '서울대', }, { text: '계명대', }, { text: '전남대', },
+    { text: '강원대', }, { text: '한양대 서울캠', }, { text: '전북대', }, { text: '동아대', }, { text: '한국외대', }, { text: '가천대', },
+    { text: '인하대', }, { text: '건국대 서울캠', },
+  ];
+  const [searchSchoolList, setSearchSchoolList] = useState(schoolList); // 검색된 학교
+  const onChangeSchool = useCallback(e => {
+    // 현재 입력된 값을 schoolList에서 찾아서 setSearchSchoolList 하기
+    const text = e.target.value;
+    const result = [];
+    schoolList.map((school) => {
+      if (school.text.indexOf(text) >= 0) {
+        result.push({ text: school.text });
+      }
+    });
+    if (text === '') {
+      setSearchSchoolList(schoolList);
+    } else {
+      setSearchSchoolList(result);
+    }
+  });
 
   return (
     <Layout>
@@ -80,11 +87,10 @@ function Landing() {
             <div className="landing-header img-class">
               <img src="/images/logo.png" id="img-id" alt="로고이미지" />
             </div>
-
-            <Link to='./login'><button type="submit" id="landing-loginBtn">로그인</button></Link>
+            <button onClick={loginClick} type="submit" id="landing-loginBtn">로그인</button>
             <Link to='./register'><button type="submit" id="landing-signUpBtn">에브리데이 회원가입</button></Link>
             <div>
-              <Link className="admin-login" to='/adminlogin'>관리자로 로그인하기 {'>'} </Link>
+              <span onClick={adminLoginClick} className="admin-login">관리자로 로그인하기 {'>'}</span>
             </div>
           </div>
 

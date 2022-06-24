@@ -5,27 +5,12 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { Avatar } from 'antd';
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-// import ListItemButton from '@mui/material/ListItemButton';
-// import { FixedSizeList } from 'react-window';
-// import { Box, TextField } from '@mui/material/';
 
-// function myDataRenderRow(props) {
-//     const { index, style } = props;
-
-//     return (
-//         <ListItem style={style} key={index} component="div" disablePadding>
-//             <ListItemButton>
-//                 <ListItemText primary={`Item ${index + 1}`} />
-//             </ListItemButton>
-//         </ListItem>
-//     );
-// }
-
-
+// import * as UserAPI from '../../api/Users';
+// import { Message } from '../../component/Message';
 
 const useStyles = makeStyles((theme) => ({
     myImg: {
@@ -47,13 +32,10 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: "3rem",
         outline: "none",
         [theme.breakpoints.down("sm")]: {
-
-
         },
     },
 
 }));
-
 
 const ModalContainer = ({
     open,
@@ -84,9 +66,14 @@ const ModalContainer = ({
             icon: <ExitToAppIcon />,
             path: '/'
         }
-
     ]
+    const handleList = (event) => {
+        // event.preventDefualt();
+        if (event === "로그아웃") {
+            alert(event);
+        }
 
+    }
     return (
         <div>
             <Modal
@@ -94,32 +81,45 @@ const ModalContainer = ({
                 onClose={handleClose}
             >
                 <Container className={classes.modal}>
-                    
-                        <Avatar alt="My계정 이미지" src={"/images/myImg.png"} />
-                        <p style={{ fontWeight: "bold" }}>닉네임이다악</p>
-                        <div style={{ color: "gray", fontSize: "0.8rem" }}>정보람</div>
-                        <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>cjstk4285</div>
-                        <hr />
-                        
-                        <List>
-                            {myDataList.map(item => (
-                                <ListItem
-                                    button
-                                    key={item.text}
-                                    sx={{padding:"0.5rem 0rem 0.5rem 0.5rem"}}
-                                >
-                                    <ListItemIcon>{item.icon}</ListItemIcon>
-                                    <ListItemText primary={item.text} sx={{marginLeft:"-1rem"}} />
-                                    
-                                </ListItem>
-                            ))}
-                        </List>
-                    
+                    <Avatar alt="My계정 이미지" src={"/images/myImg.png"} />
+                    <p style={{ fontWeight: "bold" }}>닉네임이다악</p>
+                    <div style={{ color: "gray", fontSize: "0.8rem" }}>정보람</div>
+                    <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>cjstk4285</div>
+                    <hr />
+                    <List>
+                        {myDataList.map(item => (
+                            <ListItem
+                                button
+                                key={item.text}
+                                sx={{ padding: "0.5rem 0rem 0.5rem 0.5rem" }}
+                                // onClick={handleList(item.text)}
+                            >
+                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                <ListItemText primary={item.text} sx={{ marginLeft: "-1rem" }} />
+                            </ListItem>
+                        ))}
+                    </List>
                 </Container>
-
             </Modal>
         </div>
     )
 };
 
 export default ModalContainer
+
+//로그아웃api
+// const data = {
+//     loginId: idVal,
+//     password: pwVal,
+//     type: state,
+//     isKeptLogin: isKeptLogin,
+// }
+//   UserAPI.logout(data).then(response => {
+//     console.log(JSON.stringify(response));
+//     removeCookie('access-token');
+//     localStorage.removeItem('refresh-token');
+//     navigate("/");
+//   }).catch(error => {
+//     console.log(JSON.stringify(error));
+//     Message.error(error.message);
+//   });

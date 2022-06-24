@@ -1,23 +1,31 @@
 import React, { useState } from 'react'
 import './Login.css'
-// import { Link } from 'react-router-dom';
-// import { FormControlLabel, Checkbox } from '@mui/material';
-
+import { useLocation } from 'react-router-dom';
 
 function AdminLogin() {
+    const [idVal, setIdVal] = useState("");
+    const [pwVal, setPwVal] = useState("");
+    const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
 
-    const [idval, setidval] = useState("");
-    const [pwval, setpwval] = useState("");
-
-    const handlesubmit = (event) => {
-        event.preventDefualt();
+    const handleBtn = (event) => {
+        // event.preventDefualt();
+        const data = {
+            loginId: idVal,
+            password: pwVal,
+            type: state,
+        }
+        //   UserAPI.login(data).then(response => {
+        //     console.log(JSON.stringify(response));
+        //로그인토큰발급받고 isLogin=true로 해야함
+        //     navigate("/");
+        //   }).catch(error => {
+        //     console.log(JSON.stringify(error));
+        //     Message.error(error.message);
+        //   });
     }
 
-
     return (
-
         <div className="login-contain">
-
             <div className="login-content">
                 <div >
                     <div className="login-header img-class">
@@ -27,34 +35,15 @@ function AdminLogin() {
                         <p style={{ color: 'dimgray', fontWeight: 'bold', fontStyle: 'italic' }}>지금 에브리데이를 시작해보세요!</p>
                     </div>
                 </div>
-                <form onSubmit={handlesubmit}>
-                    <input type="id" className="login-input" placeholder="아이디"
-                        value={idval} onChange={(e) => { setidval(e.target.value) }} />
-                    <input type="password" className="login-input" placeholder="비밀번호"
-                        value={pwval} onChange={(e) => setpwval(e.target.value)} />
-                    <button type="submit" id="login-btn">로그인</button>
-                </form>
 
-                {/* <div>
-                    <div className="login-footer">
-                        <FormControlLabel control={<Checkbox value="remember" color="default" size="small" />}
-                            label="로그인 유지" />
-                    </div>
-                    <div className="login-footer">
-                        <Link id="forgot-link" to='/forgot'>아이디/비밀번호 찾기</Link>
-                    </div>
-                </div>
+                <input type="id" className="login-input" placeholder="아이디"
+                    value={idVal} onChange={(e) => { setIdVal(e.target.value) }} />
+                <input type="password" className="login-input" placeholder="비밀번호"
+                    value={pwVal} onChange={(e) => setPwVal(e.target.value)} />
+                <button onClick={handleBtn} type="submit" id="login-btn">로그인</button>
 
-                <div>
-                    <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem' }}>에브리데이에 처음이신가요? <Link id="register-link" to='/register'>회원가입</Link></p>
-                </div> */}
             </div>
-
-
-
-
         </div>
-
     )
 }
 
