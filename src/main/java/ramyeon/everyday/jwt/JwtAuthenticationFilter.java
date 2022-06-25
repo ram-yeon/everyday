@@ -69,18 +69,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String jwtToken = null;
         AccountAuthority accountAuthority = (AccountAuthority) request.getAttribute("accountAuthority");  // 사용자인지 관리자인지 구분
-        jwtTokenProvider.setAccountAuthority(accountAuthority);
         Whether isKeptLogin = (Whether) request.getAttribute("isKeptLogin");
 
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
-            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), isKeptLogin);  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), accountAuthority, isKeptLogin);  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, principalDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
 
         } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인
             ManagerDetails managerDetails = (ManagerDetails) authResult.getPrincipal();
-            jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId(), isKeptLogin);  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId(), accountAuthority, isKeptLogin);  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, managerDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
 

@@ -1,6 +1,5 @@
 package ramyeon.everyday.auth;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +17,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private ManagerDetailsService managerDetailsService;
     private BCryptPasswordEncoder passwordEncoder;
 
-    public CustomAuthenticationProvider(@Lazy BCryptPasswordEncoder passwordEncoder, PrincipalDetailsService principalDetailsService, ManagerDetailsService managerDetailsService) {
+    public CustomAuthenticationProvider(BCryptPasswordEncoder passwordEncoder, PrincipalDetailsService principalDetailsService, ManagerDetailsService managerDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.principalDetailsService = principalDetailsService;
         this.managerDetailsService = managerDetailsService;

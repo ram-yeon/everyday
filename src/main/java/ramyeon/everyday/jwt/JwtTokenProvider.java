@@ -35,21 +35,14 @@ public class JwtTokenProvider {
 
     private String secretKey = JwtProperties.SECRET_KEY;
 
-    private AccountAuthority accountAuthority;
-
     // 객체 초기화, secretKey를 Base64로 인코딩
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    // 로그인 종류 설정
-    public void setAccountAuthority(AccountAuthority accountAuthority) {
-        this.accountAuthority = accountAuthority;
-    }
-
     // JWT 토큰 생성
-    public String createAccessToken(String userLoginId, Long userId, Whether isKeptLogin) {
+    public String createAccessToken(String userLoginId, Long userId, AccountAuthority accountAuthority, Whether isKeptLogin) {
         Claims claims = Jwts.claims().setSubject(userLoginId);  // claim: JWT payload 에 저장되는 정보단위
         claims.put("pk", userId);  // 기본키 추가
         claims.put("authority", accountAuthority);  // 사용자인지 관리자인지 구분 정보 추가

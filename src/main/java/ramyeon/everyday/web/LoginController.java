@@ -3,6 +3,10 @@ package ramyeon.everyday.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +16,9 @@ import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
+import ramyeon.everyday.jwt.JwtProperties;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +28,28 @@ public class LoginController {
 
     private final EmailSendService emailSendService;
     private final LoginService loginService;
+
+    /**
+     * 로그인 API
+     */
+    @PostMapping("/login")
+    public ResponseEntity login(HttpServletResponse response, @RequestBody UserDto.LoginRequestDto loginRequestDto) {
+        Authentication authentication;
+
+        try {
+            // 로그인 시도
+            authentication = loginService.attemptLogin(loginRequestDto.getLoginId(), loginRequestDto.getPassword(), loginRequestDto.getType());
+        } catch (UsernameNotFoundException | BadCredentialsException e) {
+            return new ResponseEntity<>(new ResultDto(401, e.getMessage()), HttpStatus.UNAUTHORIZED);
+        } catch (InternalAuthenticationServiceException iase) {
+            return new ResponseEntity<>(new ResultDto(401, "존재하지 않는 사용자입니다."), HttpStatus.UNAUTHORIZED);
+        }
+
+        String jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getType(), loginRequestDto.getIsKeptLogin());  // 토큰 발급
+        response.addHeader(JwtProperties.HEADER_KEY_NAME, jwtToken);  // 헤더에 JWT 추가
+
+        return new ResponseEntity<>(new ResultDto(200, "로그인 성공", jwtToken), HttpStatus.OK);
+    }
 
     /**
      * 이메일 인증 API
