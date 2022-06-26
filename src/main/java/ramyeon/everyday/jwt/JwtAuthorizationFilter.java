@@ -5,8 +5,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.PatternMatchUtils;
-import ramyeon.everyday.auth.PrincipalDetailsService;
-import ramyeon.everyday.domain.user.UserRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,15 +18,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 필터를 제외할 리소스
     private static final String[] whitelist = {"/schools", "/login", "/email-authenticate", "/check-authenticationcode", "/find-id", "/find-password", "/users/password/edit", "/users"};
 
-    private UserRepository userRepository;
     private JwtTokenProvider jwtTokenProvider;
-    private PrincipalDetailsService principalDetailsService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PrincipalDetailsService principalDetailsService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         super(authenticationManager);
-        this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.principalDetailsService = principalDetailsService;
     }
 
     @Override

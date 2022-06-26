@@ -48,7 +48,7 @@ public class LoginController {
         String jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getType(), loginRequestDto.getIsKeptLogin());  // 토큰 발급
         response.addHeader(JwtProperties.HEADER_KEY_NAME, jwtToken);  // 헤더에 JWT 추가
 
-        return new ResponseEntity<>(new ResultDto(200, "로그인 성공", jwtToken), HttpStatus.OK);
+        return new ResponseEntity<>(new ResultDto(200, "로그인 성공"), HttpStatus.OK);
     }
 
     /**
