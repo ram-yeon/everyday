@@ -14,6 +14,7 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("*");  // 모든 ip에 응답을 허용
+        config.addExposedHeader("*");  // header 추가로 허용
         config.addAllowedHeader("*");  // 모든 header에 응답을 허용
         config.addAllowedMethod("*");  // 모든 API method 요청을 허용
         source.registerCorsConfiguration("/**", config);  // "/**" 는 해당 config 설정을 따름
