@@ -11,13 +11,11 @@ function App() {
     if (token) {
       return true; // token jwt 에 적합한 토큰인지 체크하는 로직도 필요
     } 
-
     return false;
   }
 
   const [isLogin, setIsLogin] = useState(isValidLoginToken());
   
-
   function loginCallBack(login) {
     setIsLogin(login);
   }
@@ -27,7 +25,7 @@ function App() {
       {
         //로그인 후
         isLogin &&
-        <AfterLoginContainer />
+        <AfterLoginContainer loginCallBack={loginCallBack} />
       }
       {
         //로그인 전

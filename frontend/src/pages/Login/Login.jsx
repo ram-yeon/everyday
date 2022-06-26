@@ -16,7 +16,7 @@ function Login(props) {
     const [checked, setChecked] = useState(false);
     const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const handleBtn = (event) => {
         // event.preventDefualt();

@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function NavBar() {
+function NavBar(props) {
   // const [value, setValue] = useState('one');
   const [open, setOpen] = useState(false);
   const classes = useStyles({});
@@ -126,6 +126,7 @@ function NavBar() {
         <ModalContainer
           open={open}
           handleClose={handleClose}
+          loginCallBack={props.loginCallBack}
         >
         </ModalContainer>
 

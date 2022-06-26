@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Modal, makeStyles, ListItemIcon } from "@material-ui/core";
 import ChatIcon from '@mui/icons-material/Chat';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -6,20 +6,19 @@ import TextsmsIcon from '@mui/icons-material/Textsms';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { Avatar } from 'antd';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-// import * as UserAPI from '../../api/Users';
-// import { Message } from '../../component/Message';
+import * as UserAPI from '../api/Users';
+import { Message } from '../component/Message';
+import Axios from '../component/Axios/Axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     myImg: {
-
         [theme.breakpoints.down("sm")]: {
-
         },
     },
-
     modal: {
         width: 200,
         height: 420,
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.down("sm")]: {
         },
     },
-
 }));
 
 const ModalContainer = ({
@@ -42,38 +40,50 @@ const ModalContainer = ({
     handleClose,
     ...props
 }) => {
-
     const classes = useStyles();
+    const navigate = useNavigate();
     const myDataList = [
         {
             text: "내가 쓴 글",
             icon: <ChatIcon />,
+            idx: '0',
             path: '/'
 
         },
         {
             text: "댓글 단 글",
             icon: <TextsmsIcon />,
+            idx: '1',
             path: '/'
         },
         {
             text: "좋아요 한 글",
             icon: <ThumbUpIcon />,
+            idx: '2',
             path: '/'
         },
         {
             text: "로그아웃",
             icon: <ExitToAppIcon />,
+            idx: '3',
             path: '/'
         }
     ]
-    const handleList = (event) => {
-        // event.preventDefualt();
-        if (event === "로그아웃") {
-            alert(event);
+    const [selectedIndex, setSelectedIndex] = useState();
+    const handleListItemClick = (event, idx) => {
+        setSelectedIndex(idx);
+        if (Number(idx) === 3) { //로그아웃
+            UserAPI.logout().then(response => {
+                console.log(JSON.stringify(response));
+                localStorage.removeItem(Axios.SESSION_TOKEN_KEY);
+                props.loginCallBack(false);
+                navigate("/");
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            });
         }
-
-    }
+    };
     return (
         <div>
             <Modal
@@ -88,15 +98,13 @@ const ModalContainer = ({
                     <hr />
                     <List>
                         {myDataList.map(item => (
-                            <ListItem
-                                button
-                                key={item.text}
+                            <ListItemButton
                                 sx={{ padding: "0.5rem 0rem 0.5rem 0.5rem" }}
-                                // onClick={handleList(item.text)}
+                                onClick={(event) => handleListItemClick(event, item.idx)}
                             >
                                 <ListItemIcon>{item.icon}</ListItemIcon>
                                 <ListItemText primary={item.text} sx={{ marginLeft: "-1rem" }} />
-                            </ListItem>
+                            </ListItemButton>
                         ))}
                     </List>
                 </Container>
@@ -107,19 +115,3 @@ const ModalContainer = ({
 
 export default ModalContainer
 
-//로그아웃api
-// const data = {
-//     loginId: idVal,
-//     password: pwVal,
-//     type: state,
-//     isKeptLogin: isKeptLogin,
-// }
-//   UserAPI.logout(data).then(response => {
-//     console.log(JSON.stringify(response));
-//     removeCookie('access-token');
-//     localStorage.removeItem('refresh-token');
-//     navigate("/");
-//   }).catch(error => {
-//     console.log(JSON.stringify(error));
-//     Message.error(error.message);
-//   });

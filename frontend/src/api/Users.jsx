@@ -13,7 +13,7 @@ export const join = (data) => NewPromise(Axios.post('/users', data));
 //로그인
 export const login = (data) => NewPromise(Axios.post('/login', data));
 //로그아웃
-export const logout = (data) => NewPromise(Axios.get('/logout', data));
+export const logout = () => NewPromise(Axios.get('/logout'));
 
 //아이디 찾기
 export const findID = (data) => NewPromise(Axios.post('/find-id', data));
