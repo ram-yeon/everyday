@@ -32,16 +32,12 @@ const useStyles = makeStyles((theme) => ({
   },
   schoolName: {
     color: "black",
+    fontSize: "1.3rem",
     [theme.breakpoints.down("sm")]: {
       fontSize: "1rem",
       paddingLeft: "0.8rem"
     },
   },
-  // menu: {
-  //   [theme.breakpoints.down("sm")]: {
-  //     display: "none",
-  //   },
-  // },
   search: {
     color: "gray",
     paddingLeft: "0.8rem",
@@ -66,29 +62,15 @@ const useStyles = makeStyles((theme) => ({
     // display: "flex",
     marginLeft: "1rem",
     marginTop: "0.3rem",
-    cursor:"pointer",
+    cursor: "pointer",
     [theme.breakpoints.down("sm")]: {
-      
+
     },
   },
-  // modal: {
-  //   width: 200,
-  //   height: 350,
-  //   backgroundColor: "white",
-  //   position: "absolute",
-  //   top: 80,
-  //   right: 50,
-  //   margin: "auto",
-  //   [theme.breakpoints.down("sm")]: {
-  //     top:10,
-  //     right:10,
-  //   },
-  // },
 
 }));
 
 function NavBar(props) {
-  // const [value, setValue] = useState('one');
   const [open, setOpen] = useState(false);
   const classes = useStyles({});
 
@@ -104,15 +86,15 @@ function NavBar(props) {
     <AppBar position="fixed" style={{ background: 'white', height: "5rem" }}>
       <Toolbar className={classes.Toolbar}>
         <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
-        
-        <p>
+
+        <div>
           <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>
             에브리데이
           </Typography>
-          <Typography variant="h6" className={classes.schoolName}>
+          <Typography className={classes.schoolName}>
             명지전문대
           </Typography>
-        </p>
+        </div>
 
         <div className={classes.search}>
           <Search />
@@ -129,9 +111,7 @@ function NavBar(props) {
           loginCallBack={props.loginCallBack}
         >
         </ModalContainer>
-
       </Toolbar>
-
     </AppBar>
   );
 }

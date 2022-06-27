@@ -8,7 +8,6 @@ import { loginUser } from '../../_actions/user_action';
 import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Axios from '../../component/Axios/Axios';
 
 function Login(props) {
     const [idVal, setIdVal] = useState("");
@@ -16,7 +15,11 @@ function Login(props) {
     const [checked, setChecked] = useState(false);
     const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    
+    const handleCheckBox = (event) => {
+        setChecked(event.target.checked);
+      };
 
     const handleBtn = (event) => {
         // event.preventDefualt();
@@ -33,17 +36,12 @@ function Login(props) {
             isKeptLogin: isKeptLogin,
         }
         UserAPI.login(data).then(response => {
-            console.log(JSON.stringify(response));
-            localStorage.setItem(Axios.SESSION_TOKEN_KEY, response.data);   //토큰키에 응답받은 토큰값 set
             props.loginCallBack(true);
             navigate("/");
-            // API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정
-            // axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data;
         }).catch(error => {
             console.log(JSON.stringify(error));
             Message.error(error.message);
         });
-
         // redux사용
         // dispatch(loginUser(data))
         //     .then(response => {
@@ -74,7 +72,7 @@ function Login(props) {
                 <button onClick={handleBtn} type="submit" id="login-btn">로그인</button>
                 <div>
                     <div className="login-footer">
-                        <FormControlLabel control={<Checkbox value="remember" color="default" size="small" checked={checked} />}
+                        <FormControlLabel control={<Checkbox value="remember" color="default" size="small" checked={checked} onChange={handleCheckBox} />}
                             label="로그인 유지" />
                     </div>
                     <div className="login-footer">

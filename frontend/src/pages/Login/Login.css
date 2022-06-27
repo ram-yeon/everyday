@@ -3,10 +3,6 @@
     --sub-color: #e8b9c9;
 }
 
-.login-contain {
-    
-}
-
 .login-content {
     text-align: center;
     margin: 12rem 34rem;
@@ -78,6 +74,7 @@
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
     margin-top: 1rem;
+    margin-left: 0.55rem;
 }
 
 #login-btn:hover {

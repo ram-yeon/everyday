@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import * as UserAPI from '../api/Users';
 import { Message } from '../component/Message';
-import Axios from '../component/Axios/Axios';
+import {SESSION_TOKEN_KEY} from '../component/Axios/Axios';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,15 +69,15 @@ function ModalContainer (props) {
         if (Number(idx) === 3) { //로그아웃
             UserAPI.logout().then(response => {
                 console.log(JSON.stringify(response));
-                localStorage.removeItem(Axios.SESSION_TOKEN_KEY);
+                localStorage.removeItem(SESSION_TOKEN_KEY);
                 props.loginCallBack(false);
                 navigate("/");
             }).catch(error => { //만료된 토큰이거나 존재하지않는 토큰이면 강제로그아웃
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
-                localStorage.removeItem(Axios.SESSION_TOKEN_KEY);   
+                localStorage.removeItem(SESSION_TOKEN_KEY);   
                 props.loginCallBack(false);
-                navigate("/login");
+                navigate("/");
             });
         }
     };

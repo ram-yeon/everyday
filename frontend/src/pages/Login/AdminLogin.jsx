@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import './Login.css'
-import { useLocation } from 'react-router-dom';
 
-function AdminLogin() {
+import * as UserAPI from '../../api/Users';
+import { Message } from '../../component/Message';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Axios from '../../component/Axios/Axios';
+
+function AdminLogin(props) {
     const [idVal, setIdVal] = useState("");
     const [pwVal, setPwVal] = useState("");
     const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
+    const navigate = useNavigate();
 
     const handleBtn = (event) => {
         // event.preventDefualt();
@@ -14,14 +19,13 @@ function AdminLogin() {
             password: pwVal,
             type: state,
         }
-        //   UserAPI.login(data).then(response => {
-        //     console.log(JSON.stringify(response));
-        //로그인토큰발급받고 isLogin=true로 해야함
-        //     navigate("/");
-        //   }).catch(error => {
-        //     console.log(JSON.stringify(error));
-        //     Message.error(error.message);
-        //   });
+        UserAPI.login(data).then(response => {
+            props.loginCallBack(true);
+            navigate("/");
+        }).catch(error => {
+            console.log(JSON.stringify(error));
+            Message.error(error.message);
+        });
     }
 
     return (
