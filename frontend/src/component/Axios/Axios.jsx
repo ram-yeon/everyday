@@ -17,7 +17,7 @@ export const SESSION_TOKEN_KEY = "__EVERYDAY__auth__";
 
 Axios.interceptors.request.use(function (config) {
     const token = localStorage.getItem(SESSION_TOKEN_KEY);  //api요청시 토큰키 값 넣어서 요청
-    // config.headers.Authorization = "Bearer " + token;
+    // config.headers.Authorization = "Bearer" + token;
     config.headers.Authorization = token;
     config.data = JSON.stringify(config.data);
     return config;

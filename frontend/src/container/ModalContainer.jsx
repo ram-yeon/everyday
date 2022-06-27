@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Container, Modal, makeStyles, ListItemIcon } from "@material-ui/core";
 import ChatIcon from '@mui/icons-material/Chat';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import * as UserAPI from '../api/Users';
 import { Message } from '../component/Message';
 import Axios from '../component/Axios/Axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     myImg: {
@@ -35,11 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ModalContainer = ({
-    open,
-    handleClose,
-    ...props
-}) => {
+function ModalContainer (props) {
     const classes = useStyles();
     const navigate = useNavigate();
     const myDataList = [
@@ -69,26 +65,27 @@ const ModalContainer = ({
             path: '/'
         }
     ]
-    const [selectedIndex, setSelectedIndex] = useState();
     const handleListItemClick = (event, idx) => {
-        setSelectedIndex(idx);
         if (Number(idx) === 3) { //로그아웃
             UserAPI.logout().then(response => {
                 console.log(JSON.stringify(response));
                 localStorage.removeItem(Axios.SESSION_TOKEN_KEY);
                 props.loginCallBack(false);
                 navigate("/");
-            }).catch(error => {
+            }).catch(error => { //만료된 토큰이거나 존재하지않는 토큰이면 강제로그아웃
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
+                localStorage.removeItem(Axios.SESSION_TOKEN_KEY);   
+                props.loginCallBack(false);
+                navigate("/login");
             });
         }
     };
     return (
         <div>
             <Modal
-                open={open}
-                onClose={handleClose}
+                open={props.open}
+                onClose={props.handleClose}
             >
                 <Container className={classes.modal}>
                     <Avatar alt="My계정 이미지" src={"/images/myImg.png"} />
@@ -99,6 +96,7 @@ const ModalContainer = ({
                     <List>
                         {myDataList.map(item => (
                             <ListItemButton
+                                key={item.text}
                                 sx={{ padding: "0.5rem 0rem 0.5rem 0.5rem" }}
                                 onClick={(event) => handleListItemClick(event, item.idx)}
                             >
