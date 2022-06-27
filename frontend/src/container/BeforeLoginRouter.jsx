@@ -19,7 +19,7 @@ function BeforeLoginRouter(props) {
             <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login loginCallBack={props.loginCallBack} />} />
-                <Route path="/adminlogin" element={<AdminLogin />} />
+                <Route path="/adminlogin" element={<AdminLogin loginCallBack={props.loginCallBack} />} />
                 <Route path="/forgot" element={<Forgot />} />
 
                 <Route path="/forgot/password" element={<UserPassword />} />
