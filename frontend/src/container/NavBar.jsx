@@ -8,6 +8,8 @@ import { InputBase } from '@mui/material';
 import { alpha } from '@mui/lab/node_modules/@mui/system';
 import { Avatar } from 'antd';
 
+import * as BoardAPI from '../api/Board';
+import { Message } from '../component/Message';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -73,11 +75,25 @@ const useStyles = makeStyles((theme) => ({
 function NavBar(props) {
   const [open, setOpen] = useState(false);
   const classes = useStyles({});
+  const [schoolName, setSchoolName] = useState('');
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
+
+  //회원 정보 배너 조회
+  BoardAPI.userInfoSelect().then(response => {
+    setSchoolName(response.data.schoolName);
+    setId(response.data.loginId);
+    setName(response.data.name);
+    setNickname(response.data.nickname);
+  }).catch(error => {
+    console.log(JSON.stringify(error));
+    Message.error(error.message);
+  });
 
   const handleOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -92,7 +108,7 @@ function NavBar(props) {
             에브리데이
           </Typography>
           <Typography className={classes.schoolName}>
-            명지전문대
+            {schoolName}
           </Typography>
         </div>
 
@@ -109,6 +125,9 @@ function NavBar(props) {
           open={open}
           handleClose={handleClose}
           loginCallBack={props.loginCallBack}
+          id={id}
+          name={name}
+          nickname={nickname}
         >
         </ModalContainer>
       </Toolbar>

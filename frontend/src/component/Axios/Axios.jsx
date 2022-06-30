@@ -1,8 +1,7 @@
 import CommonAxios from 'axios';
-import React, { useState } from 'react'
 
 const Axios = CommonAxios.create({
-    timeout: 30000,
+    // timeout: 30000,
     headers: {
         'Content-Type': 'application/json; charset=UTF-8;',
         'Access-Control-Allow-Origin': '*',

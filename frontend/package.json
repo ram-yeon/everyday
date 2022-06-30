@@ -20,6 +20,7 @@
     "axios": "^0.27.2",
     "carousel": "0.0.3",
     "http-proxy-middleware": "^2.0.6",
+    "jsonwebtoken": "^8.5.1",
     "react": "^18.1.0",
     "react-bootstrap-validation": "^0.1.11",
     "react-dom": "^18.0.0",

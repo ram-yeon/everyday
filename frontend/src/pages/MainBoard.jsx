@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { Grid, makeStyles } from "@material-ui/core";
 import { Box } from '@mui/material/';
@@ -7,12 +7,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
-// import * as BoardAPI from '../api/Board';
-// import { Message } from '../component/Message';
+import * as BoardAPI from '../api/Board';
+import { Message } from '../component/Message';
+// import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-
     },
     link: {
         textDecoration: "none",
@@ -24,114 +24,99 @@ function MainBoard() {
     const classes = useStyles()
     // const history = useHistory()
     // const location = useLocation()
+    const [notice, setNotice] = useState([]);
+    const [hot, setHot] = useState([]);
+    const [free, setFree] = useState([]);
+    const [club, setClub] = useState([]);
+    const [info, setInfo] = useState([]);
 
-    // const data = {
-        
-    // }
-    // BoardAPI.mainBoardSelect(data).then(response => {
-    //     console.log(JSON.stringify(response));
-        
-    // }).catch(error => {
-    //     console.log(JSON.stringify(error));
-    //     Message.error(error.message);
-    // });
+    //메인화면 게시글 목록 조회
+    BoardAPI.mainBoardSelect().then(response => {
+        // token decode 방법
+        // let jwt = require("jsonwebtoken");
+        // let token = localStorage.getItem(SESSION_TOKEN_KEY);
+        // let decode = jwt.decode(token);
+        // console.log("without leading space");
+        // console.log(decode);
+        const noticeItems = [];
+        const hotItems = [];
+        const freeItems = [];
+        const clubItems = [];
+        const infoItems = [];
+        Object.keys(response.data).forEach(function (k) {
+            if (k === 'NOTICE') {
+                for (let i = 0; i <= 3; i++) {
+                    if (response.data[k][i].title && response.data[k][i].registrationDate) {
+                        let title = JSON.stringify(response.data[k][i].title);
+                        let registrationDate = JSON.stringify(response.data[k][i].registrationDate);
+                        let titleTrim = title.split('"');
+                        let registrationDateTrim = registrationDate.split('"');
+                        noticeItems.push({ text: titleTrim, date: registrationDateTrim });
+                    }
+                    else {
+                        noticeItems.push({ text: "데이터 없음", date: "" });
+                    }
+                }
+            }
+            else if (k === 'FREE') {
+                for (let i = 0; i <= 1; i++) {
+                    if (response.data[k][i].title && response.data[k][i].registrationDate) {
+                        let title = JSON.stringify(response.data[k][i].title);
+                        let registrationDate = JSON.stringify(response.data[k][i].registrationDate);
+                        let titleTrim = title.split('"');
+                        let registrationDateTrim = registrationDate.split('"');
+                        freeItems.push({ text: titleTrim, date: registrationDateTrim });
+                    } else {
+                        freeItems.push({ text: "데이터 없음", date: "" });
+                    }
+                }
+            }
+            // else if (k === 'HOT') {
+            //     for (let i = 0; i <= 3; i++) {
+            //         console.log(JSON.stringify(response.data[k][i].title));
+            //         console.log(JSON.stringify(response.data[k][i].registrationDate));
+            //     }
+            // }
+            else if (k === 'INFO') {
+                for (let i = 0; i <= 2; i++) {
+                    if (response.data[k][i].title && response.data[k][i].registrationDate) {
+                        let title = JSON.stringify(response.data[k][i].title);
+                        let registrationDate = JSON.stringify(response.data[k][i].registrationDate);
+                        let titleTrim = title.split('"');
+                        let registrationDateTrim = registrationDate.split('"');
+                        infoItems.push({ text: titleTrim, date: registrationDateTrim });
+                    } else {
+                        infoItems.push({ text: "데이터 없음", date: "" });
+                    }
+                }
+            }
+            else if (k === 'CLUB') {
+                for (let i = 0; i <= 3; i++) {
+                    if (response.data[k][i].title && response.data[k][i].registrationDate) {
+                        let title = JSON.stringify(response.data[k][i].title);
+                        let registrationDate = JSON.stringify(response.data[k][i].registrationDate);
+                        let titleTrim = title.split('"');
+                        let registrationDateTrim = registrationDate.split('"');
+                        clubItems.push({ text: titleTrim, date: registrationDateTrim });
+                    } else {
+                        clubItems.push({ text: "데이터 없음", date: "" });
+                    }
+                }
+            }
+
+        });
+        setNotice(noticeItems);
+        setHot(hotItems);
+        setFree(freeItems);
+        setClub(clubItems);
+        setInfo(infoItems);
+
+    }).catch(error => {
+        console.log(JSON.stringify(error));
+        Message.error(error.message);
+    });
 
 
-    const noticeItems = [
-        {
-            text: '첫번째 공지 이다아앙가악이다아앙가악이다아앙가악이다아앙가악이다아앙가악',
-            path: '/'
-        },
-        {
-            text: '두번째 공지',
-            path: '/'
-        },
-        {
-            text: '세번째 공지',
-            path: '/'
-        },
-        {
-            text: '네번째 공지',
-            path: '/'
-        }
-
-    ]
-    const hotItems = [
-        {
-            text: 'hot 게시물1 al소ㅑㄹ랄소ㅑㄹㄹ라소ㅑ랄',
-            path: '/'
-        },
-        {
-            text: 'hot 게시물2 ㄴㅇㄻㅇㅎㅁㅎㅁㄴㅇㅎ',
-            path: '/'
-        },
-        {
-            text: 'hot 게시물3 블라블라블라블라우알라',
-            path: '/'
-        },
-        {
-            text: 'hot 게시물4',
-            path: '/'
-        }
-
-    ]
-    const infoItems = [
-        {
-            text: '정보 게시판 게시글1',
-            path: '/'
-        },
-        {
-            text: '정보 게시판 게시글2',
-            path: '/'
-        },
-        {
-            text: '정보 게시판 게시글3',
-            path: '/'
-        },
-        {
-            text: '정보 게시판 게시글4',
-            path: '/'
-        }
-
-    ]
-    const freeItems = [
-        {
-            text: '자유 게시판 게시글1',
-            path: '/'
-        },
-        {
-            text: '자유 게시판 게시글2',
-            path: '/'
-        },
-        {
-            text: '자유 게시판 게시글3',
-            path: '/'
-        },
-        {
-            text: '자유 게시판 게시글4',
-            path: '/'
-        }
-
-    ]
-    const clubItems = [
-        {
-            text: '동아리 게시판 게시글1',
-            path: '/'
-        },
-        {
-            text: '동아리 게시판 게시글2',
-            path: '/'
-        },
-        {
-            text: '동아리 게시판 게시글3',
-            path: '/'
-        },
-        {
-            text: '동아리 게시판 게시글4',
-            path: '/'
-        }
-
-    ]
     return (
         <div className={classes.container}>
             <Grid container spacing={5} >
@@ -140,7 +125,7 @@ function MainBoard() {
                         <Link to='/noticeboard' className={classes.link}>공지사항</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
-                        {noticeItems.map(item => (
+                        {notice.map(item => (
                             <ListItem
                                 button
                                 key={item.text}
@@ -158,7 +143,7 @@ function MainBoard() {
                                         textOverflow: "ellipsis",
                                         // border:"solid 2px red"
                                     }} />
-                                <ListItemText primary="20/02/12/ 21:42"
+                                <ListItemText primary={item.date}
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -175,7 +160,7 @@ function MainBoard() {
                         <Link to='/hotboard' className={classes.link}>HOT 게시물</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
-                        {hotItems.map(item => (
+                        {hot.map(item => (
                             <ListItem
                                 button
                                 key={item.text}
@@ -193,7 +178,7 @@ function MainBoard() {
                                         textOverflow: "ellipsis",
 
                                     }} />
-                                <ListItemText primary="20/02/12/ 21:42"
+                                <ListItemText primary={item.date}
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -210,7 +195,7 @@ function MainBoard() {
                         <Link to='/informationboard' className={classes.link}>정보 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
-                        {infoItems.map(item => (
+                        {info.map(item => (
                             <ListItem
                                 button
                                 key={item.text}
@@ -228,7 +213,7 @@ function MainBoard() {
                                         textOverflow: "ellipsis",
 
                                     }} />
-                                <ListItemText primary="20/02/12/ 21:42"
+                                <ListItemText primary={item.date}
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -245,7 +230,7 @@ function MainBoard() {
                         <Link to='/freeboard' className={classes.link} name="자유 게시판">자유 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
-                        {freeItems.map(item => (
+                        {free.map(item => (
                             <ListItem
                                 button
                                 key={item.text}
@@ -263,7 +248,7 @@ function MainBoard() {
                                         textOverflow: "ellipsis",
 
                                     }} />
-                                <ListItemText primary="20/02/12/ 21:42"
+                                <ListItemText primary={item.date}
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',
@@ -280,7 +265,7 @@ function MainBoard() {
                         <Link to='/clubboard' className={classes.link}>동아리 게시판</Link>
                     </Box>
                     <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
-                        {clubItems.map(item => (
+                        {club.map(item => (
                             <ListItem
                                 button
                                 key={item.text}
@@ -298,7 +283,7 @@ function MainBoard() {
                                         textOverflow: "ellipsis",
 
                                     }} />
-                                <ListItemText primary="20/02/12/ 21:42"
+                                <ListItemText primary={item.date}
                                     primaryTypographyProps={{
                                         color: 'gray',
                                         fontSize: '0.5rem',

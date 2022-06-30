@@ -4,7 +4,6 @@ import './Login.css'
 import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Axios from '../../component/Axios/Axios';
 
 function AdminLogin(props) {
     const [idVal, setIdVal] = useState("");

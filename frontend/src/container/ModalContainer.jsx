@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import * as UserAPI from '../api/Users';
 import { Message } from '../component/Message';
-import {SESSION_TOKEN_KEY} from '../component/Axios/Axios';
+import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +35,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function ModalContainer (props) {
+function ModalContainer(props) {
+    const {
+        open,
+        handleClose,
+        loginCallBack,
+        id,
+        name,
+        nickname,
+    } = props;
     const classes = useStyles();
     const navigate = useNavigate();
     const myDataList = [
@@ -44,7 +52,6 @@ function ModalContainer (props) {
             icon: <ChatIcon />,
             idx: '0',
             path: '/'
-
         },
         {
             text: "댓글 단 글",
@@ -70,13 +77,13 @@ function ModalContainer (props) {
             UserAPI.logout().then(response => {
                 console.log(JSON.stringify(response));
                 localStorage.removeItem(SESSION_TOKEN_KEY);
-                props.loginCallBack(false);
+                loginCallBack(false);
                 navigate("/");
             }).catch(error => { //만료된 토큰이거나 존재하지않는 토큰이면 강제로그아웃
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
-                localStorage.removeItem(SESSION_TOKEN_KEY);   
-                props.loginCallBack(false);
+                localStorage.removeItem(SESSION_TOKEN_KEY);
+                loginCallBack(false);
                 navigate("/");
             });
         }
@@ -84,14 +91,14 @@ function ModalContainer (props) {
     return (
         <div>
             <Modal
-                open={props.open}
-                onClose={props.handleClose}
+                open={open}
+                onClose={handleClose}
             >
                 <Container className={classes.modal}>
                     <Avatar alt="My계정 이미지" src={"/images/myImg.png"} />
-                    <p style={{ fontWeight: "bold" }}>닉네임이다악</p>
-                    <div style={{ color: "gray", fontSize: "0.8rem" }}>정보람</div>
-                    <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>cjstk4285</div>
+                    <p style={{ fontWeight: "bold" }}>{nickname}</p>
+                    <div style={{ color: "gray", fontSize: "0.8rem" }}>{name}</div>
+                    <div style={{ color: "gray", fontSize: "0.8rem", marginBottom: "1rem" }}>{id}</div>
                     <hr />
                     <List>
                         {myDataList.map(item => (
