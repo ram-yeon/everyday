@@ -6,6 +6,10 @@ import WriteBox from './WriteBox';
 
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 // import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 // import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 // import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
@@ -14,6 +18,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
+
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
+import * as BoardAPI from '../../api/Board';
+import { Message } from '../../component/Message';
 
 const useStyles = makeStyles((theme) => ({
     writeBoxBtn: {
@@ -25,18 +35,75 @@ const useStyles = makeStyles((theme) => ({
         cursor: "pointer",
         margin: "0.3rem auto",
     },
-
 }));
 
 function BoardList(props) {
-
     const {
         title,
-        post,
+        boardType,
     } = props;
-
     const classes = useStyles();
     const [show, setShow] = useState(false);
+
+    const [post, setPost] = useState([]);
+    const postItems = [];
+    // const [user, setUser] = useState('');
+    // const [postTitle, setPostTitle] = useState('');
+    // const [postContent, setPostContent] = useState('');
+    // const [date, setDate] = useState('');
+    // const [likeIcon, setLikeIcon] = useState('');
+    // const [likeCount, setLikeCount] = useState('');
+    // const [commentIcon, setCommentIcon] = useState('');
+    // const [commentCount, setCommentCount] = useState('');
+
+    const [page, setPage] = useState(1);
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
+    const data = {
+        boardType: boardType,
+        page: page - 1,
+    }
+    //게시판 별 게시글 목록 조회
+    BoardAPI.eachBoardSelect(data).then(response => {
+        Object.keys(response.data).forEach(function (k) {
+            // response.data.map(data => ({
+
+            // }));
+            if (k === 'content') {
+                for (let i = 0; i <= 1; i++) {
+                    let title = response.data[k][i].title;                          //제목
+                    let contents = response.data[k][i].contents;                    //내용
+                    let registrationDate = response.data[k][i].registrationDate;    //등록일
+                    let isAnonymous = response.data[k][i].isAnonymous;              //익명여부
+                    let checkAnonymous = ""                                         //익명여부체크
+                    let likeCount = response.data[k][i].likeCount;                  //좋아요개수
+                    let commentCount = response.data[k][i].commentCount;            //댓글개수
+                    let views = response.data[k][i].views;                          //조회수
+                    let fileCount = response.data[k][i].fileCount;                     //파일
+                    let writer = response.data[k][i].writer;                        //작성자
+
+
+                    if (isAnonymous === 'N') {
+                        checkAnonymous = writer;
+                    } else {
+                        checkAnonymous = "익명";
+                    }
+
+                    postItems.push({
+                        user: checkAnonymous, postTitle: title, postContent: contents, date: registrationDate,
+                        likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views,
+                    });
+                }
+            }
+        });
+        setPost(postItems);
+
+    }).catch(error => {
+        console.log(JSON.stringify(error));
+        Message.error(error.message);
+    });
 
 
     return (
@@ -51,8 +118,6 @@ function BoardList(props) {
             {
                 show ? <WriteBox show={show} /> : null
             }
-
-
             <List sx={{ marginTop: "-0.4rem" }}>
                 {post.map(item => (
                     <ListItem
@@ -84,7 +149,7 @@ function BoardList(props) {
                                 primaryTypographyProps={{
                                     color: 'gray',
                                     fontSize: '0.5rem',
-                                    width: "5rem",
+                                    width: "10rem",
                                 }} />
                             <ListItemText primary={item.user}
                                 primaryTypographyProps={{
@@ -93,7 +158,7 @@ function BoardList(props) {
                                     color: "#C00000"
                                 }} />
                         </div>
-                        <ListItemIcon sx={{ color: '#C00000', marginLeft: "40%" }}>{item.likeIcon}</ListItemIcon>
+                        <ListItemIcon sx={{ color: '#C00000', marginLeft: "30%" }}><FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} /></ListItemIcon>
                         <ListItemText primary={item.likeCount}
                             primaryTypographyProps={{
                                 color: '#C00000',
@@ -102,7 +167,7 @@ function BoardList(props) {
                                 margin: "0.5rem auto auto -2.2rem"
                             }} />
 
-                        <ListItemIcon sx={{ color: '#0CDAE0', marginLeft: "-1rem" }}>{item.commentIcon}</ListItemIcon>
+                        <ListItemIcon sx={{ color: '#0CDAE0', marginLeft: "-0.5rem" }}><TextsmsOutlinedIcon sx={{ fontSize: '1rem' }} /></ListItemIcon>
                         <ListItemText primary={item.commentCount}
                             primaryTypographyProps={{
                                 color: '#0CDAE0',
@@ -110,18 +175,30 @@ function BoardList(props) {
                                 fontSize: "0.5rem",
                                 margin: "0.5rem auto auto -2.2rem"
                             }} />
-
-                        {/* <ListItemText primary={item.user}
+                        <ListItemIcon sx={{ color: '#6666ff', marginLeft: "-1rem" }}><VisibilityOutlinedIcon sx={{ fontSize: '1rem' }} /></ListItemIcon>
+                        <ListItemText primary={item.views}
                             primaryTypographyProps={{
-                                
-                                height: '1rem',
-                                width: "20rem",
-                                
+                                color: '#6666ff',
+                                width: "1rem",
+                                fontSize: "0.5rem",
+                                margin: "0.5rem auto auto -2.2rem"
+                            }} />
+                        <ListItemIcon sx={{ color: 'gray', marginLeft: "-0.6rem" }}><InsertPhotoOutlinedIcon sx={{ fontSize: '1rem' }} /></ListItemIcon>
+                        <ListItemText primary={item.fileCount}
+                            primaryTypographyProps={{
+                                color: 'gray',
+                                width: "1rem",
+                                fontSize: "0.5rem",
+                                margin: "0.5rem auto auto -2.2rem"
+                            }} />
 
-                            }} /> */}
                     </ListItem>
                 ))}
             </List>
+
+            <Stack spacing={2} style={{ float: 'right', marginTop: '1.5rem' }}>
+                <Pagination count={10} page={page} onChange={handleChange} />
+            </Stack>
 
         </div>
     )

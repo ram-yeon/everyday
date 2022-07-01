@@ -74,36 +74,50 @@ function LeftBar() {
 
     return <Container className={classes.container}>
 
-        <div className={classes.item}>
-            <LocalFireDepartmentIcon className={classes.icon} />
-            <Typography className={classes.text}>
-                <Link to='/hotboard' className={classes.menuLink} >HOT 게시물</Link>
-            </Typography>
-        </div>
-        <div className={classes.item}>
-            <ChatIcon className={classes.icon} />
-            <Typography className={classes.text}>
-                <Link to='/freeboard' className={classes.menuLink} >자유 게시판</Link>
-            </Typography>
-        </div>
-        <div className={classes.item} >
-            <CircleNotificationsIcon className={classes.icon} />
-            <Typography className={classes.text}>
-                <Link to='/informationboard' className={classes.menuLink} >정보 게시판</Link>
-            </Typography>
-        </div>
-        <div className={classes.item} >
-            <GroupIcon className={classes.icon} />
-            <Typography className={classes.text}>
-                <Link to='/clubboard' className={classes.menuLink} >동아리 게시판</Link>
-            </Typography>
-        </div>
-        <div className={classes.item}>
-            <Info className={classes.icon} />
-            <Typography className={classes.text}>
-                <Link to='/noticeboard' className={classes.menuLink} >공지사항</Link>
-            </Typography>
-        </div>
+        <Link to='/hotboard' className={classes.menuLink} >
+            <div className={classes.item}>
+                <LocalFireDepartmentIcon className={classes.icon} />
+                <Typography className={classes.text}>
+                    HOT 게시물
+                </Typography>
+            </div>
+        </Link>
+
+        <Link to='/freeboard' className={classes.menuLink} >
+            <div className={classes.item}>
+                <ChatIcon className={classes.icon} />
+                <Typography className={classes.text}>
+                    자유 게시판
+                </Typography>
+            </div>
+        </Link>
+
+        <Link to='/informationboard' className={classes.menuLink} >
+            <div className={classes.item} >
+                <CircleNotificationsIcon className={classes.icon} />
+                <Typography className={classes.text}>
+                    정보 게시판
+                </Typography>
+            </div>
+        </Link>
+
+        <Link to='/clubboard' className={classes.menuLink} >
+            <div className={classes.item} >
+                <GroupIcon className={classes.icon} />
+                <Typography className={classes.text}>
+                    동아리 게시판
+                </Typography>
+            </div>
+        </Link>
+
+        <Link to='/noticeboard' className={classes.menuLink} >
+            <div className={classes.item}>
+                <Info className={classes.icon} />
+                <Typography className={classes.text}>
+                    공지사항
+                </Typography>
+            </div>
+        </Link>
 
     </Container>
 }

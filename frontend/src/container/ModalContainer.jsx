@@ -4,6 +4,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import { Avatar } from 'antd';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     },
     modal: {
         width: 200,
-        height: 420,
+        height: 470,
         backgroundColor: "white",
         position: "absolute",
         top: 80,
@@ -68,8 +69,12 @@ function ModalContainer(props) {
         {
             text: "로그아웃",
             icon: <ExitToAppIcon />,
-            idx: '3',
-            path: '/'
+            idx: '3'
+        },
+        {
+            text: "탈퇴하기",
+            icon: <SentimentDissatisfiedIcon />,
+            idx: '4'
         }
     ]
     const handleListItemClick = (event, idx) => {
@@ -85,6 +90,17 @@ function ModalContainer(props) {
                 localStorage.removeItem(SESSION_TOKEN_KEY);
                 loginCallBack(false);
                 navigate("/");
+            });
+        }
+        else if (Number(idx) === 4) { //탈퇴하기
+            UserAPI.resign().then(response => {
+                console.log(JSON.stringify(response));
+                localStorage.removeItem(SESSION_TOKEN_KEY);
+                loginCallBack(false);
+                navigate("/");
+            }).catch(error => { 
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
             });
         }
     };

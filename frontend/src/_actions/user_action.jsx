@@ -1,5 +1,5 @@
 import * as UserAPI from '../api/Users';
-import { Message } from '../component/Message';
+// import { Message } from '../component/Message';
 import { LOGIN_USER } from './types';
 
 export function loginUser(dataToSubmit) {
