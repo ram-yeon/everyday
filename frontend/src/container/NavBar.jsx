@@ -117,6 +117,7 @@ function NavBar(props) {
           <InputBase placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
 
         </div>
+
         <div className={classes.myImg}>
           <Avatar alt="My계정 이미지" src={"/images/myImg.png"}
             onClick={handleOpen} />

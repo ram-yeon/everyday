@@ -10,3 +10,5 @@ export const userInfoSelect = () => NewPromise(Axios.get('/users/banner'));
 
 //게시판 별 게시글 목록 조회
 export const eachBoardSelect = (data) => NewPromise(Axios.get('/posts/list/'+data.boardType+'?page='+data.page +'&size='+'3'));
+//공지사항 게시글 목록 조회
+export const noticeBoardSelect = (data) => NewPromise(Axios.get('/notices?page='+data.page +'&size='+'3'));

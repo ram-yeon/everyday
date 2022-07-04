@@ -9,10 +9,7 @@ import GroupIcon from '@mui/icons-material/Group';
 // import { useHistory, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
-
     container: {
-        // border:"2px solid red",
-        paddingLeft: "0rem",
         height: "100vh",
         width: "17%",
         boxShadow: "0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57)",

@@ -37,7 +37,7 @@ function Login(props) {
         }
         UserAPI.login(data).then(response => {
             props.loginCallBack(true);
-            navigate("/");
+            navigate('/', { state: state });
         }).catch(error => {
             console.log(JSON.stringify(error));
             Message.error(error.message);

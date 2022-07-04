@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
-// import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+
 import { makeStyles } from "@material-ui/core";
 import { Box } from '@mui/material/';
 import WriteBox from './WriteBox';
-
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -24,6 +23,7 @@ import Stack from '@mui/material/Stack';
 
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
+import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
     writeBoxBtn: {
@@ -43,20 +43,14 @@ function BoardList(props) {
         boardType,
     } = props;
     const classes = useStyles();
-    const [show, setShow] = useState(false);
+    const navigate = useNavigate();
 
+    const [show, setShow] = useState(false);
     const [post, setPost] = useState([]);
     const postItems = [];
-    // const [user, setUser] = useState('');
-    // const [postTitle, setPostTitle] = useState('');
-    // const [postContent, setPostContent] = useState('');
-    // const [date, setDate] = useState('');
-    // const [likeIcon, setLikeIcon] = useState('');
-    // const [likeCount, setLikeCount] = useState('');
-    // const [commentIcon, setCommentIcon] = useState('');
-    // const [commentCount, setCommentCount] = useState('');
-
     const [page, setPage] = useState(1);
+    const [isInitialize, setIsInitialize] = useState(false);
+
     const handleChange = (event, value) => {
         setPage(value);
     };
@@ -65,44 +59,53 @@ function BoardList(props) {
         boardType: boardType,
         page: page - 1,
     }
-    //게시판 별 게시글 목록 조회
-    BoardAPI.eachBoardSelect(data).then(response => {
-        Object.keys(response.data).forEach(function (k) {
-            // response.data.map(data => ({
+    useEffect(() => {
+        if (!isInitialize) {
+            let token = localStorage.getItem(SESSION_TOKEN_KEY);
+            token = 'Bearer ' + token;
+            const tokenJson = JSON.parse(atob(token.split(".")[1]));
+            if (tokenJson.authority === "USER") {
+                //게시판 별 게시글 목록 조회
+                BoardAPI.eachBoardSelect(data).then(response => {
+                    if (response.data.hasOwnProperty('content')) {
+                        response.data.content.forEach((v, i) => {
+                            const title = JSON.stringify(v.title);                          //제목
+                            const contents = JSON.stringify(v.contents);                    //내용
+                            const registrationDate = JSON.stringify(v.registrationDate);    //등록일
+                            const isAnonymous = JSON.stringify(v.isAnonymous);              //익명여부
+                            let checkAnonymous = ""                                       //익명여부체크
+                            const likeCount = JSON.stringify(v.likeCount);                //좋아요개수
+                            const commentCount = JSON.stringify(v.commentCount);            //댓글개수
+                            const views = JSON.stringify(v.views);                          //조회수
+                            const fileCount = JSON.stringify(v.fileCount);                  //파일
+                            const writer = JSON.stringify(v.writer);                        //작성자
 
-            // }));
-            if (k === 'content') {
-                for (let i = 0; i <= 1; i++) {
-                    let title = response.data[k][i].title;                          //제목
-                    let contents = response.data[k][i].contents;                    //내용
-                    let registrationDate = response.data[k][i].registrationDate;    //등록일
-                    let isAnonymous = response.data[k][i].isAnonymous;              //익명여부
-                    let checkAnonymous = ""                                         //익명여부체크
-                    let likeCount = response.data[k][i].likeCount;                  //좋아요개수
-                    let commentCount = response.data[k][i].commentCount;            //댓글개수
-                    let views = response.data[k][i].views;                          //조회수
-                    let fileCount = response.data[k][i].fileCount;                     //파일
-                    let writer = response.data[k][i].writer;                        //작성자
+                            const titleTrim = title.split('"');
+                            const contentsTrim = contents.split('"');
+                            const registrationDateTrim = registrationDate.split('"');
 
+                            if (isAnonymous === 'N') {
+                                checkAnonymous = writer;
+                            } else {
+                                checkAnonymous = "익명";
+                            }
 
-                    if (isAnonymous === 'N') {
-                        checkAnonymous = writer;
-                    } else {
-                        checkAnonymous = "익명";
+                            postItems.push({
+                                user: checkAnonymous, postTitle: titleTrim, postContent: contentsTrim, date: registrationDateTrim,
+                                likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
+                            });
+                        })
                     }
+                    setPost(postItems);
 
-                    postItems.push({
-                        user: checkAnonymous, postTitle: title, postContent: contents, date: registrationDate,
-                        likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views,
-                    });
-                }
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                }).finally(() => {
+                    setIsInitialize(true);
+                });
             }
-        });
-        setPost(postItems);
-
-    }).catch(error => {
-        console.log(JSON.stringify(error));
-        Message.error(error.message);
+        }
     });
 
 
@@ -111,10 +114,14 @@ function BoardList(props) {
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
                 {title}
             </Box>
-            <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
-                새 글을 작성해주세요! //HOT 게시물엔 이 칸 안보임
-                <BorderColorIcon sx={{ float: "right" }} />
-            </Box>
+            {   //HOT게시물이면 글작성박스 안보이도록
+                (boardType !== "HOT") ?
+                    <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
+                        새 글을 작성해주세요!
+                        <BorderColorIcon sx={{ float: "right" }} />
+                    </Box>
+                    : null
+            }
             {
                 show ? <WriteBox show={show} /> : null
             }
@@ -123,9 +130,8 @@ function BoardList(props) {
                     <ListItem
                         sx={{ border: "1px gray solid", height: "15vh" }}
                         button
-                        key={item.postTitle}
-                    // onClick={() => history.push(item.path)}
-                    // className={location.pathname == item.path ? classes.active : null}
+                        key={item.id}
+                        onClick={() => navigate('/boarddetail/' + item.id, { state: item.id })}
                     >
                         <div>
                             <ListItemText primary={item.postTitle}
@@ -196,7 +202,7 @@ function BoardList(props) {
                 ))}
             </List>
 
-            <Stack spacing={2} style={{ float: 'right', marginTop: '1.5rem' }}>
+            <Stack spacing={2} style={{ marginLeft: '32%', marginTop: '1.5rem' }}>
                 <Pagination count={10} page={page} onChange={handleChange} />
             </Stack>
 

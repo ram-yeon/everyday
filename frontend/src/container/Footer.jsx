@@ -2,31 +2,23 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { makeStyles } from "@material-ui/core";
 
-
 const useStyles = makeStyles((theme) => ({
     footerContainer: {
-        textAlign: "center",
+        textAlign: "right",
         width: "100%",
         height: "3rem",
-        margin:"5rem 0rem 1rem auto",
-        bottom:0,
-        [theme.breakpoints.down("sm")]: {
-            
-        },
-        
+        margin:"9rem auto 1rem auto",
+        [theme.breakpoints.down("sm")]: {    
+        }, 
     },
-
     link: {
         textDecoration: "none",
         fontSize: "0.7rem",
         color: "gray",
         margin: "auto 0.5rem",
-        [theme.breakpoints.down("sm")]: {
-            
+        [theme.breakpoints.down("sm")]: {   
         },
     },
-    
-
 }));
 
 function Footer() {

@@ -8,9 +8,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
-
 const useStyles = makeStyles((theme) => ({
-
     writeBox: {
         height: "46vh",
         border: "2px lightgray solid",
@@ -45,8 +43,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
-
 function WriteBox(props) {
     const classes = useStyles();
     // const [inputValue, setInputValue] = useState('');
@@ -76,7 +72,6 @@ function WriteBox(props) {
                 <div>
                     <TextField id="standard-basic" label="글 제목" variant="standard" sx={{ width: "100%" }} />
                 </div>
-
                 <div>
                     <textarea
                         onKeyUp={checkLength}
