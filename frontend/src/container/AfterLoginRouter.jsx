@@ -5,7 +5,7 @@ import MainBoard from '../pages/MainBoard';
 
 import NoticeBoard from '../pages/Notice/NoticeBoard';
 import HotBoardList from '../pages/HotBoard/HotBoardList';
-import InformationBoardList from '../pages/InformationBoard/InformationBoardList';
+import InformationBoardList from '../pages/InfoBoard/InfoBoardList';
 import FreeBoardList from '../pages/FreeBoard/FreeBoardList';
 import ClubBoardList from '../pages/ClubBoard/ClubBoardList';
 
@@ -27,12 +27,16 @@ function AfterLoginRouter() {
 
                 <Route path="/noticeboard" element={<NoticeBoard />} />
                 <Route path="/hotboard" element={<HotBoardList />} />
-                <Route path="/informationboard" element={<InformationBoardList />} />
+                <Route path="/infoboard" element={<InformationBoardList />} />
                 <Route path="/freeboard" element={<FreeBoardList />} />
                 <Route path="/clubboard" element={<ClubBoardList />} />
 
-                <Route path="/boarddetail" element={<BoardDetail />} />
-                <Route path="/noticeboarddetail" element={<NoticeBoardDetail />} />
+                <Route path="/hotboard/detail/*" element={<BoardDetail />} />
+                <Route path="/infoboard/detail/*" element={<BoardDetail />} />
+                <Route path="/freeboard/detail/*" element={<BoardDetail />} />
+                <Route path="/clubboard/detail/*" element={<BoardDetail />} />
+
+                <Route path="/noticeboard/detail/*" element={<NoticeBoardDetail />} />
 
                 <Route path="/useterms" element={<UseTerms />} />
                 <Route path="/privacypolicy" element={<PrivacyPolicy />} />

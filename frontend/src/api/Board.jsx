@@ -12,3 +12,8 @@ export const userInfoSelect = () => NewPromise(Axios.get('/users/banner'));
 export const eachBoardSelect = (data) => NewPromise(Axios.get('/posts/list/'+data.boardType+'?page='+data.page +'&size='+'3'));
 //공지사항 게시글 목록 조회
 export const noticeBoardSelect = (data) => NewPromise(Axios.get('/notices?page='+data.page +'&size='+'3'));
+
+//게시글 상세조회
+export const boardDetailSelect = (data) => NewPromise(Axios.get('/posts/'+data.postId));
+//공지사항 상세조회
+export const noticeBoardDetailSelect = (data) => NewPromise(Axios.get('/notices/'+data.noticeId));

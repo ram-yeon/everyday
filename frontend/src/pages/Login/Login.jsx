@@ -7,13 +7,13 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 // import { loginUser } from '../../_actions/user_action';
 import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Login(props) {
     const [idVal, setIdVal] = useState("");
     const [pwVal, setPwVal] = useState("");
     const [checked, setChecked] = useState(false);
-    const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
+    // const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
     const navigate = useNavigate();
     // const dispatch = useDispatch();
     
@@ -32,12 +32,12 @@ function Login(props) {
         const data = {
             loginId: idVal,
             password: pwVal,
-            type: state,
+            type: 'USER',
             isKeptLogin: isKeptLogin,
         }
         UserAPI.login(data).then(response => {
             props.loginCallBack(true);
-            navigate('/', { state: state });
+            navigate('/');
         }).catch(error => {
             console.log(JSON.stringify(error));
             Message.error(error.message);

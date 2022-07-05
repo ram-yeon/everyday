@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 import { makeStyles } from "@material-ui/core";
 import { Box } from '@mui/material/';
 import WriteBox from './WriteBox';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-// import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-// import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';             //채워진좋아요
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
+
+import moment from 'moment';
+import 'moment/locale/ko';
 
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
@@ -42,62 +43,61 @@ function BoardList(props) {
         title,
         boardType,
     } = props;
+    const boardTypeToLowerCase = boardType.toLowerCase();
     const classes = useStyles();
     const navigate = useNavigate();
 
     const [show, setShow] = useState(false);
     const [post, setPost] = useState([]);
-    const postItems = [];
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [isInitialize, setIsInitialize] = useState(false);
 
     const handleChange = (event, value) => {
         setPage(value);
+
+        getBoardList({
+            boardType: boardType,
+            page: value - 1,    //추후 -1 제거 필요
+        });
     };
 
-    const data = {
-        boardType: boardType,
-        page: page - 1,
-    }
-    useEffect(() => {
-        if (!isInitialize) {
-            let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            token = 'Bearer ' + token;
+    const getBoardList = (apiRequestData) => {
+        let token = localStorage.getItem(SESSION_TOKEN_KEY);
+            token = 'Bearer ' + token;  //추후 Bearer 제거 필요
             const tokenJson = JSON.parse(atob(token.split(".")[1]));
             if (tokenJson.authority === "USER") {
                 //게시판 별 게시글 목록 조회
-                BoardAPI.eachBoardSelect(data).then(response => {
+                BoardAPI.eachBoardSelect(apiRequestData).then(response => {
                     if (response.data.hasOwnProperty('content')) {
+                        const postItems = [];
+
                         response.data.content.forEach((v, i) => {
                             const title = JSON.stringify(v.title);                          //제목
                             const contents = JSON.stringify(v.contents);                    //내용
                             const registrationDate = JSON.stringify(v.registrationDate);    //등록일
-                            const isAnonymous = JSON.stringify(v.isAnonymous);              //익명여부
-                            let checkAnonymous = ""                                       //익명여부체크
+                            const writer = JSON.stringify(v.writer);                        //작성자
                             const likeCount = JSON.stringify(v.likeCount);                //좋아요개수
                             const commentCount = JSON.stringify(v.commentCount);            //댓글개수
                             const views = JSON.stringify(v.views);                          //조회수
                             const fileCount = JSON.stringify(v.fileCount);                  //파일
-                            const writer = JSON.stringify(v.writer);                        //작성자
 
                             const titleTrim = title.split('"');
                             const contentsTrim = contents.split('"');
                             const registrationDateTrim = registrationDate.split('"');
-
-                            if (isAnonymous === 'N') {
-                                checkAnonymous = writer;
-                            } else {
-                                checkAnonymous = "익명";
-                            }
-
+                            const writerTrim = writer.split('"');
+                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                        
                             postItems.push({
-                                user: checkAnonymous, postTitle: titleTrim, postContent: contentsTrim, date: registrationDateTrim,
+                                user: writerTrim, postTitle: titleTrim, postContent: contentsTrim, date: dateFormat,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
                         })
+                        setPost(postItems);
                     }
-                    setPost(postItems);
-
+                    if (response.data.hasOwnProperty('totalPages')) {
+                        setTotalPages(response.data.totalPages);
+                    }
                 }).catch(error => {
                     console.log(JSON.stringify(error));
                     Message.error(error.message);
@@ -105,9 +105,16 @@ function BoardList(props) {
                     setIsInitialize(true);
                 });
             }
+    };
+
+    useEffect(() => {
+        if (!isInitialize) {
+            getBoardList({
+                boardType: boardType,
+                page: 0,    //추후 1로 수정필요
+            });
         }
     });
-
 
     return (
         <div>
@@ -117,7 +124,7 @@ function BoardList(props) {
             {   //HOT게시물이면 글작성박스 안보이도록
                 (boardType !== "HOT") ?
                     <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
-                        새 글을 작성해주세요!
+                        새 글을 작성하세요.
                         <BorderColorIcon sx={{ float: "right" }} />
                     </Box>
                     : null
@@ -131,8 +138,7 @@ function BoardList(props) {
                         sx={{ border: "1px gray solid", height: "15vh" }}
                         button
                         key={item.id}
-                        onClick={() => navigate('/boarddetail/' + item.id, { state: item.id })}
-                    >
+                        onClick={() => navigate('/' + boardTypeToLowerCase + 'board/detail/' + item.id, { state: { postId: item.id, headTitle: title } })}>
                         <div>
                             <ListItemText primary={item.postTitle}
                                 primaryTypographyProps={{
@@ -160,7 +166,7 @@ function BoardList(props) {
                             <ListItemText primary={item.user}
                                 primaryTypographyProps={{
                                     fontSize: '0.7rem',
-                                    width: "2rem",
+                                    width: "5rem",
                                     color: "#C00000"
                                 }} />
                         </div>
@@ -203,7 +209,7 @@ function BoardList(props) {
             </List>
 
             <Stack spacing={2} style={{ marginLeft: '32%', marginTop: '1.5rem' }}>
-                <Pagination count={10} page={page} onChange={handleChange} />
+                <Pagination count={totalPages} page={page} onChange={handleChange} />
             </Stack>
 
         </div>

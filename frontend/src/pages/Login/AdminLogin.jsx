@@ -3,12 +3,12 @@ import './Login.css'
 
 import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function AdminLogin(props) {
     const [idVal, setIdVal] = useState("");
     const [pwVal, setPwVal] = useState("");
-    const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
+    // const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
     const navigate = useNavigate();
 
     const handleBtn = (event) => {
@@ -16,11 +16,11 @@ function AdminLogin(props) {
         const data = {
             loginId: idVal,
             password: pwVal,
-            type: state,
+            type: 'MANAGER',
         }
         UserAPI.login(data).then(response => {
             props.loginCallBack(true);
-            navigate('/', { state: state });
+            navigate('/');
         }).catch(error => {
             console.log(JSON.stringify(error));
             Message.error(error.message);

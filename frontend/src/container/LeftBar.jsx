@@ -89,7 +89,7 @@ function LeftBar() {
             </div>
         </Link>
 
-        <Link to='/informationboard' className={classes.menuLink} >
+        <Link to='/infoboard' className={classes.menuLink} >
             <div className={classes.item} >
                 <CircleNotificationsIcon className={classes.icon} />
                 <Typography className={classes.text}>

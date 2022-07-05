@@ -17,6 +17,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
+import moment from 'moment';
+import 'moment/locale/ko';
+
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
@@ -45,58 +48,71 @@ function NoticeBoardList(props) {
 
     const [show, setShow] = useState(false);
     const [notice, setNotice] = useState([]);
-    const noticeItems = [];
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [isInitialize, setIsInitialize] = useState(false);
 
     const handleChange = (event, value) => {
         setPage(value);
+
+        getBoardList({
+            page: value - 1,    //추후 -1 제거 필요
+        });
     };
-    const data = {
-        page: page - 1,
-    }
+
+    const getBoardList = (apiRequestData) => {
+        let token = localStorage.getItem(SESSION_TOKEN_KEY);
+        token = 'Bearer ' + token;
+        const tokenJson = JSON.parse(atob(token.split(".")[1]));
+        if (tokenJson.authority === "USER") {
+            //공지사항 게시글 목록 조회
+            BoardAPI.noticeBoardSelect(apiRequestData).then(response => {
+                if (response.data.hasOwnProperty('content')) {
+                    const noticeItems = [];
+                    response.data.content.forEach((v, i) => {
+                        const title = JSON.stringify(v.title);
+                        const registrationDate = JSON.stringify(v.registrationDate);
+                        const likeCount = JSON.stringify(v.likeCount);
+                        const views = JSON.stringify(v.views);
+                        const fileCount = JSON.stringify(v.fileCount);
+
+                        const titleTrim = title.split('"');
+                        const registrationDateTrim = registrationDate.split('"');
+                        const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+
+                        noticeItems.push({
+                            postTitle: titleTrim, date: dateFormat, likeCount: likeCount, fileCount: fileCount, views: views, id: v.id
+                        });
+                    })
+                    setNotice(noticeItems);
+                } 
+                if (response.data.hasOwnProperty('totalPages')) {
+                    setTotalPages(response.data.totalPages);
+                }
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            }).finally(() => {
+                setIsInitialize(true);
+            });
+        }
+    };
+
     useEffect(() => {
         if (!isInitialize) {
-            let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            token = 'Bearer ' + token;
-            const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.authority === "USER") {
-                //공지사항 게시글 목록 조회
-                BoardAPI.noticeBoardSelect(data).then(response => {
-                    if (response.data.hasOwnProperty('content')) {
-                        response.data.content.forEach((v, i) => {
-                            const title = JSON.stringify(v.title);
-                            const registrationDate = JSON.stringify(v.registrationDate);
-                            const likeCount = JSON.stringify(v.likeCount);
-                            const views = JSON.stringify(v.views);
-                            const fileCount = JSON.stringify(v.fileCount);
-
-                            const titleTrim = title.split('"');
-                            const registrationDateTrim = registrationDate.split('"');
-
-                            noticeItems.push({
-                                postTitle: titleTrim, date: registrationDateTrim, likeCount: likeCount, fileCount: fileCount, views: views, id: v.id
-                            });
-                        })
-                    }
-                    setNotice(noticeItems);
-
-                }).catch(error => {
-                    console.log(JSON.stringify(error));
-                    Message.error(error.message);
-                }).finally(() => {
-                    setIsInitialize(true);
-                });
-            }
+            getBoardList({
+                page: 0,    //추후 1로 수정필요
+            });
         }
     });
+
     return (
         <div>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
                 {title}
             </Box>
             <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
-                공지사항을 등록해주세요. //관리자만 이 칸 보임
+                공지사항을 등록해주세요. //관리자만 칸 보임
                 <BorderColorIcon sx={{ float: "right" }} />
             </Box>
 
@@ -110,7 +126,7 @@ function NoticeBoardList(props) {
                         sx={{ border: "1px gray solid", height: "12vh" }}
                         button
                         key={item.id}
-                        onClick={() => navigate('/noticeboarddetail/' + item.id, { state: item.id })}
+                        onClick={() => navigate('/noticeboard/detail/' + item.id, { state: item.id })}
                     >
                         <div>
                             <ListItemText primary={item.postTitle}
@@ -128,7 +144,7 @@ function NoticeBoardList(props) {
                                 }} />
 
 
-                            <ListItemText primary="에브리타임"
+                            <ListItemText primary="에브리데이"
                                 primaryTypographyProps={{
                                     fontSize: '0.7rem',
                                     width: "4rem",
@@ -167,7 +183,7 @@ function NoticeBoardList(props) {
             </List>
 
             <Stack spacing={2} style={{ marginLeft: '32%', marginTop: '1.5rem' }}>
-                <Pagination count={10} page={page} onChange={handleChange} />
+                <Pagination count={totalPages} page={page} onChange={handleChange} />
             </Stack>
 
         </div>

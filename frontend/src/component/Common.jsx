@@ -12,7 +12,6 @@ export const NewPromise = (promise) => {
                 } else {
                     reject({error: {}, message: response.statusText});
                 }
-                // debugger
             })
             .catch((error) => {
                 const errorMessage = CommonJs.extractErrorMessage(error);

@@ -1,7 +1,7 @@
 import React from 'react'
 import BoardList from '../../component/Table/BoardList';
 
-function InformationBoard() {
+function InfoBoard() {
 
   return (
     <div>
@@ -10,4 +10,4 @@ function InformationBoard() {
   )
 }
 
-export default InformationBoard
+export default InfoBoard

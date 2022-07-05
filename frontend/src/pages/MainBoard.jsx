@@ -6,6 +6,9 @@ import { Box } from '@mui/material/';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import moment from 'moment';
+import 'moment/locale/ko';	
+
 import { useNavigate } from 'react-router-dom';
 
 import * as BoardAPI from '../api/Board';
@@ -52,7 +55,8 @@ function MainBoard() {
                             const registrationDate = JSON.stringify(v.registrationDate);
                             const titleTrim = title.split('"');
                             const registrationDateTrim = registrationDate.split('"');
-                            noticeItems.push({ text: titleTrim, date: registrationDateTrim, id: v.id });
+                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            noticeItems.push({ text: titleTrim, date: dateFormat, id: v.id });
                         })
                     }
                     if (response.data.hasOwnProperty('FREE')) {
@@ -61,7 +65,8 @@ function MainBoard() {
                             const registrationDate = JSON.stringify(v.registrationDate);
                             const titleTrim = title.split('"');
                             const registrationDateTrim = registrationDate.split('"');
-                            freeItems.push({ text: titleTrim, date: registrationDateTrim, id: v.id });
+                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            freeItems.push({ text: titleTrim, date: dateFormat, id: v.id });
                         })
                     }
                     if (response.data.hasOwnProperty('INFO')) {
@@ -70,7 +75,8 @@ function MainBoard() {
                             const registrationDate = JSON.stringify(v.registrationDate);
                             const titleTrim = title.split('"');
                             const registrationDateTrim = registrationDate.split('"');
-                            infoItems.push({ text: titleTrim, date: registrationDateTrim, id: v.id });
+                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            infoItems.push({ text: titleTrim, date: dateFormat, id: v.id });
                         })
                     }
                     if (response.data.hasOwnProperty('CLUB')) {
@@ -79,7 +85,8 @@ function MainBoard() {
                             const registrationDate = JSON.stringify(v.registrationDate);
                             const titleTrim = title.split('"');
                             const registrationDateTrim = registrationDate.split('"');
-                            clubItems.push({ text: titleTrim, date: registrationDateTrim, id: v.id });
+                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            clubItems.push({ text: titleTrim, date: dateFormat, id: v.id });
                         })
                     }
                     if (response.data.hasOwnProperty('HOT')) {
@@ -88,7 +95,8 @@ function MainBoard() {
                             const registrationDate = JSON.stringify(v.registrationDate);
                             const titleTrim = title.split('"');
                             const registrationDateTrim = registrationDate.split('"');
-                            hotItems.push({ text: titleTrim, date: registrationDateTrim, id: v.id });
+                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            hotItems.push({ text: titleTrim, date: dateFormat, id: v.id });
                         })
                     }
                     setNotice(noticeItems);
@@ -123,7 +131,7 @@ function MainBoard() {
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/noticeboarddetail/' + item.id, { state: item.id })}
+                                        onClick={() => navigate('/noticeboard/detail/' + item.id, { state: item.id })}
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{
@@ -139,9 +147,8 @@ function MainBoard() {
                                             primaryTypographyProps={{
                                                 color: 'gray',
                                                 fontSize: '0.5rem',
-                                                width: "3rem",
-                                                marginLeft: "82%",
-
+                                                width: "5rem",
+                                                marginLeft: "83%",
                                             }} />
                                     </ListItem>
                                 ))}
@@ -161,7 +168,7 @@ function MainBoard() {
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/boarddetail/' + item.id, { state: item.id })}
+                                        onClick={() => navigate('/hotboard/detail/' + item.id, { state: { postId: item.id, headTitle: 'HOT 게시물' } })}
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{
@@ -178,9 +185,9 @@ function MainBoard() {
                                             primaryTypographyProps={{
                                                 color: 'gray',
                                                 fontSize: '0.5rem',
-                                                width: "3rem",
+                                                width: "5rem",
                                                 marginLeft: "65%",
-
+                                                
                                             }} />
                                     </ListItem>
                                 ))}
@@ -201,7 +208,7 @@ function MainBoard() {
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/boarddetail/' + item.id, { state: item.id })}
+                                        onClick={() => navigate('/hotboard/detail/' + item.id, { state: { postId: item.id, headTitle: '자유 게시판' } })}
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{
@@ -218,7 +225,7 @@ function MainBoard() {
                                             primaryTypographyProps={{
                                                 color: 'gray',
                                                 fontSize: '0.5rem',
-                                                width: "3rem",
+                                                width: "5rem",
                                                 marginLeft: "65%",
 
                                             }} />
@@ -234,14 +241,14 @@ function MainBoard() {
                     <>
                         <Grid item xs={12} sm={6}>
                             <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                                <Link to='/informationboard' className={classes.link}>정보 게시판</Link>
+                                <Link to='/infoboard' className={classes.link}>정보 게시판</Link>
                             </Box>
                             <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                                 {info.map(item => (
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/boarddetail/' + item.id, { state: item.id })}
+                                        onClick={() => navigate('/infoboard/detail/' + item.id, { state: { postId: item.id, headTitle: '정보 게시판' } })}
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{
@@ -258,7 +265,7 @@ function MainBoard() {
                                             primaryTypographyProps={{
                                                 color: 'gray',
                                                 fontSize: '0.5rem',
-                                                width: "3rem",
+                                                width: "5rem",
                                                 marginLeft: "65%",
 
                                             }} />
@@ -281,7 +288,7 @@ function MainBoard() {
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/boarddetail/' + item.id, { state: item.id })}
+                                        onClick={() => navigate('/clubboard/detail/' + item.id, { state: { postId: item.id, headTitle: '동아리 게시판' } })}
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{
@@ -298,7 +305,7 @@ function MainBoard() {
                                             primaryTypographyProps={{
                                                 color: 'gray',
                                                 fontSize: '0.5rem',
-                                                width: "3rem",
+                                                width: "5rem",
                                                 marginLeft: "65%",
 
                                             }} />

@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Board.css';
 import WriteReply from './WriteReply';
 import { Link } from 'react-router-dom';
 import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
 
-// import { Info } from '@material-ui/icons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-// import BorderColorIcon from '@mui/icons-material/BorderColor';
-// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-// import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';             //채워진좋아요
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
 
-// import TextsmsIcon from '@mui/icons-material/Textsms';
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 
@@ -24,8 +21,21 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
 import { FormControlLabel, Checkbox } from '@mui/material';
+import { useLocation } from 'react-router-dom';
+
+import moment from 'moment';
+import 'moment/locale/ko';
+
+import * as BoardAPI from '../../api/Board';
+import { Message } from '../../component/Message';
+import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
+    headLink: {
+        textDecoration: 'none',
+        cursor: 'pointer',
+        color: 'black',
+    },
     writerIcon: {
         color: "gray",
         [theme.breakpoints.up("sm")]: {
@@ -51,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
         // display: "inline",
         cursor: "pointer",
     },
-
     writer: {
         fontWeight: "bold",
         fontSize: "0.9rem",
@@ -61,10 +70,7 @@ const useStyles = makeStyles((theme) => ({
         color: "gray",
         fontSize: "0.7rem",
     },
-
     checkAnonymous: {
-        // float: "right",
-        // marginLeft: "3rem",
         marginTop: "-4.5rem",
     },
     registerBtn: {
@@ -92,8 +98,71 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function BoardDetail(props) {
+function BoardDetail() {
+    const location = useLocation();
+    const postId = location.state.postId;
+    const headTitle = location.state.headTitle;
 
+    const classes = useStyles();
+    const [commentVal, setCommentVal] = useState('');
+    const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
+    const [isAnonymous, setIsAnonymous] = useState('');
+    const [checkAnonymous, setCheckAnonymous] = useState('');
+    const [writer, setWriter] = useState('');
+    const [likeCount, setLikeCount] = useState('');
+    const [commentCount, setCommentCount] = useState('');
+    const [views, setViews] = useState('');
+    const [fileCount, setFileCount] = useState('');
+    const [title, setTitle] = useState('');
+    const [contents, setContents] = useState('');
+    const [dateFormat, setDateFormat] = useState('');
+
+    // const [postDetail, setPostDetail] = useState([]);
+    // const postDetailItems = [];
+    const [isInitialize, setIsInitialize] = useState(false);
+    const data = {
+        postId: postId,
+    }
+
+    useEffect(() => {
+        if (!isInitialize) {
+            let token = localStorage.getItem(SESSION_TOKEN_KEY);
+            token = 'Bearer ' + token;
+            const tokenJson = JSON.parse(atob(token.split(".")[1]));
+            if (tokenJson.authority === "USER") {
+                //게시글 상세조회
+                BoardAPI.boardDetailSelect(data).then(response => {
+                    // file comment 처리필요
+                    // if (response.data.hasOwnProperty('comment')) {
+                    //
+                    // } else if (response.data.hasOwnProperty('file')) {
+                    //
+                    // }
+
+                    const boardType = response.data.boardType;
+                    setBoardTypeToLowerCase(boardType.toLowerCase());
+
+                    setTitle((JSON.stringify(response.data.title).split('"')));
+                    setContents((JSON.stringify(response.data.contents).split('"')));
+                    setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                    setWriter((JSON.stringify(response.data.writer).split('"')));
+                    
+                    setLikeCount(JSON.stringify(response.data.likeCount));
+                    setCommentCount(JSON.stringify(response.data.commentCount));
+                    setViews(JSON.stringify(response.data.views));
+                    setFileCount(JSON.stringify(response.data.fileCount));
+
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                }).finally(() => {
+                    setIsInitialize(true);
+                });
+            }
+        }
+    });
+
+    //댓글
     const comment = [
         {
             writer: "익명",
@@ -103,6 +172,7 @@ function BoardDetail(props) {
             replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeCount: "0",
+            id: 1,
         },
         {
             writer: "익명",
@@ -112,33 +182,31 @@ function BoardDetail(props) {
             replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
             likeCount: "0",
+            id: 2,
         },
     ]
-
-    const classes = useStyles();
-    const [commentVal, setCommentVal] = useState("");
-
 
     return (
         <div>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
-                게시판 상세
+                <Link to={'/' + boardTypeToLowerCase + 'board'} className={classes.headLink}>{headTitle}</Link>
             </Box>
             <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
-
                 <AccountCircleIcon className={classes.writerIcon} />
                 <div style={{ float: "right" }}>
                     <Typography className={classes.postUpdate}>수정</Typography>
                     <Typography className={classes.postDelete}>삭제</Typography>
                 </div>
-                <Typography className={classes.writer}>익명</Typography>
-                <Typography className={classes.date}>20/02/12/ 21:42</Typography>
-                <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>학교주변</strong></Typography>
-                <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>만날사람~</Typography>
+                <Typography className={classes.writer}>{writer}</Typography>
+                <Typography className={classes.date}>{dateFormat}</Typography>
+                <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
+                <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
 
                 <div style={{ margin: "2rem auto auto 0.3rem" }}>
-                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} /><Typography variant="" style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>0</Typography>
-                    <TextsmsOutlinedIcon sx={{ fontSize: '1rem', color: '#0CDAE0', marginLeft: "1rem" }} /><Typography variant="" style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#0CDAE0' }}>0</Typography>
+                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>{likeCount}</span>
+                    <TextsmsOutlinedIcon sx={{ fontSize: '1rem', color: '#0CDAE0', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#0CDAE0' }}>{commentCount}</span>
+                    <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
+                    <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
                 </div>
             </Box>
 
@@ -147,9 +215,7 @@ function BoardDetail(props) {
                 {comment.map(item => (
                     <ListItem
                         sx={{ border: "1px gray solid", height: "17vh" }}
-                    // key={item.date}
-                    // className={location.pathname == item.path ? classes.active : null}
-                    >
+                        key={item.id}>
                         <div>
                             <ListItemText primary={item.writer}
                                 primaryTypographyProps={{
@@ -210,8 +276,8 @@ function BoardDetail(props) {
                 label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "85%" }} />
             <BorderColorIcon className={classes.registerBtn} />
 
-            {/* 게시판따라경로분기처리필요 */}
-            <Link to='/freeboard'><button className={classes.listBtn}>목록</button></Link>
+            {/* 게시판따라경로분기처리 */}
+            <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
         </div>
     )
 }

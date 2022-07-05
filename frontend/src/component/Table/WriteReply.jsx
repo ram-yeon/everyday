@@ -31,14 +31,16 @@ function WriteReply() {
             content: "대댓글 달고 갑니다~~~",
             date: "20/02/12/ 21:42",
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",      
+            likeCount: "0", 
+            id:1,     
         },
         {
             writer: "익명",
             content: "대댓나도 나두 나도 도나도나도나도나 ",
             date: "20/02/12/ 21:42",
             likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",        
+            likeCount: "0",      
+            id:2,  
         },
     ]
 
@@ -49,7 +51,7 @@ function WriteReply() {
                     <ListItem
                         sx={{ border: "2px gray dotted", height: "13vh", backgroundColor:"#F6F6F6" }}
                     // button
-                    // key={item.date}
+                    key={item.id}
                     // onClick={() => history.push(item.path)}
                     // className={location.pathname == item.path ? classes.active : null}
                     >
