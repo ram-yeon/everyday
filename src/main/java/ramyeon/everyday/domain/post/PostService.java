@@ -97,7 +97,7 @@ public class PostService {
                 postsBoardDtos.add(
                         PostDto.PostResponseDto.builder()
                                 .id(post.getId())
-                                .writer(post.getUser().getNickname())
+                                .writer(getWriter(post.getUser(), post.getIsAnonymous()))
                                 .title(post.getTitle())
                                 .contents(post.getContents())
                                 .registrationDate(post.getRegistrationDate())
@@ -120,7 +120,7 @@ public class PostService {
             return posts.map(
                     post -> PostDto.PostResponseDto.builder()
                             .id(post.getId())
-                            .writer(post.getUser().getNickname())
+                            .writer(getWriter(post.getUser(), post.getIsAnonymous()))
                             .title(post.getTitle())
                             .contents(post.getContents())
                             .registrationDate(post.getRegistrationDate())
@@ -155,7 +155,7 @@ public class PostService {
                 commentDtoList.add(
                         CommentDto.CommentResponseDto.builder()
                                 .id(comment.getId())
-                                .writer(comment.getUser().getNickname())
+                                .writer(getCommentWriter(comment.getUser(), post.getUser(), comment.getIsAnonymous(), post.getIsAnonymous()))
                                 .contents(comment.getContents())
                                 .registrationDate(comment.getRegistrationDate())
                                 .commentType(comment.getCommentType())
@@ -167,7 +167,7 @@ public class PostService {
 
             return PostDto.PostResponseDto.builder()
                     .id(post.getId())
-                    .writer(post.getUser().getNickname())
+                    .writer(getWriter(post.getUser(), post.getIsAnonymous()))
                     .title(post.getTitle())
                     .contents(post.getContents())
                     .registrationDate(post.getRegistrationDate())
@@ -196,7 +196,7 @@ public class PostService {
                     // Post 엔티티를 PostResponseDto로 변환
                     PostDto.PostResponseDto.builder()
                             .id(post.getId())
-                            .writer(post.getUser().getNickname())
+                            .writer(getWriter(post.getUser(), post.getIsAnonymous()))
                             .title(post.getTitle())
                             .contents(post.getContents())
                             .registrationDate(post.getRegistrationDate())
@@ -256,7 +256,7 @@ public class PostService {
             postDtoList.add(
                     PostDto.PostResponseDto.builder()
                             .id(post.getId())
-                            .writer(post.getUser().getNickname())
+                            .writer(getWriter(post.getUser(), post.getIsAnonymous()))
                             .title(post.getTitle())
                             .contents(post.getContents())
                             .registrationDate(post.getRegistrationDate())
@@ -303,6 +303,36 @@ public class PostService {
         return likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());
     }
 
+    // 게시글 작성자 조회
+    String getWriter(User user, Whether isAnonymous) {
+        if (user == null)  // 삭제된 유저 처리
+            return "(알수없음)";
+        else {
+            if (isAnonymous == Whether.Y)  // 익명 처리
+                return "익명";
+            else
+                return user.getNickname();  // 닉네임
+        }
+    }
+
+    // 댓글 작성자 조회
+    String getCommentWriter(User commentUser, User postUser, Whether commentIsAnonymous, Whether postIsAnonymous) {
+        if (commentUser == null)  // 삭제된 유저 처리
+            return "(알수없음)";
+        else {
+            // 게시글 작성자와 댓글 작성자가 같고, 게시글이 익명이 아니고, 댓글이 익명일 때
+            if (commentUser == postUser && postIsAnonymous == Whether.N && commentIsAnonymous == Whether.Y)
+                return "익명";
+            if (commentIsAnonymous == Whether.Y) {  // 익명 처리
+                if (commentUser == postUser)  // 글 작성자와 댓글 작성자가 같으면
+                    return "익명(글쓴이)";
+                else   // 글 작성자와 댓글 작성자가 다르면
+                    return "익명";
+            } else
+                return commentUser.getNickname();  // 닉네임
+        }
+    }
+
     // 게시글 검색
     public PostDto.PostsSearchResponseDto getPostsSearch(String keyword, String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
@@ -310,7 +340,7 @@ public class PostService {
         Page<PostDto.PostResponseDto> postDtos = posts.map(
                 post -> PostDto.PostResponseDto.builder()
                         .id(post.getId())
-                        .writer(post.getUser().getNickname())
+                        .writer(getWriter(post.getUser(), post.getIsAnonymous()))
                         .title(post.getTitle())
                         .contents(post.getContents())
                         .registrationDate(post.getRegistrationDate())
