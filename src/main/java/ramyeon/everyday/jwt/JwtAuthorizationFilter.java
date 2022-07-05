@@ -15,8 +15,11 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 인증이나 권한이 필요한 주소 요청이 있을 때 해당 필터를 거침
 
-    // 필터를 제외할 리소스
-    private static final String[] whitelist = {"/schools", "/login", "/email-authenticate", "/check-authenticationcode", "/find-id", "/find-password", "/users/password/edit", "/users"};
+    // 필터 적용을 제외할 리소스
+    private static final String[] whitelist = {"GET/schools", "POST/login", "POST/email-authenticate", "POST/check-authenticationcode", "POST/find-id", "POST/find-password", "PATCH/users/password/edit", "POST/users"};
+
+    // DELETE /users
+    // POST /users
 
     private JwtTokenProvider jwtTokenProvider;
 
@@ -28,7 +31,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        if (isCheckPath(request.getRequestURI())) {
+        if (isCheckPath(request.getMethod() + request.getRequestURI())) {
 
             String header = request.getHeader(JwtProperties.HEADER_KEY_NAME);
             if (jwtTokenProvider.validateHeader(header, response)) {  // 유효한 헤더
@@ -52,7 +55,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
 
-    private boolean isCheckPath(String requestURI) {  // 필터를 적용 여부
-        return !PatternMatchUtils.simpleMatch(whitelist, requestURI);
+    private boolean isCheckPath(String requestMethodAndURI) {  // 필터 적용 여부
+        return !PatternMatchUtils.simpleMatch(whitelist, requestMethodAndURI);
     }
 }
