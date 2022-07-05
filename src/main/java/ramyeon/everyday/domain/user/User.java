@@ -73,6 +73,10 @@ public class User extends DateBaseEntity {  // 회원
         this.password = password;
     }
 
+    // 회원 삭제
+    public void delete(School school) {
+        deleteFromSchool(school);
+    }
 
     //== 연관관계 메서드 ==//
 
@@ -85,6 +89,9 @@ public class User extends DateBaseEntity {  // 회원
         this.token = token;
     }
 
+    public void deleteFromSchool(School school) {
+        school.getUserList().remove(this);
+    }
 
     //== 생성 메서드 ==//
 

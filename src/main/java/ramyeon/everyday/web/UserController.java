@@ -47,6 +47,15 @@ public class UserController {
     }
 
     /**
+     * 회원 삭제 API
+     */
+    @DeleteMapping("/users")
+    public ResponseEntity deleteUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        userService.deleteUser(principalDetails.getUsername());
+        return new ResponseEntity<>(new ResultDto(200, "회원 탈퇴 성공"), HttpStatus.OK);
+    }
+
+    /**
      * 회원 정보 배너 조회 API
      */
     @GetMapping("/users/banner")

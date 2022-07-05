@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.school.School;
 import ramyeon.everyday.domain.school.SchoolRepository;
+import ramyeon.everyday.domain.token.TokenService;
 import ramyeon.everyday.dto.UserDto;
 import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.NotFoundResourceException;
@@ -17,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final SchoolRepository schoolRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TokenService tokenService;
 
     /**
      * 비밀번호 변경
@@ -53,6 +55,16 @@ public class UserService {
         // 회원 등록
         User user = User.registerUser(loginId, bCryptPasswordEncoder.encode(password), name, email, nickname, admissionYear, findSchool);
         userRepository.save(user);
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    public void deleteUser(String loginId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        loginUser.delete(loginUser.getSchool());
+        tokenService.deleteToken(loginUser.getToken());  // 토큰 삭제
+        userRepository.delete(loginUser);
     }
 
     /**
