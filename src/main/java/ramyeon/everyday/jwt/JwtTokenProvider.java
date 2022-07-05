@@ -17,7 +17,6 @@ import ramyeon.everyday.domain.token.TokenService;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
@@ -90,33 +89,44 @@ public class JwtTokenProvider {
         return AccountAuthority.valueOf(String.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("authority")));
     }
 
-    // Header에서 token 값 추출
-    public String resolveToken(HttpServletRequest request) {
-        return request.getHeader(JwtProperties.HEADER_KEY_NAME);
+    // Header의 유효성 확인
+    public boolean validateHeader(String header, HttpServletResponse response) throws IOException {
+        if (header == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Header가 존재하지 않습니다.");
+            return false;
+        }
+        if (!header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Header 형식이 올바르지 않습니다.");
+            return false;
+        }
+        return true;
+    }
+
+    // token의 PREFIX 제거하여 추출
+    public String resolveToken(String header) {
+        return header.replace(JwtProperties.TOKEN_PREFIX, "");
     }
 
     // 토큰의 유효성, 만료일자 확인
     public boolean validateToken(String jwtToken, HttpServletResponse response) throws IOException {
         Token token = null;
         try {
-            // DB에서 토큰 존재하는지 조회
-            token = tokenService.getToken(jwtToken);
-
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+
+            token = tokenService.getToken(jwtToken);  // DB에서 토큰 존재하는지 조회
+
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (NotFoundResourceException nfre) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 토큰입니다.");
-            return false;
         } catch (ExpiredJwtException eje) {
 
             tokenService.deleteToken(token);  // 만료된 토큰이므로 DB에서 삭제
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 만료된 토큰입니다.");
-            eje.printStackTrace();
             return false;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException jwtE) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-            jwtE.printStackTrace();
+            return false;
+        } catch (NotFoundResourceException nfre) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 토큰입니다.");
             return false;
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,4 +8,6 @@ public interface JwtProperties {
     int TOKEN_EXPIRATION_DATE_FOR_KEEP_LOGIN = 14;  // 로그인 유지시 토큰 만료 일 수
 
     String HEADER_KEY_NAME = "Authorization";
+
+    String TOKEN_PREFIX = "Bearer ";
 }

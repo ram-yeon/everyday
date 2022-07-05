@@ -29,18 +29,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         if (isCheckPath(request.getRequestURI())) {
-            String jwtToken = jwtTokenProvider.resolveToken(request);  // 토큰 추출
 
-            // JWT 토큰을 검증해서 정상적인 사용자인지 확인
-            if (jwtTokenProvider.validateToken(jwtToken, response)) {  // 유효한 토큰
+            String header = request.getHeader(JwtProperties.HEADER_KEY_NAME);
+            if (jwtTokenProvider.validateHeader(header, response)) {  // 유효한 헤더
 
-                // Jwt 토큰 인증 정보 조회
-                Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);
+                String jwtToken = jwtTokenProvider.resolveToken(header);  // 토큰 추출
 
-                // 시큐리티의 세션에 접근하여 Authentication 객체 저장
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                // JWT 토큰을 검증해서 정상적인 사용자인지 확인
+                if (jwtTokenProvider.validateToken(jwtToken, response)) {  // 유효한 토큰
 
-                chain.doFilter(request, response);
+                    // Jwt 토큰 인증 정보 조회
+                    Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);
+
+                    // 시큐리티의 세션에 접근하여 Authentication 객체 저장
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    chain.doFilter(request, response);
+                }
             }
         } else {
             chain.doFilter(request, response);

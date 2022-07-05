@@ -16,11 +16,13 @@ import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
-import ramyeon.everyday.jwt.JwtProperties;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+
+import static ramyeon.everyday.jwt.JwtProperties.HEADER_KEY_NAME;
+import static ramyeon.everyday.jwt.JwtProperties.TOKEN_PREFIX;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,7 +48,7 @@ public class LoginController {
         }
 
         String jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getType(), loginRequestDto.getIsKeptLogin());  // 토큰 발급
-        response.addHeader(JwtProperties.HEADER_KEY_NAME, jwtToken);  // 헤더에 JWT 추가
+        response.addHeader(HEADER_KEY_NAME, TOKEN_PREFIX + jwtToken);  // 헤더에 JWT 추가
 
         return new ResponseEntity<>(new ResultDto(200, "로그인 성공"), HttpStatus.OK);
     }
