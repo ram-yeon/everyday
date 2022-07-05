@@ -49,7 +49,7 @@ public class PostService {
         postsMainMap.put(BoardType.HOT, hotPostList);
 
         // 게시판 별 게시글 조회
-        for (BoardType boardType : BoardType.values()) {
+        for (BoardType boardType : BoardType.getNormalBoard()) {
             List<PostDto.PostResponseDto> boardPostList = getBoardPosts(loginUser, boardType, pageable)
                     .stream().map(
                             boardPost -> PostDto.PostResponseDto.builder()
@@ -78,8 +78,8 @@ public class PostService {
     // 게시판 별 게시글 목록 조회
     public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String type, Pageable pageable) {
         BoardType boardType = BoardType.valueOf(type);  // 게시판 종류
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         if (boardType == BoardType.HOT) {  // 핫 게시판
-            User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L);  // 핫 게시글 ID 조회
             List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
             // 핫 게시글 조회
@@ -116,7 +116,6 @@ public class PostService {
             return new PageImpl<>(postsBoardDtos.subList(start, end), pageable, postsBoardDtos.size());
 
         } else {  // 자유, 정보, 동아리 게시판
-            User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
             Page<Post> posts = getBoardPosts(loginUser, boardType, pageable);// 게시글 조회 최근순 정렬
             return posts.map(
                     post -> PostDto.PostResponseDto.builder()
