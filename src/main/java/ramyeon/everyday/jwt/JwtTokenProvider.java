@@ -111,11 +111,13 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken, HttpServletResponse response) throws IOException {
         Token token = null;
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-
             token = tokenService.getToken(jwtToken);  // DB에서 토큰 존재하는지 조회
 
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
+        } catch (NotFoundResourceException nfre) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 토큰입니다.");
+            return false;
         } catch (ExpiredJwtException eje) {
 
             tokenService.deleteToken(token);  // 만료된 토큰이므로 DB에서 삭제
@@ -124,9 +126,6 @@ public class JwtTokenProvider {
             return false;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException jwtE) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-            return false;
-        } catch (NotFoundResourceException nfre) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 토큰입니다.");
             return false;
         } catch (Exception e) {
             e.printStackTrace();
