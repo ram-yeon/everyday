@@ -89,7 +89,7 @@ public class JwtTokenProvider {
     }
 
     public AccountAuthority getAuthority(String token) {
-        return AccountAuthority.valueOf(String.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("authority")));
+        return AccountAuthority.valueOf(String.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("account_authority")));
     }
 
     // Header의 유효성 확인
