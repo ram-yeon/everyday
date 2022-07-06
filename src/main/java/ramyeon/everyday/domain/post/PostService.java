@@ -168,6 +168,7 @@ public class PostService {
             return PostDto.PostResponseDto.builder()
                     .id(post.getId())
                     .writer(getWriter(post.getUser(), post.getIsAnonymous()))
+                    .writerLoginId(post.getUser().getLoginId())
                     .title(post.getTitle())
                     .contents(post.getContents())
                     .registrationDate(post.getRegistrationDate())

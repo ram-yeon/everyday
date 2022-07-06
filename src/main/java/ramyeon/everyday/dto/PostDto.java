@@ -22,7 +22,8 @@ public class PostDto {
     public static class PostResponseDto {
 
         private Long id;  // 게시글 ID
-        private String writer;  // 작성자
+        private String writer;  // 작성자(닉네임)
+        private String writerLoginId;  // 작성자 아이디
 
         private String title;  // 제목
         private String contents;  // 내용
