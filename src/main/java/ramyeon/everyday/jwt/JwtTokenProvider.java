@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import ramyeon.everyday.AccountAuthority;
 import ramyeon.everyday.auth.ManagerDetails;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -41,10 +43,11 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createAccessToken(String userLoginId, Long userId, AccountAuthority accountAuthority, Whether isKeptLogin) {
+    public String createAccessToken(String userLoginId, Long userId, Collection<? extends GrantedAuthority> authorities, AccountAuthority accountAuthority, Whether isKeptLogin) {
         Claims claims = Jwts.claims().setSubject(userLoginId);  // claim: JWT payload 에 저장되는 정보단위
         claims.put("pk", userId);  // 기본키 추가
-        claims.put("authority", accountAuthority);  // 사용자인지 관리자인지 구분 정보 추가
+        claims.put("account_authority", accountAuthority);  // 사용자인지 관리자인지 구분 정보 추가
+        claims.put("authorities", authorities);  // 권한 추가
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인이면
             claims.put("school", schoolService.getSchoolNameByUserId(userId));  // 사용자의 학교이름 추가
         }

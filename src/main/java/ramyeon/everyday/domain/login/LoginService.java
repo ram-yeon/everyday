@@ -48,13 +48,13 @@ public class LoginService {
         String jwtToken = null;
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), accountAuthority, Whether.valueOf(isKeptLogin));  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), principalDetails.getAuthorities(), accountAuthority, Whether.valueOf(isKeptLogin));  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, principalDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
 
         } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인
             ManagerDetails managerDetails = (ManagerDetails) authentication.getPrincipal();
-            jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId(), accountAuthority, Whether.N);  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId(), managerDetails.getAuthorities(), accountAuthority, Whether.N);  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, managerDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
         }
