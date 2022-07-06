@@ -6,7 +6,8 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import ChatIcon from '@mui/icons-material/Chat';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import GroupIcon from '@mui/icons-material/Group';
-// import { useHistory, useLocation } from 'react-router-dom';
+
+import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -56,9 +57,6 @@ const useStyles = makeStyles((theme) => ({
             display: "none",
         },
     },
-    // active:{
-    //     background:"f4f4f4",
-    // },
     menuLink: {
         textDecoration: "none",
         color: "black",
@@ -67,56 +65,75 @@ const useStyles = makeStyles((theme) => ({
 
 function LeftBar() {
     const classes = useStyles();
-    // const location = useLocation();
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
-    return <Container className={classes.container}>
+    return (
+        <>
+            {
+                (tokenJson.account_authority === 'USER')                            //사용자일때,
+                    ?
+                    <Container className={classes.container}>
+                        <Link to='/hotboard' className={classes.menuLink} >
+                            <div className={classes.item}>
+                                <LocalFireDepartmentIcon className={classes.icon} />
+                                <Typography className={classes.text}>
+                                    HOT 게시물
+                                </Typography>
+                            </div>
+                        </Link>
 
-        <Link to='/hotboard' className={classes.menuLink} >
-            <div className={classes.item}>
-                <LocalFireDepartmentIcon className={classes.icon} />
-                <Typography className={classes.text}>
-                    HOT 게시물
-                </Typography>
-            </div>
-        </Link>
+                        <Link to='/freeboard' className={classes.menuLink} >
+                            <div className={classes.item}>
+                                <ChatIcon className={classes.icon} />
+                                <Typography className={classes.text}>
+                                    자유 게시판
+                                </Typography>
+                            </div>
+                        </Link>
 
-        <Link to='/freeboard' className={classes.menuLink} >
-            <div className={classes.item}>
-                <ChatIcon className={classes.icon} />
-                <Typography className={classes.text}>
-                    자유 게시판
-                </Typography>
-            </div>
-        </Link>
+                        <Link to='/infoboard' className={classes.menuLink} >
+                            <div className={classes.item} >
+                                <CircleNotificationsIcon className={classes.icon} />
+                                <Typography className={classes.text}>
+                                    정보 게시판
+                                </Typography>
+                            </div>
+                        </Link>
 
-        <Link to='/infoboard' className={classes.menuLink} >
-            <div className={classes.item} >
-                <CircleNotificationsIcon className={classes.icon} />
-                <Typography className={classes.text}>
-                    정보 게시판
-                </Typography>
-            </div>
-        </Link>
+                        <Link to='/clubboard' className={classes.menuLink} >
+                            <div className={classes.item} >
+                                <GroupIcon className={classes.icon} />
+                                <Typography className={classes.text}>
+                                    동아리 게시판
+                                </Typography>
+                            </div>
+                        </Link>
 
-        <Link to='/clubboard' className={classes.menuLink} >
-            <div className={classes.item} >
-                <GroupIcon className={classes.icon} />
-                <Typography className={classes.text}>
-                    동아리 게시판
-                </Typography>
-            </div>
-        </Link>
+                        <Link to='/noticeboard' className={classes.menuLink} >
+                            <div className={classes.item}>
+                                <Info className={classes.icon} />
+                                <Typography className={classes.text}>
+                                    공지사항
+                                </Typography>
+                            </div>
+                        </Link>
+                    </Container>
+                    :                                                                   //관리자일때,
+                    <Container className={classes.container}>   
+                        <Link to='/noticeboard' className={classes.menuLink} >
+                            <div className={classes.item}>
+                                <Info className={classes.icon} />
+                                <Typography className={classes.text}>
+                                    공지사항
+                                </Typography>
+                            </div>
+                        </Link>
+                    </Container>
+            }
 
-        <Link to='/noticeboard' className={classes.menuLink} >
-            <div className={classes.item}>
-                <Info className={classes.icon} />
-                <Typography className={classes.text}>
-                    공지사항
-                </Typography>
-            </div>
-        </Link>
-
-    </Container>
+        </>
+    );
 }
 
 export default LeftBar

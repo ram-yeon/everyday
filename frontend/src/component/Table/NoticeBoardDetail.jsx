@@ -6,7 +6,6 @@ import { Info } from '@material-ui/icons';
 
 // import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';             //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
 
@@ -69,6 +68,9 @@ function NoticeBoardDetail() {
     const classes = useStyles();
     const { state } = useLocation();
 
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
     const [title, setTitle] = useState('');
     const [contents, setContents] = useState('');
     const [dateFormat, setDateFormat] = useState('');
@@ -83,33 +85,29 @@ function NoticeBoardDetail() {
 
     useEffect(() => {
         if (!isInitialize) {
-            let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.account_authority === "USER") {
-                //공지사항 상세조회
-                BoardAPI.noticeBoardDetailSelect(data).then(response => {
-                    // file comment 처리필요
-                    // if (response.data.hasOwnProperty('comment')) {
-                    //
-                    // } else if (response.data.hasOwnProperty('file')) {
-                    //
-                    // }
+            //공지사항 상세조회
+            BoardAPI.noticeBoardDetailSelect(data).then(response => {
+                // file comment 처리필요
+                // if (response.data.hasOwnProperty('comment')) {
+                //
+                // } else if (response.data.hasOwnProperty('file')) {
+                //
+                // }
+                setTitle(response.data.title);
+                setContents(response.data.contents);
+                setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                setLikeCount(response.data.likeCount);
+                setViews(response.data.views);
+                setFileCount(response.data.fileCount);
 
-                    setTitle(response.data.title);
-                    setContents(response.data.contents);
-                    setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
-                    setLikeCount(response.data.likeCount);
-                    setViews(response.data.views);
-                    setFileCount(response.data.fileCount);
-
-                }).catch(error => {
-                    console.log(JSON.stringify(error));
-                    Message.error(error.message);
-                }).finally(() => {
-                    setIsInitialize(true);
-                });
-            }
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            }).finally(() => {
+                setIsInitialize(true);
+            });
         }
+
     });
 
     return (
@@ -119,10 +117,14 @@ function NoticeBoardDetail() {
             </Box>
             <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
                 <Info className={classes.writerIcon} />
-                <div style={{ float: "right" }}>
-                    <Typography className={classes.update}>수정</Typography>
-                    <Typography className={classes.delete}>삭제</Typography>
-                </div>
+                {
+                    (tokenJson.account_authority === 'MANAGER') ?
+                        < div style={{ float: "right" }}>
+                            <Typography className={classes.update}>수정</Typography>
+                            <Typography className={classes.delete}>삭제</Typography>
+                        </div>
+                        : null
+                }
                 <Typography className={classes.writer}>에브리데이</Typography>
                 <Typography className={classes.date}>{dateFormat}</Typography>
                 <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ModalContainer from './ModalContainer';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, makeStyles, Toolbar, Typography } from "@material-ui/core";
 
 import { Search } from '@mui/icons-material';
@@ -8,8 +8,10 @@ import { InputBase } from '@mui/material';
 import { alpha } from '@mui/lab/node_modules/@mui/system';
 import { Avatar } from 'antd';
 
+import * as UserAPI from '../api/Users';
 import * as BoardAPI from '../api/Board';
 import { Message } from '../component/Message';
+import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -61,14 +63,18 @@ const useStyles = makeStyles((theme) => ({
 
   },
   myImg: {
-    // display: "flex",
     marginLeft: "1rem",
     marginTop: "0.3rem",
     cursor: "pointer",
-    [theme.breakpoints.down("sm")]: {
-
-    },
   },
+  adminLogout:{
+    marginLeft:"82%",
+    cursor: "pointer",
+    border:"none",
+    background:"white",
+    color:"gray",
+    textDecoration:"underline",
+  }
 
 }));
 
@@ -79,17 +85,22 @@ function NavBar(props) {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
+  const navigate = useNavigate();
+  let token = localStorage.getItem(SESSION_TOKEN_KEY);
+  const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
   //회원 정보 배너 조회
-  BoardAPI.userInfoSelect().then(response => {
-    setSchoolName(response.data.schoolName);
-    setId(response.data.loginId);
-    setName(response.data.name);
-    setNickname(response.data.nickname);
-  }).catch(error => {
-    console.log(JSON.stringify(error));
-    Message.error(error.message);
-  });
+  if (tokenJson.account_authority === 'USER') {
+    BoardAPI.userInfoSelect().then(response => {
+      setSchoolName(response.data.schoolName);
+      setId(response.data.loginId);
+      setName(response.data.name);
+      setNickname(response.data.nickname);
+    }).catch(error => {
+      console.log(JSON.stringify(error));
+      Message.error(error.message);
+    });
+  }
 
   const handleOpen = () => {
     setOpen(true);
@@ -98,41 +109,73 @@ function NavBar(props) {
     setOpen(false);
   };
 
+  //관리자로그아웃버튼
+  const adminLogoutBtn = () => {
+    UserAPI.logout().then(response => {
+      console.log(JSON.stringify(response));
+      localStorage.removeItem(SESSION_TOKEN_KEY);
+      props.loginCallBack(false);
+      navigate("/");
+    }).catch(error => { //만료된 토큰이거나 존재하지않는 토큰이면 강제로그아웃
+      console.log(JSON.stringify(error));
+      Message.error(error.message);
+      localStorage.removeItem(SESSION_TOKEN_KEY);
+      props.loginCallBack(false);
+      navigate("/");
+    });
+  }
+
   return (
-    <AppBar position="fixed" style={{ background: 'white', height: "5rem" }}>
-      <Toolbar className={classes.Toolbar}>
-        <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
+    <>
+      {
+        (tokenJson.account_authority === 'MANAGER')                                                               //관리자일때,
+          ?
+          <AppBar position="fixed" style={{ background: 'white', height: "5rem" }}>
+            <Toolbar className={classes.Toolbar}>
+              <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
+              <div>
+                <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>
+                  에브리데이
+                </Typography>
+              </div>
+              <button className={classes.adminLogout} onClick={adminLogoutBtn}>로그아웃</button>
+            </Toolbar>
+          </AppBar>
+          :                                                                                                         //사용자일때,
+          <AppBar position="fixed" style={{ background: 'white', height: "5rem" }}>
+            <Toolbar className={classes.Toolbar}>
+              <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
+              <div>
+                <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>
+                  에브리데이
+                </Typography>
+                <Typography className={classes.schoolName}>
+                  {schoolName}
+                </Typography>
+              </div>
 
-        <div>
-          <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>
-            에브리데이
-          </Typography>
-          <Typography className={classes.schoolName}>
-            {schoolName}
-          </Typography>
-        </div>
+              <div className={classes.search}>
+                <Search />
+                <InputBase placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
+              </div>
+              <div className={classes.myImg}>
+                <Avatar alt="My계정 이미지" src={"/images/myImg.png"}
+                  onClick={handleOpen} />
+              </div>
+              <ModalContainer
+                open={open}
+                handleClose={handleClose}
+                loginCallBack={props.loginCallBack}
+                id={id}
+                name={name}
+                nickname={nickname}
+              >
+              </ModalContainer>
+            </Toolbar>
+          </AppBar>
+      }
 
-        <div className={classes.search}>
-          <Search />
-          <InputBase placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
-
-        </div>
-
-        <div className={classes.myImg}>
-          <Avatar alt="My계정 이미지" src={"/images/myImg.png"}
-            onClick={handleOpen} />
-        </div>
-        <ModalContainer
-          open={open}
-          handleClose={handleClose}
-          loginCallBack={props.loginCallBack}
-          id={id}
-          name={name}
-          nickname={nickname}
-        >
-        </ModalContainer>
-      </Toolbar>
-    </AppBar>
+    </>
   );
 }
 

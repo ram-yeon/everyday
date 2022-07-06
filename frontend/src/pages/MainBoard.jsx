@@ -7,27 +7,35 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import moment from 'moment';
-import 'moment/locale/ko';	
+import 'moment/locale/ko';
 
 import { useNavigate } from 'react-router-dom';
 
 import * as BoardAPI from '../api/Board';
 import { Message } from '../component/Message';
-
 import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
-    container: {
-    },
     link: {
         textDecoration: "none",
         color: "black",
+    },
+    climbUpText: {
+        textDecoration: "none",
+        fontSize: "0.7rem",
+        color: "gray",
+        cursor: "pointer",
+        float: "right",
+        textAlign: "right",
     },
 }));
 
 function MainBoard() {
     const classes = useStyles()
     const navigate = useNavigate();
+
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
     const [notice, setNotice] = useState([]);
     const [hot, setHot] = useState([]);
@@ -38,9 +46,6 @@ function MainBoard() {
 
     useEffect(() => {
         if (!isInitialize) {
-            let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            token = 'Bearer ' + token;
-            const tokenJson = JSON.parse(atob(token.split(".")[1]));
             if (tokenJson.account_authority === "USER") {
                 //메인화면 게시글 목록 조회
                 BoardAPI.mainBoardSelect().then(response => {
@@ -116,8 +121,38 @@ function MainBoard() {
 
     });
 
+    const clickHotBoard = () => {
+        if (tokenJson.authorities[0].authority === 'ROLE_BASIC') {
+            alert("HOT 게시물을 보려면 좋아요10개, 댓글5개를 달성하세요!");
+        } else
+            navigate('/hotboard');
+    };
+    const clickHotBoardDetail = (itemId) => {
+        if (tokenJson.authorities[0].authority === 'ROLE_BASIC') {
+            alert("HOT 게시물을 보려면 좋아요10개, 댓글5개를 달성하세요!");
+        } else
+            navigate('/hotboard/detail/' + itemId, { state: { postId: itemId, headTitle: 'HOT 게시물' } })
+    };
+
+    const climbUp = () => {
+        BoardAPI.userAuthorityEdit().then(response => {
+            //성공하면 등급업그레이드 텍스트 없어져야하고 핫게 들어갈 수 있어야함
+
+        }).catch(error => {
+            console.log(JSON.stringify(error));
+            Message.error(error.message);
+        })
+    };
+
     return (
-        <div className={classes.container}>
+        <div>
+            {
+                (tokenJson.authorities[0].authority === 'ROLE_BASIC') ?
+                    <div className={classes.climbUpText} onClick={climbUp}>
+                        HOT 게시물을 보고싶다면?<br />클릭 시, 등급 업그레이드!
+                    </div>
+                    : null
+            }
             <Grid container spacing={5} >
                 {
                     notice.length > 0 &&
@@ -161,14 +196,14 @@ function MainBoard() {
                     <>
                         <Grid item xs={12} sm={6}>
                             <Box border="2px black solid" color="black" fontWeight="bold" p={1}>
-                                <Link to='/hotboard' className={classes.link}>HOT 게시물</Link>
+                                <span className={classes.link} onClick={() => clickHotBoard()} style={{ cursor: 'pointer' }}>HOT 게시물</span>
                             </Box>
                             <List sx={{ border: "1px gray dotted", borderRadius: "0rem 0rem 1rem 1rem" }}>
                                 {hot.map(item => (
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/hotboard/detail/' + item.id, { state: { postId: item.id, headTitle: 'HOT 게시물' } })}
+                                        onClick={() => clickHotBoardDetail(item.id)}
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{
@@ -179,7 +214,6 @@ function MainBoard() {
                                                 overflow: "hidden",
                                                 whiteSpace: "nowrap",
                                                 textOverflow: "ellipsis",
-
                                             }} />
                                         <ListItemText primary={item.date}
                                             primaryTypographyProps={{
@@ -187,7 +221,7 @@ function MainBoard() {
                                                 fontSize: '0.5rem',
                                                 width: "5rem",
                                                 marginLeft: "65%",
-                                                
+
                                             }} />
                                     </ListItem>
                                 ))}

@@ -13,7 +13,7 @@ function AfterLoginContainer(props) {
                     <Grid item sm={2} xs={2}>
                         <LeftBar />
                     </Grid>
-                <Grid item sm={8} xs={10} style={{ margin: '10rem auto auto 100px' }}>
+                <Grid item sm={8} xs={10} style={{ margin: '8rem auto auto 100px' }}>
                     <AfterLoginRouter />
                 </Grid>
             </Grid>

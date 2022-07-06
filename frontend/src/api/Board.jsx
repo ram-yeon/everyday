@@ -7,7 +7,7 @@ export const mainBoardSelect = () => NewPromise(Axios.get('/posts/main'));
 
 //회원 정보 배너 조회ㅇ
 export const userInfoSelect = () => NewPromise(Axios.get('/users/banner'));
-//회원 등급(권한) 변경
+//회원 등급(권한) 변경 ㅇ
 export const userAuthorityEdit = (data) => NewPromise(Axios.post('/users/authority/edit', data));
 
 //게시판 별 게시글 목록 조회ㅇ

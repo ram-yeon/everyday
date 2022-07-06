@@ -64,38 +64,37 @@ function NoticeBoardList(props) {
     };
 
     const getBoardList = (apiRequestData) => {
-        if (tokenJson.account_authority === "USER") {
-            //공지사항 게시글 목록 조회
-            BoardAPI.noticeBoardSelect(apiRequestData).then(response => {
-                if (response.data.hasOwnProperty('content')) {
-                    const noticeItems = [];
-                    response.data.content.forEach((v, i) => {
-                        const title = JSON.stringify(v.title);
-                        const registrationDate = JSON.stringify(v.registrationDate);
-                        const likeCount = JSON.stringify(v.likeCount);
-                        const views = JSON.stringify(v.views);
-                        const fileCount = JSON.stringify(v.fileCount);
+        //공지사항 게시글 목록 조회
+        BoardAPI.noticeBoardSelect(apiRequestData).then(response => {
+            if (response.data.hasOwnProperty('content')) {
+                const noticeItems = [];
+                response.data.content.forEach((v, i) => {
+                    const title = JSON.stringify(v.title);
+                    const registrationDate = JSON.stringify(v.registrationDate);
+                    const likeCount = JSON.stringify(v.likeCount);
+                    const views = JSON.stringify(v.views);
+                    const fileCount = JSON.stringify(v.fileCount);
 
-                        const titleTrim = title.split('"');
-                        const registrationDateTrim = registrationDate.split('"');
-                        const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                    const titleTrim = title.split('"');
+                    const registrationDateTrim = registrationDate.split('"');
+                    const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
 
-                        noticeItems.push({
-                            postTitle: titleTrim, date: dateFormat, likeCount: likeCount, fileCount: fileCount, views: views, id: v.id
-                        });
-                    })
-                    setNotice(noticeItems);
-                }
-                if (response.data.hasOwnProperty('totalPages')) {
-                    setTotalPages(response.data.totalPages);
-                }
-            }).catch(error => {
-                console.log(JSON.stringify(error));
-                Message.error(error.message);
-            }).finally(() => {
-                setIsInitialize(true);
-            });
-        }
+                    noticeItems.push({
+                        postTitle: titleTrim, date: dateFormat, likeCount: likeCount, fileCount: fileCount, views: views, id: v.id
+                    });
+                })
+                setNotice(noticeItems);
+            }
+            if (response.data.hasOwnProperty('totalPages')) {
+                setTotalPages(response.data.totalPages);
+            }
+        }).catch(error => {
+            console.log(JSON.stringify(error));
+            Message.error(error.message);
+        }).finally(() => {
+            setIsInitialize(true);
+        });
+
     };
 
     useEffect(() => {
@@ -119,7 +118,6 @@ function NoticeBoardList(props) {
                     </Box>
                     : null
             }
-
             {
                 show ? <WriteBox show={show} /> : null
             }
