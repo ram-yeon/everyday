@@ -1,9 +1,12 @@
 package ramyeon.everyday.domain.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ramyeon.everyday.domain.comment.CommentRepository;
+import ramyeon.everyday.domain.like.LikeRepository;
 import ramyeon.everyday.domain.school.School;
 import ramyeon.everyday.domain.school.SchoolRepository;
 import ramyeon.everyday.domain.token.TokenService;
@@ -11,12 +14,16 @@ import ramyeon.everyday.dto.UserDto;
 import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
+import java.util.Collection;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final SchoolRepository schoolRepository;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenService tokenService;
 
@@ -73,5 +80,30 @@ public class UserService {
     public UserDto.BannerResponseDto getUserInfoForBanner(String loginId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);
         return new UserDto.BannerResponseDto(loginUser.getLoginId(), loginUser.getName(), loginUser.getNickname(), loginUser.getSchool().getSchoolName());
+    }
+
+    /**
+     * 회원 등업 신청
+     */
+    @Transactional
+    public int upgradeUserAuthority(String loginId, Collection<? extends GrantedAuthority> authorities) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);
+
+        // 이미 등업이 완료된 회원이면
+        for (GrantedAuthority authority : authorities) {
+            if (authority.getAuthority().equals(UserAuthority.ROLE_UPGRADE.name()))
+                return 2;
+        }
+
+        Long likeCount = likeRepository.countByUser(loginUser);  // 좋아요 개수 조회
+        Long commentCount = commentRepository.countByUser(loginUser);  // 댓글 개수 조회
+
+        // 두 조건 모두 만족하면 등업 승인
+        if (likeCount >= 10 && commentCount >= 5) {
+            loginUser.changeAuthority(UserAuthority.ROLE_UPGRADE);
+            return 0;
+        } else {  // 등업 거절
+            return 1;
+        }
     }
 }

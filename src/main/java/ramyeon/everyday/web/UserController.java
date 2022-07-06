@@ -63,4 +63,19 @@ public class UserController {
         UserDto.BannerResponseDto data = userService.getUserInfoForBanner(principalDetails.getUsername());
         return new ResponseEntity<>(new ResultDto(200, "회원 정보 배너 조회 성공", data), HttpStatus.OK);
     }
+
+    /**
+     * 회원 권한 변경 API
+     */
+    @PostMapping("/users/authority/edit")
+    public ResponseEntity changeAuthority(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        int isSuccess = userService.upgradeUserAuthority(principalDetails.getUsername(), principalDetails.getAuthorities());
+        if (isSuccess == 0) {
+            return new ResponseEntity<>(new ResultDto(200, "등업 성공"), HttpStatus.OK);
+        } else if (isSuccess == 1) {
+            return new ResponseEntity<>(new ResultDto(200, "등업 실패: [좋아요 10개, 댓글 5개 이상] 조건 미충족"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResultDto(200, "이미 등업이 완료된 회원"), HttpStatus.OK);
+        }
+    }
 }

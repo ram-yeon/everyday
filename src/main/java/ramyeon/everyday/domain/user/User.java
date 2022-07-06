@@ -78,6 +78,11 @@ public class User extends DateBaseEntity {  // 회원
         deleteFromSchool(school);
     }
 
+    // 회원 권한 변경
+    public void changeAuthority(UserAuthority authority) {
+        this.authority = authority;
+    }
+
     //== 연관관계 메서드 ==//
 
     public void setSchool(School school) {
