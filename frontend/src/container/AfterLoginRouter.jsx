@@ -8,10 +8,9 @@ import HotBoardList from '../pages/HotBoard/HotBoardList';
 import InformationBoardList from '../pages/InfoBoard/InfoBoardList';
 import FreeBoardList from '../pages/FreeBoard/FreeBoardList';
 import ClubBoardList from '../pages/ClubBoard/ClubBoardList';
-
-// import BoardList from '../component/Table/BoardList';
 import BoardDetail from '../component/Table/BoardDetail';
 import NoticeBoardDetail from '../component/Table/NoticeBoardDetail';
+import BoardListAboutMe from '../component/Table/BoardListAboutMe';
 
 import UseTerms from '../pages/UseTerms';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
@@ -35,8 +34,11 @@ function AfterLoginRouter() {
                 <Route path="/infoboard/detail/*" element={<BoardDetail />} />
                 <Route path="/freeboard/detail/*" element={<BoardDetail />} />
                 <Route path="/clubboard/detail/*" element={<BoardDetail />} />
-
                 <Route path="/noticeboard/detail/*" element={<NoticeBoardDetail />} />
+                
+                <Route path="/myarticle" element={<BoardListAboutMe />} />
+                <Route path="/mycommentarticle" element={<BoardListAboutMe />} />
+                <Route path="/mylikearticle" element={<BoardListAboutMe />} />
 
                 <Route path="/useterms" element={<UseTerms />} />
                 <Route path="/privacypolicy" element={<PrivacyPolicy />} />

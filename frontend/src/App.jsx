@@ -5,7 +5,8 @@ import BeforeLoginContainer from './container/BeforeLoginContainer';
 import { SESSION_TOKEN_KEY } from './component/Axios/Axios';
 
 function App() {
-  
+  // localStorage.removeItem(SESSION_TOKEN_KEY);
+
   function isValidLoginToken() {
     const token = localStorage.getItem(SESSION_TOKEN_KEY);
     if (token) {

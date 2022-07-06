@@ -46,6 +46,9 @@ function NoticeBoardList(props) {
     const classes = useStyles();
     const navigate = useNavigate();
 
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
     const [show, setShow] = useState(false);
     const [notice, setNotice] = useState([]);
     const [page, setPage] = useState(1);
@@ -61,10 +64,7 @@ function NoticeBoardList(props) {
     };
 
     const getBoardList = (apiRequestData) => {
-        let token = localStorage.getItem(SESSION_TOKEN_KEY);
-        token = 'Bearer ' + token;
-        const tokenJson = JSON.parse(atob(token.split(".")[1]));
-        if (tokenJson.authority === "USER") {
+        if (tokenJson.account_authority === "USER") {
             //공지사항 게시글 목록 조회
             BoardAPI.noticeBoardSelect(apiRequestData).then(response => {
                 if (response.data.hasOwnProperty('content')) {
@@ -85,7 +85,7 @@ function NoticeBoardList(props) {
                         });
                     })
                     setNotice(noticeItems);
-                } 
+                }
                 if (response.data.hasOwnProperty('totalPages')) {
                     setTotalPages(response.data.totalPages);
                 }
@@ -111,10 +111,14 @@ function NoticeBoardList(props) {
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
                 {title}
             </Box>
-            <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
-                공지사항을 등록해주세요. //관리자만 칸 보임
-                <BorderColorIcon sx={{ float: "right" }} />
-            </Box>
+            {
+                (tokenJson.account_authority === 'MANAGER') ?
+                    <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
+                        공지사항을 등록해주세요.
+                        <BorderColorIcon sx={{ float: "right" }} />
+                    </Box>
+                    : null
+            }
 
             {
                 show ? <WriteBox show={show} /> : null
@@ -182,7 +186,7 @@ function NoticeBoardList(props) {
                 ))}
             </List>
 
-            <Stack spacing={2} style={{ marginLeft: '32%', marginTop: '1.5rem' }}>
+            <Stack spacing={2} style={{ marginTop: '1.5rem' }}>
                 <Pagination count={totalPages} page={page} onChange={handleChange} />
             </Stack>
 

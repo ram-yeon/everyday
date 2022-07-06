@@ -64,9 +64,8 @@ function BoardList(props) {
 
     const getBoardList = (apiRequestData) => {
         let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            token = 'Bearer ' + token;  //추후 Bearer 제거 필요
             const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.authority === "USER") {
+            if (tokenJson.account_authority === "USER") {
                 //게시판 별 게시글 목록 조회
                 BoardAPI.eachBoardSelect(apiRequestData).then(response => {
                     if (response.data.hasOwnProperty('content')) {
@@ -130,7 +129,7 @@ function BoardList(props) {
                     : null
             }
             {
-                show ? <WriteBox show={show} /> : null
+                show ? <WriteBox show={show} boardType={boardType} /> : null
             }
             <List sx={{ marginTop: "-0.4rem" }}>
                 {post.map(item => (
@@ -208,7 +207,7 @@ function BoardList(props) {
                 ))}
             </List>
 
-            <Stack spacing={2} style={{ marginLeft: '32%', marginTop: '1.5rem' }}>
+            <Stack spacing={2} style={{ marginTop: '1.5rem' }}>
                 <Pagination count={totalPages} page={page} onChange={handleChange} />
             </Stack>
 

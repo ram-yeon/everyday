@@ -84,9 +84,8 @@ function NoticeBoardDetail() {
     useEffect(() => {
         if (!isInitialize) {
             let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            token = 'Bearer ' + token;
             const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.authority === "USER") {
+            if (tokenJson.account_authority === "USER") {
                 //공지사항 상세조회
                 BoardAPI.noticeBoardDetailSelect(data).then(response => {
                     // file comment 처리필요

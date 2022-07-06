@@ -78,7 +78,19 @@ function ModalContainer(props) {
         }
     ]
     const handleListItemClick = (event, idx) => {
-        if (Number(idx) === 3) { //로그아웃
+        if (Number(idx) === 0) { //내가 쓴 글
+            navigate('/myarticle', {state: {headTitle:'내가 쓴 글', typeId: 1}});
+            props.handleClose(false);
+        }
+        else if (Number(idx) === 1) { //댓글 단 글
+            navigate('/mycommentarticle', {state: {headTitle:'댓글 단 글', typeId: 2}});
+            props.handleClose(false);
+        }
+        else if (Number(idx) === 2) { //좋아요 한 글
+            navigate('/mylikearticle', {state: {headTitle:'좋아요 한 글', typeId: 3}});
+            props.handleClose(false);
+        }
+        else if (Number(idx) === 3) { //로그아웃
             UserAPI.logout().then(response => {
                 console.log(JSON.stringify(response));
                 localStorage.removeItem(SESSION_TOKEN_KEY);

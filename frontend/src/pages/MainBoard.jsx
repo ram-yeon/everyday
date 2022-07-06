@@ -41,7 +41,7 @@ function MainBoard() {
             let token = localStorage.getItem(SESSION_TOKEN_KEY);
             token = 'Bearer ' + token;
             const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.authority === "USER") {
+            if (tokenJson.account_authority === "USER") {
                 //메인화면 게시글 목록 조회
                 BoardAPI.mainBoardSelect().then(response => {
                     const noticeItems = [];

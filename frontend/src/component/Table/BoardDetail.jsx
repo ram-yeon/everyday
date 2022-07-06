@@ -103,12 +103,14 @@ function BoardDetail() {
     const postId = location.state.postId;
     const headTitle = location.state.headTitle;
 
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
     const classes = useStyles();
     const [commentVal, setCommentVal] = useState('');
     const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
-    const [isAnonymous, setIsAnonymous] = useState('');
-    const [checkAnonymous, setCheckAnonymous] = useState('');
     const [writer, setWriter] = useState('');
+    const [userId, setUserId] = useState('');
     const [likeCount, setLikeCount] = useState('');
     const [commentCount, setCommentCount] = useState('');
     const [views, setViews] = useState('');
@@ -126,10 +128,7 @@ function BoardDetail() {
 
     useEffect(() => {
         if (!isInitialize) {
-            let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            token = 'Bearer ' + token;
-            const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.authority === "USER") {
+            if (tokenJson.account_authority === "USER") {
                 //게시글 상세조회
                 BoardAPI.boardDetailSelect(data).then(response => {
                     // file comment 처리필요
@@ -146,7 +145,8 @@ function BoardDetail() {
                     setContents((JSON.stringify(response.data.contents).split('"')));
                     setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
                     setWriter((JSON.stringify(response.data.writer).split('"')));
-                    
+                    setUserId(JSON.stringify(response.data.userId));
+
                     setLikeCount(JSON.stringify(response.data.likeCount));
                     setCommentCount(JSON.stringify(response.data.commentCount));
                     setViews(JSON.stringify(response.data.views));
@@ -193,10 +193,14 @@ function BoardDetail() {
             </Box>
             <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
                 <AccountCircleIcon className={classes.writerIcon} />
-                <div style={{ float: "right" }}>
-                    <Typography className={classes.postUpdate}>수정</Typography>
-                    <Typography className={classes.postDelete}>삭제</Typography>
-                </div>
+                {
+                    (tokenJson.sub === userId) ?
+                    < div style={{ float: "right" }}>
+                        <Typography className={classes.postUpdate}>수정</Typography>
+                        <Typography className={classes.postDelete}>삭제</Typography>
+                    </div>
+                    : null
+                }
                 <Typography className={classes.writer}>{writer}</Typography>
                 <Typography className={classes.date}>{dateFormat}</Typography>
                 <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
@@ -208,66 +212,67 @@ function BoardDetail() {
                     <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
                     <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
                 </div>
-            </Box>
+            </Box >
 
             {/* 댓글 */}
-            <List sx={{ marginTop: "-0.4rem" }}>
-                {comment.map(item => (
-                    <ListItem
-                        sx={{ border: "1px gray solid", height: "17vh" }}
-                        key={item.id}>
-                        <div>
-                            <ListItemText primary={item.writer}
-                                primaryTypographyProps={{
-                                    color: 'black',
-                                    fontWeight: "bold",
-                                    fontSize: "0.8rem",
-                                    width: "2rem",
-
-                                }} />
-
-                            <ListItemText primary={item.content}
-                                primaryTypographyProps={{
-                                    color: 'black',
-                                    fontSize: '0.8rem',
-                                    width: "50rem",
-
-                                }} />
-
-                            <ListItemText primary={item.date}
-                                primaryTypographyProps={{
-                                    color: 'gray',
-                                    fontSize: '0.5rem',
-                                    width: "5rem",
-                                }} />
-                            <div style={{ display: "inline-flex" }}>
-                                <ListItemText primary={item.reply}
+            < List sx={{ marginTop: "-0.4rem" }}>
+                {
+                    comment.map(item => (
+                        <ListItem
+                            sx={{ border: "1px gray solid", height: "17vh" }}
+                            key={item.id}>
+                            <div>
+                                <ListItemText primary={item.writer}
                                     primaryTypographyProps={{
-                                        fontSize: '0.7rem',
-                                        width: "5rem",
-                                        color: '#0CDAE0',
-                                        cursor: "pointer",
+                                        color: 'black',
+                                        fontWeight: "bold",
+                                        fontSize: "0.8rem",
+                                        width: "2rem",
 
                                     }} />
-                                <ListItemIcon sx={{ color: '#0CDAE0', cursor: "pointer", margin: "auto auto auto -2rem" }}>{item.replyIcon}</ListItemIcon>
+
+                                <ListItemText primary={item.content}
+                                    primaryTypographyProps={{
+                                        color: 'black',
+                                        fontSize: '0.8rem',
+                                        width: "50rem",
+
+                                    }} />
+
+                                <ListItemText primary={item.date}
+                                    primaryTypographyProps={{
+                                        color: 'gray',
+                                        fontSize: '0.5rem',
+                                        width: "5rem",
+                                    }} />
+                                <div style={{ display: "inline-flex" }}>
+                                    <ListItemText primary={item.reply}
+                                        primaryTypographyProps={{
+                                            fontSize: '0.7rem',
+                                            width: "5rem",
+                                            color: '#0CDAE0',
+                                            cursor: "pointer",
+
+                                        }} />
+                                    <ListItemIcon sx={{ color: '#0CDAE0', cursor: "pointer", margin: "auto auto auto -2rem" }}>{item.replyIcon}</ListItemIcon>
+                                </div>
+                                <Typography className={classes.replyDelete}>삭제</Typography>
                             </div>
 
-                            <Typography className={classes.replyDelete}>삭제</Typography>
-                        </div>
+                            <ListItemIcon sx={{ marginLeft: "10%", color: '#C00000', cursor: "pointer" }}>{item.likeIcon}</ListItemIcon>
+                            <ListItemText primary={item.likeCount}
+                                primaryTypographyProps={{
+                                    width: "1rem",
+                                    fontSize: "0.5rem",
+                                    color: '#C00000',
+                                    margin: "0.5rem auto auto -2.2rem",
+                                    cursor: "pointer",
+                                }} />
 
-                        <ListItemIcon sx={{ marginLeft: "10%", color: '#C00000', cursor: "pointer" }}>{item.likeIcon}</ListItemIcon>
-                        <ListItemText primary={item.likeCount}
-                            primaryTypographyProps={{
-                                width: "1rem",
-                                fontSize: "0.5rem",
-                                color: '#C00000',
-                                margin: "0.5rem auto auto -2.2rem",
-                                cursor: "pointer",
-                            }} />
-
-                    </ListItem>
-                ))}
-            </List>
+                        </ListItem>
+                    ))
+                }
+            </List >
             <WriteReply />
 
             <input className="comment-input" type="text" name="comment" id="comment1" placeholder="댓글을 입력하세요."
@@ -278,7 +283,7 @@ function BoardDetail() {
 
             {/* 게시판따라경로분기처리 */}
             <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
-        </div>
+        </div >
     )
 }
 
