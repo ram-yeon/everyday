@@ -246,7 +246,8 @@ public class PostService {
 
         List<Post> posts = new ArrayList<>();
         if (myPostType == MyPostType.POST) {   // 내가 쓴 글
-            posts = postRepository.findByUserAndIsDeleted(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
+            // 내가 쓴 글 및 댓글 조회 - fetch join을 통한 쿼리 수 감소
+            posts = postRepository.findByUserAndIsDeletedWithComment(loginUser, Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 내가 쓴 글 조회 최신순
         } else if (myPostType == MyPostType.COMMENT) {   // 댓글단 글
             posts = postRepository.findByUserFetchJoinComment(loginUser, Whether.N);  // 댓글 단 글 최신순 조회
         }
