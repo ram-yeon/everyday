@@ -19,7 +19,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findBySchoolAndIsDeleted(School school, Whether isDeleted, Sort sort);  // 학교 게시글 조회
 
-    Optional<Post> findByIdAndSchoolAndIsDeleted(Long id, School school, Whether isDeleted);  // 게시글 상세 조회
+    @Query("SELECT DISTINCT p FROM Post p" +
+            " LEFT OUTER JOIN FETCH p.user u" +
+            " LEFT OUTER JOIN FETCH p.commentList c" +
+            " LEFT OUTER JOIN FETCH c.user cu" +
+            " WHERE p.id = ?1" +
+            " and p.school = ?2" +
+            " and p.isDeleted = ?3")
+    Optional<Post> findByIdAndSchoolAndIsDeletedWithUserCommentUser(Long id, School school, Whether isDeleted);  // 게시글 상세 조회 - commentList, user와 fetch join
 
     @Query("SELECT DISTINCT p FROM Post p" +
             " LEFT OUTER JOIN FETCH p.commentList" +
