@@ -15,7 +15,14 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     Page<Notice> findByIsDeleted(Whether isDeleted, Pageable pageable);  // 공지사항 목록 조회
 
-    Optional<Notice> findByIdAndIsDeleted(Long id, Whether isDeleted);  // 공지사항 상세 조회
+    Optional<Notice> findByIdAndIsDeleted(Long id, Whether isDeleted);
+
+    @Query("SELECT DISTINCT n FROM Notice n" +
+            " LEFT OUTER JOIN FETCH n.manager m" +
+            " LEFT OUTER JOIN FETCH n.fileList" +
+            " WHERE n.id = ?1" +
+            " and n.isDeleted = ?2")
+    Optional<Notice> findByIdAndIsDeletedWithManagerFile(Long id, Whether isDeleted);  // 공지사항 상세 조회 - manager, fileList와 fetch join
 
     @Query("SELECT distinct n FROM Notice n" +
             " LEFT JOIN Like l" +

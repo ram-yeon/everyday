@@ -44,7 +44,8 @@ public class NoticeService {
 
     // 공지사항 상세 조회
     public NoticeDto.NoticeResponseDto getNoticeDetail(Long noticeId) {
-        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);  // 공지사항 조회
+        // 공지사항 및 관리자, 파일 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
+        Notice notice = noticeRepository.findByIdAndIsDeletedWithManagerFile(noticeId, Whether.N).orElse(null);
         if (notice == null) {
             return null;
         } else {
