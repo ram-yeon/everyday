@@ -2,6 +2,7 @@ package ramyeon.everyday.domain.notice;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ramyeon.everyday.domain.Whether;
@@ -13,7 +14,13 @@ import java.util.Optional;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
-    Page<Notice> findByIsDeleted(Whether isDeleted, Pageable pageable);  // 공지사항 목록 조회
+    Page<Notice> findByIsDeleted(Whether isDeleted, Pageable pageable);
+
+    @Query("SELECT DISTINCT n FROM Notice n" +
+            " LEFT OUTER JOIN FETCH n.manager m" +
+            " LEFT OUTER JOIN FETCH n.fileList" +
+            " WHERE n.isDeleted = ?1")
+    List<Notice> findByIsDeletedWithManagerFile(Whether isDeleted, Sort sort);  // 공지사항 목록 조회 - manager, fileList와 fetch join
 
     Optional<Notice> findByIdAndIsDeleted(Long id, Whether isDeleted);
 

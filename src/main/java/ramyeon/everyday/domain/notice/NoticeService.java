@@ -2,7 +2,9 @@ package ramyeon.everyday.domain.notice;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.Whether;
@@ -27,19 +29,29 @@ public class NoticeService {
 
     // 공지사항 목록 조회
     public Page<NoticeDto.NoticeResponseDto> getNotices(Pageable pageable) {
-        Page<Notice> notices = getNoticesPaging(pageable);  // 공지사항 목록 조회
+        // 공지사항 및 관리자, 파일 조회 - fetch join을 통한 쿼리 수 감소
+        List<Notice> notices = noticeRepository.findByIsDeletedWithManagerFile(Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));
 
-        return notices.map(
-                notice -> NoticeDto.NoticeResponseDto.builder()
-                        .id(notice.getId())
-                        .writer(notice.getManager().getName())
-                        .title(notice.getTitle())
-                        .registrationDate(notice.getRegistrationDate())
-                        .views(notice.getViews())
-                        .likeCount(likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId()))  // 좋아요 수 조회
-                        .fileCount(notice.getFileList().size())
-                        .build()
-        );
+        List<NoticeDto.NoticeResponseDto> noticeDtoList = new ArrayList<>();
+        for (Notice notice : notices) {
+            noticeDtoList.add(
+                    // Notice 엔티티를 NoticeResponseDto로 변환
+                    NoticeDto.NoticeResponseDto.builder()
+                            .id(notice.getId())
+                            .writer(notice.getManager().getName())
+                            .title(notice.getTitle())
+                            .registrationDate(notice.getRegistrationDate())
+                            .views(notice.getViews())
+                            .likeCount(getLikeCount(notice))  // 좋아요 수 조회
+                            .fileCount(notice.getFileList().size())
+                            .build()
+            );
+        }
+
+        // List를 Page로 변환
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), noticeDtoList.size());
+        return new PageImpl<>(noticeDtoList.subList(start, end), pageable, noticeDtoList.size());
     }
 
     // 공지사항 상세 조회
