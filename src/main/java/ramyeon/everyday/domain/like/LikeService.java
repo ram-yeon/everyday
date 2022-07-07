@@ -16,7 +16,7 @@ public class LikeService {
     /**
      * 좋아요 등록
      */
-    public void createLike(String loginId, LikeDto.LikeCreateRequestDto createRequestDto) {
+    public void createLike(String loginId, LikeDto.LikeRequestDto createRequestDto) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         Like like = Like.addLike(TargetType.valueOf(createRequestDto.getTargetType()), createRequestDto.getTargetId(), loginUser);
         likeRepository.save(like);  // 좋아요 등록

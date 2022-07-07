@@ -20,7 +20,7 @@ public class LikeController {
      * 좋아요 등록 API
      */
     @PostMapping("/likes")
-    public ResponseEntity createLike(@RequestBody LikeDto.LikeCreateRequestDto createRequestDto,
+    public ResponseEntity createLike(@RequestBody LikeDto.LikeRequestDto createRequestDto,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
         likeService.createLike(principalDetails.getUsername(), createRequestDto);
         return new ResponseEntity<>(new ResultDto(200, "좋아요 등록 성공"), HttpStatus.OK);
