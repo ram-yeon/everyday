@@ -3,6 +3,7 @@ package ramyeon.everyday.domain.school;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SchoolRepository extends JpaRepository<School, Long> {
@@ -13,4 +14,9 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
             " join s.userList u" +
             " where u.id = ?1")
     String findSchoolNameByUserId(Long userId);
+
+    @Query("SELECT DISTINCT s FROM School s" +
+            " LEFT OUTER JOIN FETCH s.userList" +
+            " order by s.schoolName")
+    List<School> findAllWithUserList();  // 학교 조회 - userList와 fetch join
 }
