@@ -40,6 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().disable()
                 .httpBasic().disable()  // 기본적인 http 로그인 방식을 사용하지 않음
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider))  // JwtAuthorizationFilter 추가
-                .authorizeRequests().anyRequest().permitAll();  // 모든 리소스에대해 인증절차 없이 접근 허용
+                .authorizeRequests()
+                .antMatchers("/posts/list/HOT").hasAnyRole("UPGRADE")  // HOT 게시판은 UPGRADE 등급 User만 접근 가능
+                .anyRequest().permitAll();  // 모든 리소스에대해 인증절차 없이 접근 허용
     }
 }
