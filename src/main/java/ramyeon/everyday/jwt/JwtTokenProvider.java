@@ -114,7 +114,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken, HttpServletResponse response) throws IOException {
         Token token = null;
         try {
-            token = tokenService.getToken(jwtToken);  // DB에서 토큰 존재하는지 조회
+            token = tokenService.getTokenWithUserManager(jwtToken);  // DB에서 토큰 존재하는지 조회
 
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());

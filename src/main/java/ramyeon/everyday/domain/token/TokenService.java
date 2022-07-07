@@ -55,8 +55,9 @@ public class TokenService {
     /**
      * 토큰 문자열로 토큰 조회
      */
-    public Token getToken(String token) {
-        return tokenRepository.findByAccessToken(token).orElseThrow(NotFoundResourceException::new);
+    public Token getTokenWithUserManager(String token) {
+        // Token 조회 시 User, Manager 조회 - fetch join을 통한 성능 최적화로 쿼리 1번 호출
+        return tokenRepository.findByAccessTokenWithUserManager(token).orElseThrow(NotFoundResourceException::new);
     }
 
     /**
