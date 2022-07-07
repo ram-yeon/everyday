@@ -94,7 +94,6 @@ function NoticeBoardList(props) {
         }).finally(() => {
             setIsInitialize(true);
         });
-
     };
 
     useEffect(() => {
@@ -104,6 +103,18 @@ function NoticeBoardList(props) {
             });
         }
     });
+    //조회수갱신
+    const clickNoticeBoardList = (itemId) => {
+        navigate('/noticeboard/detail/' + itemId, { state: { postId: itemId, headTitle: '공지사항' } })
+        const data = {
+            views: 1,
+        }
+        BoardAPI.noticeBoardViews(itemId, data).then(response => {
+        }).catch(error => {
+            console.log(JSON.stringify(error));
+            Message.error(error.message);
+        })
+    }
 
     return (
         <div>
@@ -118,7 +129,7 @@ function NoticeBoardList(props) {
                     </Box>
                     : null
             }
-            { show ? <WriteBox show={show} boardType='공지사항'  /> : null }
+            {show ? <WriteBox show={show} boardType='공지사항' /> : null}
 
             <List sx={{ marginTop: "-0.4rem" }}>
                 {notice.map(item => (
@@ -126,8 +137,9 @@ function NoticeBoardList(props) {
                         sx={{ border: "1px gray solid", height: "12vh" }}
                         button
                         key={item.id}
-                        onClick={() => navigate('/noticeboard/detail/' + item.id, { state: item.id })}
+                        onClick={() => clickNoticeBoardList(item.id)}
                     >
+
                         <div>
                             <ListItemText primary={item.postTitle}
                                 primaryTypographyProps={{

@@ -47,6 +47,9 @@ function BoardList(props) {
     const classes = useStyles();
     const navigate = useNavigate();
 
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
     const [show, setShow] = useState(false);
     const [post, setPost] = useState([]);
     const [page, setPage] = useState(1);
@@ -58,13 +61,11 @@ function BoardList(props) {
 
         getBoardList({
             boardType: boardType,
-            page: value - 1,    //추후 -1 제거 필요
+            page: value - 1,
         });
     };
 
     const getBoardList = (apiRequestData) => {
-        let token = localStorage.getItem(SESSION_TOKEN_KEY);
-        const tokenJson = JSON.parse(atob(token.split(".")[1]));
         if (tokenJson.account_authority === "USER") {
             //게시판 별 게시글 목록 조회
             BoardAPI.eachBoardSelect(apiRequestData).then(response => {
@@ -110,10 +111,25 @@ function BoardList(props) {
         if (!isInitialize) {
             getBoardList({
                 boardType: boardType,
-                page: 0,    //추후 1로 수정필요
+                page: 0,  
             });
         }
     });
+    //조회수갱신
+    const clickBoardList = (itemId) => {
+        navigate('/' + boardTypeToLowerCase + 'board/detail/' + itemId, { state: { postId: itemId, headTitle: title } })
+        if (tokenJson.account_authority === "USER") {
+           const data = {
+                views: 1,   
+            }
+            BoardAPI.boardViews(itemId, data).then(response => {
+                alert("성공");
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            })
+        }
+    }
 
     return (
         <div>
@@ -135,7 +151,7 @@ function BoardList(props) {
                         sx={{ border: "1px gray solid", height: "15vh" }}
                         button
                         key={item.id}
-                        onClick={() => navigate('/' + boardTypeToLowerCase + 'board/detail/' + item.id, { state: { postId: item.id, headTitle: title } })}>
+                        onClick={() => clickBoardList(item.id)}>
                         <div>
                             <ListItemText primary={item.postTitle}
                                 primaryTypographyProps={{

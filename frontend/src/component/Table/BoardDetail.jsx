@@ -6,7 +6,7 @@ import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';             //채워진좋아요
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
     writerIcon: {
         color: "gray",
         [theme.breakpoints.up("sm")]: {
-            // fontSize: "18px",
         },
     },
     postUpdate: {
@@ -58,7 +57,6 @@ const useStyles = makeStyles((theme) => ({
     replyDelete: {
         color: "gray",
         fontSize: "0.6rem",
-        // display: "inline",
         cursor: "pointer",
     },
     writer: {
@@ -110,7 +108,8 @@ function BoardDetail() {
     const [commentVal, setCommentVal] = useState('');
     const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
     const [writer, setWriter] = useState('');
-    const [userId, setUserId] = useState('');
+    const [writerLoginId, setWriterLoginId] = useState('');
+    const [id, setId] = useState('');
     const [likeCount, setLikeCount] = useState('');
     const [commentCount, setCommentCount] = useState('');
     const [views, setViews] = useState('');
@@ -140,13 +139,13 @@ function BoardDetail() {
 
                     const boardType = response.data.boardType;
                     setBoardTypeToLowerCase(boardType.toLowerCase());
-
                     setTitle((JSON.stringify(response.data.title).split('"')));
                     setContents((JSON.stringify(response.data.contents).split('"')));
                     setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
                     setWriter((JSON.stringify(response.data.writer).split('"')));
-                    setUserId(JSON.stringify(response.data.userId));
+                    setWriterLoginId(JSON.stringify(response.data.writerLoginId));
 
+                    setId(JSON.stringify(response.data.id));
                     setLikeCount(JSON.stringify(response.data.likeCount));
                     setCommentCount(JSON.stringify(response.data.commentCount));
                     setViews(JSON.stringify(response.data.views));
@@ -161,6 +160,55 @@ function BoardDetail() {
             }
         }
     });
+
+    const [likeState, setLikeState] = useState(false);
+    const clickLike = () => {
+        if (tokenJson.account_authority === "USER") {
+            if (!likeState) {  //좋아요추가
+                setLikeState(!likeState);
+                const data = {
+                    targetType: "POST",
+                    targetId: id
+                }
+                BoardAPI.like(data).then(response => {
+                    Message.success(response.message);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            } else { //좋아요취소
+                setLikeState(!likeState);
+                const data = {
+                    targetType: "POST",
+                    targetId: id
+                }
+                BoardAPI.likeCancel(data).then(response => {
+                    Message.success(response.message);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            }
+        } else {
+            alert("좋아요는 사용자만 할 수 있습니다.");
+        }
+    }
+    //게시글 삭제
+    const deletePost = () => {
+        if (tokenJson.sub === writerLoginId) {
+            const data = {
+                postId: id,
+            }
+            BoardAPI.deleteBoard(data).then(response => {
+                Message.success(response.message);
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            })
+        }else {
+            alert("삭제할 권한이 없습니다.");
+        }
+    }
 
     //댓글
     const comment = [
@@ -194,12 +242,12 @@ function BoardDetail() {
             <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
                 <AccountCircleIcon className={classes.writerIcon} />
                 {
-                    (tokenJson.sub === userId) ?
-                    < div style={{ float: "right" }}>
-                        <Typography className={classes.postUpdate}>수정</Typography>
-                        <Typography className={classes.postDelete}>삭제</Typography>
-                    </div>
-                    : null
+                    (tokenJson.sub === writerLoginId) ?
+                        < div style={{ float: "right" }}>
+                            <Typography className={classes.postUpdate}>수정</Typography>
+                            <Typography className={classes.postDelete} onClick={deletePost}>삭제</Typography>
+                        </div>
+                        : null
                 }
                 <Typography className={classes.writer}>{writer}</Typography>
                 <Typography className={classes.date}>{dateFormat}</Typography>
@@ -207,7 +255,12 @@ function BoardDetail() {
                 <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
 
                 <div style={{ margin: "2rem auto auto 0.3rem" }}>
-                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>{likeCount}</span>
+                    {
+                        (!likeState) ?
+                            <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
+                            :
+                            <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
+                    }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }} onClick={clickLike}>{likeCount}</span>
                     <TextsmsOutlinedIcon sx={{ fontSize: '1rem', color: '#0CDAE0', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#0CDAE0' }}>{commentCount}</span>
                     <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
                     <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>

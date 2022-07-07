@@ -25,6 +25,7 @@ function BoardListAboutMe() {
     const navigate = useNavigate();
     const location = useLocation();
     const headTitle = location.state.headTitle;
+
     const typeId = location.state.typeId;
     const [currentTypeId, setCurrentTypeId] = useState(typeId);
     const [post, setPost] = useState([]);
@@ -35,7 +36,7 @@ function BoardListAboutMe() {
     const handleChange = (event, value) => {
         setPage(value);
         getBoardList({
-            page: value - 1,    //추후 -1 제거 필요
+            page: value - 1, 
         });
     };
 
@@ -53,7 +54,7 @@ function BoardListAboutMe() {
                             const title = (v.title).split('"');                             //제목
                             const contents = (v.contents).split('"');                       //내용
                             const registrationDate = (v.registrationDate).split('"');       //등록일
-                            const writer = (v.writer).split('"');                           //작성자
+                            let writer = (v.writer).split('"');                             //작성자
                             const likeCount = (v.likeCount)                                 //좋아요개수
                             const commentCount = (v.commentCount);                          //댓글개수
                             const views = (v.views);;                                       //조회수
@@ -68,6 +69,10 @@ function BoardListAboutMe() {
                                     break;
                                 case 'CLUB':
                                     boardTypeToKor = '동아리 게시판';
+                                    break;
+                                case 'NOTICE':
+                                    boardTypeToKor = '공지사항';
+                                    writer='에브리타임';
                                     break;
                             }
                             postItems.push({
@@ -98,7 +103,7 @@ function BoardListAboutMe() {
                             const title = (v.title).split('"');                             //제목
                             const contents = (v.contents).split('"');                       //내용
                             const registrationDate = (v.registrationDate).split('"');       //등록일
-                            const writer = (v.writer).split('"');                           //작성자
+                            let writer = (v.writer).split('"');                           //작성자
                             const likeCount = (v.likeCount)                                 //좋아요개수
                             const commentCount = (v.commentCount);                          //댓글개수
                             const views = (v.views);;                                       //조회수
@@ -113,6 +118,10 @@ function BoardListAboutMe() {
                                     break;
                                 case 'CLUB':
                                     boardTypeToKor = '동아리 게시판';
+                                    break;
+                                case 'NOTICE':
+                                    boardTypeToKor = '공지사항';
+                                    writer='에브리타임';
                                     break;
                             }
                             postItems.push({
@@ -143,7 +152,7 @@ function BoardListAboutMe() {
                             const title = (v.title).split('"');                             //제목
                             const contents = (v.contents).split('"');                       //내용
                             const registrationDate = (v.registrationDate).split('"');       //등록일
-                            const writer = (v.writer).split('"');                           //작성자
+                            let writer = (v.writer).split('"');                           //작성자
                             const likeCount = (v.likeCount)                                 //좋아요개수
                             const commentCount = (v.commentCount);                          //댓글개수
                             const views = (v.views);;                                       //조회수
@@ -158,6 +167,10 @@ function BoardListAboutMe() {
                                     break;
                                 case 'CLUB':
                                     boardTypeToKor = '동아리 게시판';
+                                    break;
+                                case 'NOTICE':
+                                    boardTypeToKor = '공지사항';
+                                    writer='에브리타임';
                                     break;
                             }
                             postItems.push({
@@ -184,7 +197,7 @@ function BoardListAboutMe() {
     useEffect(() => {
         if (!isInitialize || currentTypeId !== typeId) {
             getBoardList({
-                page: 0,    //추후 1로 수정필요
+                page: 0, 
             });
         }
     });
@@ -200,7 +213,7 @@ function BoardListAboutMe() {
                         sx={{ border: "1px gray solid", height: "17vh" }}
                         button
                         key={item.id}
-                        onClick={() => navigate('/' + (item.boardTypeToLowerCase) + 'board/detail/' + item.id, { state: { postId: item.id, headTitle: item.postTitle } })}
+                        onClick={() => navigate('/' + (item.boardTypeToLowerCase) + 'board/detail/' + item.id, { state: { postId: item.id, headTitle: item.boardTypeToKor } })}
                     >
                         <div>
                             <ListItemText primary={item.postTitle}

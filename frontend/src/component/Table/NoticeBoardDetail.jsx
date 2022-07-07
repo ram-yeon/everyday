@@ -66,7 +66,9 @@ const useStyles = makeStyles((theme) => ({
 
 function NoticeBoardDetail() {
     const classes = useStyles();
-    const { state } = useLocation();
+    const location = useLocation();
+    const postId = location.state.postId;
+    const headTitle = location.state.headTitle;
 
     let token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
@@ -80,9 +82,8 @@ function NoticeBoardDetail() {
 
     const [isInitialize, setIsInitialize] = useState(false);
     const data = {
-        noticeId: state,
+        noticeId: postId,
     }
-
     useEffect(() => {
         if (!isInitialize) {
             //공지사항 상세조회
@@ -109,11 +110,27 @@ function NoticeBoardDetail() {
         }
 
     });
+    //게시글 삭제
+    const deletePost = () => {
+        if (tokenJson.account_authority === 'MANAGER') {
+            const data = {
+                postId: postId,
+            }
+            BoardAPI.deleteBoardByAdmin(data).then(response => {
+                Message.success(response.message);
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            })
+        } else {
+            alert("삭제할 권한이 없습니다.");
+        }
+    }
 
     return (
         <div>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
-                <Link to='/noticeboard' className={classes.headLink}>공지사항</Link>
+                <Link to='/noticeboard' className={classes.headLink}>{headTitle}</Link>
             </Box>
             <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
                 <Info className={classes.writerIcon} />
@@ -121,7 +138,7 @@ function NoticeBoardDetail() {
                     (tokenJson.account_authority === 'MANAGER') ?
                         < div style={{ float: "right" }}>
                             <Typography className={classes.update}>수정</Typography>
-                            <Typography className={classes.delete}>삭제</Typography>
+                            <Typography className={classes.delete} onClick={deletePost}>삭제</Typography>
                         </div>
                         : null
                 }

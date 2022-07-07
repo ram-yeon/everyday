@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Container, makeStyles, Typography } from "@material-ui/core";
 import { Info } from '@material-ui/icons';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
@@ -30,10 +30,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "right",
         marginBottom: theme.spacing(5),
         cursor: "pointer",
-        // margin: "4rem auto 2rem 2rem",
-        // &:hover:{
-        //     background:"gray",
-        // },
         [theme.breakpoints.down("sm")]: {
             marginBottom: theme.spacing(3),
             cursor: "pointer",
@@ -41,10 +37,8 @@ const useStyles = makeStyles((theme) => ({
         },
 
     },
-
     icon: {
         marginRight: theme.spacing(1),
-        // color:"#C00000",
         color: "black",
         [theme.breakpoints.up("sm")]: {
             fontSize: "18px",
@@ -67,6 +61,14 @@ function LeftBar() {
     const classes = useStyles();
     let token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
+    const navigate = useNavigate();
+
+    const clickHotBoard = () => {
+        if (tokenJson.authorities[0].authority === 'ROLE_BASIC') {
+            alert("HOT 게시물을 보려면 등급 업그레이드가 필요합니다.\n(조건: 좋아요10개, 댓글5개 이상)");
+        } else
+            navigate('/hotboard');
+    };
 
     return (
         <>
@@ -74,14 +76,14 @@ function LeftBar() {
                 (tokenJson.account_authority === 'USER')                            //사용자일때,
                     ?
                     <Container className={classes.container}>
-                        <Link to='/hotboard' className={classes.menuLink} >
+                        <span className={classes.menuLink} onClick={() => clickHotBoard()}>
                             <div className={classes.item}>
                                 <LocalFireDepartmentIcon className={classes.icon} />
                                 <Typography className={classes.text}>
                                     HOT 게시물
                                 </Typography>
                             </div>
-                        </Link>
+                        </span>
 
                         <Link to='/freeboard' className={classes.menuLink} >
                             <div className={classes.item}>
@@ -120,7 +122,7 @@ function LeftBar() {
                         </Link>
                     </Container>
                     :                                                                   //관리자일때,
-                    <Container className={classes.container}>   
+                    <Container className={classes.container}>
                         <Link to='/noticeboard' className={classes.menuLink} >
                             <div className={classes.item}>
                                 <Info className={classes.icon} />
