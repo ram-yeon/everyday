@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ramyeon.everyday.domain.user.User;
 import ramyeon.everyday.domain.user.UserRepository;
 import ramyeon.everyday.dto.LikeDto;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RequiredArgsConstructor
 @Service
@@ -25,9 +26,9 @@ public class LikeService {
     /**
      * 좋아요 삭제
      */
-    public int deleteLike(String loginId, Long likeId) {
+    public int deleteLike(String loginId, String targetType, Long targetId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        Like like = likeRepository.findById(likeId).orElse(null);  // 좋아요 조회
+        Like like = likeRepository.findByUserAndTargetTypeAndTargetId(loginUser, TargetType.valueOf(targetType), targetId).orElseThrow(NotFoundResourceException::new); // 좋아요 조회
         if (like.getUser() != loginUser) {  // 남의 좋아요 삭제
             return 1;
         }
