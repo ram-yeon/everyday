@@ -169,7 +169,7 @@ public class PostService {
             return PostDto.PostResponseDto.builder()
                     .id(post.getId())
                     .writer(getWriter(post.getUser(), post.getIsAnonymous()))
-                    .writerLoginId(post.getUser().getLoginId())
+                    .writerLoginId(getWriterLoginId(post.getUser()))
                     .title(post.getTitle())
                     .contents(post.getContents())
                     .registrationDate(post.getRegistrationDate())
@@ -316,6 +316,14 @@ public class PostService {
             else
                 return user.getNickname();  // 닉네임
         }
+    }
+
+    // 게시글 작성자 id 조회
+    String getWriterLoginId(User user) {
+        if (user == null)  // 삭제된 유저 처리
+            return "삭제된 회원";
+        else
+            return user.getLoginId();
     }
 
     // 댓글 작성자 조회
