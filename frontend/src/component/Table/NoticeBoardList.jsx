@@ -110,7 +110,7 @@ function NoticeBoardList(props) {
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
                 {title}
             </Box>
-            {
+            {   //공지 등록은 관리자만 글작성박스 보이도록
                 (tokenJson.account_authority === 'MANAGER') ?
                     <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
                         공지사항을 등록해주세요.
@@ -118,9 +118,7 @@ function NoticeBoardList(props) {
                     </Box>
                     : null
             }
-            {
-                show ? <WriteBox show={show} /> : null
-            }
+            { show ? <WriteBox show={show} boardType='공지사항'  /> : null }
 
             <List sx={{ marginTop: "-0.4rem" }}>
                 {notice.map(item => (

@@ -47,15 +47,18 @@ function WriteBox(props) {
     const [contents, setContents] = useState("");
     const [checked, setChecked] = useState(false);
 
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
     const handleSetTitle = (e) => {
-        setContents(e.target.value);
+        setTitle(e.target.value);
     };
     const handleSetContents = (e) => {
         setContents(e.target.value);
     };
     const handleCheckBox = (event) => {
         setChecked(event.target.checked);
-      };
+    };
 
     //입력 글자 수 제한
     // const checkLength = (event) => {
@@ -95,13 +98,22 @@ function WriteBox(props) {
             contents: contents,
             isAnonymous: isAnonymous,
         }
-        BoardAPI.boardDetailSelect(data).then(response => {
+        if (props.boardType === '공지사항') {   //관리자 공지등록
+            BoardAPI.registerBoardByAdmin(data).then(response => {
 
-        }).catch(error => {
-            console.log(JSON.stringify(error));
-            Message.error(error.message);
-        })
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            })
 
+        } else {    //일반사용자 글등록
+            BoardAPI.registerBoard(data).then(response => {
+
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            })
+        }
     };
 
     useEffect(() => {
@@ -159,9 +171,13 @@ function WriteBox(props) {
                 <hr style={{ marginBottom: "0.3rem" }} />
 
                 <div className={classes.boxFooter}>
-                    <InsertPhotoOutlinedIcon htmlFor="image" />
-                    <FormControlLabel control={<Checkbox color="default" size="small" />}
-                        label="익명" sx={{ marginLeft: "83%", marginBottom: "1.8rem" }} checked={checked} onChange={handleCheckBox} />
+                    <InsertPhotoOutlinedIcon />
+                    {
+                        (tokenJson.account_authority === 'USER') ?
+                            <FormControlLabel control={<Checkbox color="default" size="small" />}
+                                label="익명" sx={{ marginLeft: "83%", marginBottom: "1.8rem" }} checked={checked} onChange={handleCheckBox} />
+                            : null
+                    }
                     <BorderColorIcon className={classes.registerBtn} onClick={handleClick} />
                 </div>
             </Box>

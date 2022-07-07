@@ -33,5 +33,11 @@ export const registerBoard = (data) => NewPromise(Axios.post('/posts', data));
 export const updateBoard = (data) => NewPromise(Axios.patch('/posts' + data.postId));
 //게시글 삭제
 export const deleteBoard = (data) => NewPromise(Axios.delete('/posts' + data.postId));
+//게시글 등록(관리자)
+export const registerBoardByAdmin = (data) => NewPromise(Axios.post('/posts', data));
+//게시글 수정(관리자)
+export const updateBoardByAdmin = (data) => NewPromise(Axios.patch('/posts' + data.postId));
+//게시글 삭제(관리자)
+export const deleteBoardByAdmin = (data) => NewPromise(Axios.delete('/posts' + data.postId));
 
 

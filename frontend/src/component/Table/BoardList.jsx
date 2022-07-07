@@ -64,46 +64,46 @@ function BoardList(props) {
 
     const getBoardList = (apiRequestData) => {
         let token = localStorage.getItem(SESSION_TOKEN_KEY);
-            const tokenJson = JSON.parse(atob(token.split(".")[1]));
-            if (tokenJson.account_authority === "USER") {
-                //게시판 별 게시글 목록 조회
-                BoardAPI.eachBoardSelect(apiRequestData).then(response => {
-                    if (response.data.hasOwnProperty('content')) {
-                        const postItems = [];
+        const tokenJson = JSON.parse(atob(token.split(".")[1]));
+        if (tokenJson.account_authority === "USER") {
+            //게시판 별 게시글 목록 조회
+            BoardAPI.eachBoardSelect(apiRequestData).then(response => {
+                if (response.data.hasOwnProperty('content')) {
+                    const postItems = [];
 
-                        response.data.content.forEach((v, i) => {
-                            const title = JSON.stringify(v.title);                          //제목
-                            const contents = JSON.stringify(v.contents);                    //내용
-                            const registrationDate = JSON.stringify(v.registrationDate);    //등록일
-                            const writer = JSON.stringify(v.writer);                        //작성자
-                            const likeCount = JSON.stringify(v.likeCount);                //좋아요개수
-                            const commentCount = JSON.stringify(v.commentCount);            //댓글개수
-                            const views = JSON.stringify(v.views);                          //조회수
-                            const fileCount = JSON.stringify(v.fileCount);                  //파일
+                    response.data.content.forEach((v, i) => {
+                        const title = JSON.stringify(v.title);                          //제목
+                        const contents = JSON.stringify(v.contents);                    //내용
+                        const registrationDate = JSON.stringify(v.registrationDate);    //등록일
+                        const writer = JSON.stringify(v.writer);                        //작성자
+                        const likeCount = JSON.stringify(v.likeCount);                //좋아요개수
+                        const commentCount = JSON.stringify(v.commentCount);            //댓글개수
+                        const views = JSON.stringify(v.views);                          //조회수
+                        const fileCount = JSON.stringify(v.fileCount);                  //파일
 
-                            const titleTrim = title.split('"');
-                            const contentsTrim = contents.split('"');
-                            const registrationDateTrim = registrationDate.split('"');
-                            const writerTrim = writer.split('"');
-                            const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
-                        
-                            postItems.push({
-                                user: writerTrim, postTitle: titleTrim, postContent: contentsTrim, date: dateFormat,
-                                likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
-                            });
-                        })
-                        setPost(postItems);
-                    }
-                    if (response.data.hasOwnProperty('totalPages')) {
-                        setTotalPages(response.data.totalPages);
-                    }
-                }).catch(error => {
-                    console.log(JSON.stringify(error));
-                    Message.error(error.message);
-                }).finally(() => {
-                    setIsInitialize(true);
-                });
-            }
+                        const titleTrim = title.split('"');
+                        const contentsTrim = contents.split('"');
+                        const registrationDateTrim = registrationDate.split('"');
+                        const writerTrim = writer.split('"');
+                        const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+
+                        postItems.push({
+                            user: writerTrim, postTitle: titleTrim, postContent: contentsTrim, date: dateFormat,
+                            likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
+                        });
+                    })
+                    setPost(postItems);
+                }
+                if (response.data.hasOwnProperty('totalPages')) {
+                    setTotalPages(response.data.totalPages);
+                }
+            }).catch(error => {
+                console.log(JSON.stringify(error));
+                Message.error(error.message);
+            }).finally(() => {
+                setIsInitialize(true);
+            });
+        }
     };
 
     useEffect(() => {
@@ -128,9 +128,7 @@ function BoardList(props) {
                     </Box>
                     : null
             }
-            {
-                show ? <WriteBox show={show} boardType={boardType} /> : null
-            }
+            {show ? <WriteBox show={show} boardType={boardType} /> : null}
             <List sx={{ marginTop: "-0.4rem" }}>
                 {post.map(item => (
                     <ListItem

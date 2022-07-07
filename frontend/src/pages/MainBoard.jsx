@@ -123,13 +123,13 @@ function MainBoard() {
 
     const clickHotBoard = () => {
         if (tokenJson.authorities[0].authority === 'ROLE_BASIC') {
-            alert("HOT 게시물을 보려면 좋아요10개, 댓글5개를 달성하세요!");
+            alert("HOT 게시물을 보려면 등급 업그레이드가 필요합니다.\n(조건: 좋아요10개, 댓글5개 이상)");
         } else
             navigate('/hotboard');
     };
     const clickHotBoardDetail = (itemId) => {
         if (tokenJson.authorities[0].authority === 'ROLE_BASIC') {
-            alert("HOT 게시물을 보려면 좋아요10개, 댓글5개를 달성하세요!");
+            alert("HOT 게시물을 보려면 등급 업그레이드가 필요합니다.\n(조건: 좋아요10개, 댓글5개 이상)");
         } else
             navigate('/hotboard/detail/' + itemId, { state: { postId: itemId, headTitle: 'HOT 게시물' } })
     };
@@ -137,7 +137,8 @@ function MainBoard() {
     const climbUp = () => {
         BoardAPI.userAuthorityEdit().then(response => {
             //성공하면 등급업그레이드 텍스트 없어져야하고 핫게 들어갈 수 있어야함
-
+            console.log(JSON.stringify(response));
+            Message.success(response.message);
         }).catch(error => {
             console.log(JSON.stringify(error));
             Message.error(error.message);
@@ -148,7 +149,7 @@ function MainBoard() {
         <div>
             {
                 (tokenJson.authorities[0].authority === 'ROLE_BASIC') ?
-                    <div className={classes.climbUpText} onClick={climbUp}>
+                    <div className={classes.climbUpText} onClick={() => climbUp()}>
                         HOT 게시물을 보고싶다면?<br />클릭 시, 등급 업그레이드!
                     </div>
                     : null
