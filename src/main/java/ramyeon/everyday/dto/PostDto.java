@@ -33,6 +33,8 @@ public class PostDto {
         private Whether isAnonymous;  // 익명 여부
         private Long views;  // 조회수
 
+        private Whether isLikePost;  // 글을 조회한 회원의 게시글 좋아요 여부
+
         private Long likeCount;  // 좋아요 수
 
         private Integer fileCount;  // 파일 수

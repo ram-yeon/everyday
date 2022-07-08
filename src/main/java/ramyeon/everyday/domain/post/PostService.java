@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.file.File;
+import ramyeon.everyday.domain.like.Like;
 import ramyeon.everyday.domain.like.LikeRepository;
 import ramyeon.everyday.domain.like.TargetType;
 import ramyeon.everyday.domain.notice.Notice;
@@ -164,6 +165,7 @@ public class PostService {
                                 .commentType(comment.getCommentType())
                                 .preId(comment.getPreId())
                                 .isAnonymous(comment.getIsAnonymous())
+                                .isLikeComment(checkUserLike(loginUser.getLikeList(), TargetType.COMMENT, comment.getId()))  // 해당 댓글을 좋아요 했는지 확인
                                 .build()
                 );
             }
@@ -178,6 +180,7 @@ public class PostService {
                     .boardType(post.getBoardType())
                     .isAnonymous(post.getIsAnonymous())
                     .views(post.getViews())
+                    .isLikePost(checkUserLike(loginUser.getLikeList(), TargetType.POST, post.getId()))  // 해당 글을 좋아요 했는지 확인
                     .likeCount(getLikeCount(post))
                     .fileCount(fileDtoList.size())
                     .file(fileDtoList)
@@ -301,6 +304,16 @@ public class PostService {
     // 게시판 별 게시글 조회
     Page<Post> getBoardPosts(User user, BoardType boardType, Pageable pageable) {
         return postRepository.findBySchoolAndBoardTypeAndIsDeleted(user.getSchool(), boardType, Whether.N, pageable);
+    }
+
+    // 회원의 좋아요 여부 확인
+    public Whether checkUserLike(List<Like> likeList, TargetType targetType, Long targetId) {
+        for (Like like : likeList) {
+            // 회원의 좋아요 리스트에 있을 때
+            if (like.getTargetType() == targetType && like.getTargetId().equals(targetId))
+                return Whether.Y;
+        }
+        return Whether.N;
     }
 
     // 좋아요 수 조회
