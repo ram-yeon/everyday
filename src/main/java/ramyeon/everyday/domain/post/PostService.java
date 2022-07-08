@@ -85,17 +85,8 @@ public class PostService {
         BoardType boardType = BoardType.valueOf(type);  // 게시판 종류
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         if (boardType == BoardType.HOT) {  // 핫 게시판
-            List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L);  // 핫 게시글 ID 조회
-            List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(loginUser.getSchool(), Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));  // 게시글 최신순 조회
             // 핫 게시글 조회
-            List<Post> postsHot = new ArrayList<>();
-            for (Post post : postsAll) {
-                for (Long hotPostId : hotPostIdList) {
-                    if (post.getId().equals(hotPostId)) {
-                        postsHot.add(post);
-                    }
-                }
-            }
+            List<Post> postsHot = getHotPostsMain(loginUser, pageable);
             // Post 엔티티를 PostsBoardDto로 변환
             List<PostDto.PostResponseDto> postsBoardDtos = new ArrayList<>();
             for (Post post : postsHot) {
@@ -344,19 +335,7 @@ public class PostService {
 
     // 핫 게시글 조회(메인화면)
     List<Post> getHotPostsMain(User user, Pageable pageable) {
-        List<Post> hotPosts = new ArrayList<>();
-        List<Long> hotPostIdList = likeRepository.findTargetIdByTargetIdGreaterThan(TargetType.POST, 10L, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));  // 핫 게시글 ID 조회(메인화면)
-        List<Post> postsAll = postRepository.findBySchoolAndIsDeleted(user.getSchool(), Whether.N, pageable.getSort());  // 게시글 최신순 조회
-
-        // 핫 게시글 조회
-        for (Post post : postsAll) {
-            for (Long hotPostId : hotPostIdList) {
-                if (post.getId().equals(hotPostId)) {
-                    hotPosts.add(post);
-                }
-            }
-        }
-        return hotPosts;
+        return postRepository.findBySchoolAndIsDeletedAndId(user.getSchool(), Whether.N, TargetType.POST, 10L, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
     // 게시판 별 게시글 조회

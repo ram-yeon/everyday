@@ -19,6 +19,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findBySchoolAndIsDeleted(School school, Whether isDeleted, Sort sort);  // 학교 게시글 조회
 
+    @Query("SELECT p FROM Post p" +
+            " WHERE p.school = ?1" +
+            " and p.isDeleted = ?2" +
+            " and p.id IN (select l.targetId from Like l where targetType = ?3 group by l.targetId having count(l.targetId) >= ?4)" +
+            " order by p.registrationDate desc")
+    List<Post> findBySchoolAndIsDeletedAndId(School school, Whether isDeleted, TargetType targetType, Long likeCount, Pageable pageable);  // 핫 게시글 조회 - subQuery
+
     @Query("SELECT DISTINCT p FROM Post p" +
             " LEFT OUTER JOIN FETCH p.user u" +
             " LEFT OUTER JOIN FETCH p.commentList c" +
