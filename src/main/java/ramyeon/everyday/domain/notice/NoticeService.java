@@ -13,8 +13,12 @@ import ramyeon.everyday.domain.like.LikeRepository;
 import ramyeon.everyday.domain.like.TargetType;
 import ramyeon.everyday.domain.manager.Manager;
 import ramyeon.everyday.domain.manager.ManagerRepository;
+import ramyeon.everyday.domain.post.PostService;
+import ramyeon.everyday.domain.user.User;
+import ramyeon.everyday.domain.user.UserRepository;
 import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.NoticeDto;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,7 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final LikeRepository likeRepository;
     private final ManagerRepository managerRepository;
+    private final UserRepository userRepository;
 
     // 공지사항 목록 조회
     public Page<NoticeDto.NoticeResponseDto> getNotices(Pageable pageable) {
@@ -55,20 +60,21 @@ public class NoticeService {
     }
 
     // 공지사항 상세 조회
-    public NoticeDto.NoticeResponseDto getNoticeDetail(Long noticeId) {
+    public NoticeDto.NoticeResponseDto getNoticeDetail(Long noticeId, String userLoginId) {
         // 공지사항 및 관리자, 파일 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
-        Notice notice = noticeRepository.findByIdAndIsDeletedWithManagerFile(noticeId, Whether.N).orElse(null);
-        if (notice == null) {
-            return null;
-        } else {
-            Long likeCount = likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId());  // 좋아요 수 조회
+        Notice notice = noticeRepository.findByIdAndIsDeletedWithManagerFile(noticeId, Whether.N).orElseThrow(NotFoundResourceException::new);
 
-            // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
-            List<File> fileList = notice.getFileList();
-            List<FileDto.FileInPostAndNoticeResponseDto> fileDtoList = new ArrayList<>();
-            for (File file : fileList) {
-                fileDtoList.add(new FileDto.FileInPostAndNoticeResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
-            }
+        // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
+        List<File> fileList = notice.getFileList();
+        List<FileDto.FileInPostAndNoticeResponseDto> fileDtoList = new ArrayList<>();
+        for (File file : fileList) {
+            fileDtoList.add(new FileDto.FileInPostAndNoticeResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
+        }
+
+        // 사용자가 조회
+        if (userLoginId != null) {
+            // 사용자 및 좋아요 조회- fetch join을 통한 성능 최적화로 쿼리 수 감소
+            User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(userLoginId).orElse(null);
 
             return NoticeDto.NoticeResponseDto.builder()
                     .id(notice.getId())
@@ -77,11 +83,25 @@ public class NoticeService {
                     .contents(notice.getContents())
                     .registrationDate(notice.getRegistrationDate())
                     .views(notice.getViews())
-                    .likeCount(likeCount)
+                    .isLikeNotice(PostService.checkUserLike(loginUser.getLikeList(), TargetType.NOTICE, notice.getId()))  // 해당 공지사항을 좋아요 했는지 확인
+                    .likeCount(getLikeCount(notice))  // 좋아요 수 조회
                     .fileCount(notice.getFileList().size())
                     .file(fileDtoList)
                     .build();
         }
+
+        // 관리자가 조회
+        return NoticeDto.NoticeResponseDto.builder()
+                .id(notice.getId())
+                .writer(notice.getManager().getName())
+                .title(notice.getTitle())
+                .contents(notice.getContents())
+                .registrationDate(notice.getRegistrationDate())
+                .views(notice.getViews())
+                .likeCount(getLikeCount(notice))  // 좋아요 수 조회
+                .fileCount(notice.getFileList().size())
+                .file(fileDtoList)
+                .build();
     }
 
     // 공지사항 목록 조회

@@ -10,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ramyeon.everyday.auth.ManagerDetails;
+import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.notice.NoticeService;
 import ramyeon.everyday.dto.NoticeDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,13 +35,17 @@ public class NoticeController {
      * 공지사항 상세 조회 API
      */
     @GetMapping("/notices/{noticeId}")
-    public ResponseEntity noticeDetail(@PathVariable Long noticeId) {
-        NoticeDto.NoticeResponseDto data = noticeService.getNoticeDetail(noticeId);
-        if (data == null) {
+    public ResponseEntity noticeDetail(@PathVariable Long noticeId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        NoticeDto.NoticeResponseDto data;
+        try {
+            if (principalDetails != null)  // 사용자가 조회
+                data = noticeService.getNoticeDetail(noticeId, principalDetails.getUsername());
+            else  // 관리자가 조회
+                data = noticeService.getNoticeDetail(noticeId, null);
+        } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, "존재하지 않는 공지사항"), HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(new ResultDto(200, "공지사항 상세 조회 성공", data), HttpStatus.OK);
         }
+        return new ResponseEntity<>(new ResultDto(200, "공지사항 상세 조회 성공", data), HttpStatus.OK);
     }
 
     /**
