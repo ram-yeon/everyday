@@ -66,6 +66,7 @@ logs
 **/*.back.*
 
 node_modules
+my-app
 bower_components
 
 *.sublime*

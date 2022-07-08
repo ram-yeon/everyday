@@ -25,8 +25,11 @@ function BoardListAboutMe() {
     const navigate = useNavigate();
     const location = useLocation();
     const headTitle = location.state.headTitle;
-
     const typeId = location.state.typeId;
+
+    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
     const [currentTypeId, setCurrentTypeId] = useState(typeId);
     const [post, setPost] = useState([]);
     const [page, setPage] = useState(1);
@@ -36,13 +39,11 @@ function BoardListAboutMe() {
     const handleChange = (event, value) => {
         setPage(value);
         getBoardList({
-            page: value - 1, 
+            page: value - 1,
         });
     };
 
     const getBoardList = (apiRequestData) => {
-        let token = localStorage.getItem(SESSION_TOKEN_KEY);
-        const tokenJson = JSON.parse(atob(token.split(".")[1]));
         if (tokenJson.account_authority === "USER") {
             if (typeId === 1) { //내가 쓴 글 조회
                 BoardAPI.WritenByMe(apiRequestData).then(response => {
@@ -72,7 +73,7 @@ function BoardListAboutMe() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer='에브리타임';
+                                    writer = '에브리타임';
                                     break;
                             }
                             postItems.push({
@@ -121,7 +122,7 @@ function BoardListAboutMe() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer='에브리타임';
+                                    writer = '에브리타임';
                                     break;
                             }
                             postItems.push({
@@ -170,7 +171,7 @@ function BoardListAboutMe() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer='에브리타임';
+                                    writer = '에브리타임';
                                     break;
                             }
                             postItems.push({
@@ -197,10 +198,33 @@ function BoardListAboutMe() {
     useEffect(() => {
         if (!isInitialize || currentTypeId !== typeId) {
             getBoardList({
-                page: 0, 
+                page: 0,
             });
         }
     });
+
+    //조회수갱신
+    const clickBoardList = (itemId, boardTypeToLowerCase, boardTypeToKor) => {
+        navigate('/' + boardTypeToLowerCase + 'board/detail/' + itemId, { state: { postId: itemId, headTitle: boardTypeToKor } })
+        if (tokenJson.account_authority === "USER") {
+            const data = {
+                views: 1,
+            }
+            if (boardTypeToLowerCase === 'notice') {
+                BoardAPI.noticeBoardViews(itemId, data).then(response => {
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            } else {
+                BoardAPI.boardViews(itemId, data).then(response => {
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            }
+        }
+    }
 
     return (
         <div>
@@ -213,7 +237,7 @@ function BoardListAboutMe() {
                         sx={{ border: "1px gray solid", height: "17vh" }}
                         button
                         key={item.id}
-                        onClick={() => navigate('/' + (item.boardTypeToLowerCase) + 'board/detail/' + item.id, { state: { postId: item.id, headTitle: item.boardTypeToKor } })}
+                        onClick={() => clickBoardList(item.id, item.boardTypeToLowerCase, item.boardTypeToKor)}
                     >
                         <div>
                             <ListItemText primary={item.postTitle}

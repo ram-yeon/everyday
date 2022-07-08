@@ -132,5 +132,4 @@ function Landing() {
     </Layout>
   );
 }
-
 export default Landing

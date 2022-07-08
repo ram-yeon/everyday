@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Board.css';
-import WriteReply from './WriteReply';
+// import WriteReply from './WriteReply';
 import { Link } from 'react-router-dom';
-import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -12,14 +11,12 @@ import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';          
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
 
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
+// import List from '@mui/material/List';
+// import ListItem from '@mui/material/ListItem';
+// import ListItemText from '@mui/material/ListItemText';
+// import ListItemIcon from '@mui/material/ListItemIcon';
 
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-
+import { makeStyles, Typography } from "@material-ui/core";
 import { FormControlLabel, Checkbox } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
@@ -29,6 +26,8 @@ import 'moment/locale/ko';
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
+
+import Comment from '../Table/Comment';
 
 const useStyles = makeStyles((theme) => ({
     headLink: {
@@ -68,19 +67,6 @@ const useStyles = makeStyles((theme) => ({
         color: "gray",
         fontSize: "0.7rem",
     },
-    checkAnonymous: {
-        marginTop: "-4.5rem",
-    },
-    registerBtn: {
-        width: "1.5rem",
-        height: "1.5rem",
-        padding: "0.5rem",
-        backgroundColor: "#C00000",
-        color: "white",
-        float: "right",
-        cursor: "pointer",
-        marginTop: "-2.7rem",
-    },
     listBtn: {
         width: "10%",
         height: "2.5rem",
@@ -111,6 +97,9 @@ function BoardDetail() {
     const [writerLoginId, setWriterLoginId] = useState('');
     const [id, setId] = useState('');
     const [likeCount, setLikeCount] = useState('');
+    const [likeState, setLikeState] = useState('');
+    const [isLikePost, setIsLikePost] = useState('');               //해당 게시글 좋아요했는지에 대한 상태값  
+
     const [commentCount, setCommentCount] = useState('');
     const [views, setViews] = useState('');
     const [fileCount, setFileCount] = useState('');
@@ -147,6 +136,11 @@ function BoardDetail() {
 
                     setId(JSON.stringify(response.data.id));
                     setLikeCount(JSON.stringify(response.data.likeCount));
+                    setIsLikePost(JSON.stringify(response.data.isLikePost));
+                    if (isLikePost === 'Y') {
+                        setLikeState(true);
+                    } else
+                        setLikeState(false);
                     setCommentCount(JSON.stringify(response.data.commentCount));
                     setViews(JSON.stringify(response.data.views));
                     setFileCount(JSON.stringify(response.data.fileCount));
@@ -161,11 +155,11 @@ function BoardDetail() {
         }
     });
 
-    const [likeState, setLikeState] = useState(false);
     const clickLike = () => {
         if (tokenJson.account_authority === "USER") {
             if (!likeState) {  //좋아요추가
-                setLikeState(!likeState);
+                setLikeState(true);
+                setLikeCount(likeCount + 1);
                 const data = {
                     targetType: "POST",
                     targetId: id
@@ -177,7 +171,8 @@ function BoardDetail() {
                     Message.error(error.message);
                 })
             } else { //좋아요취소
-                setLikeState(!likeState);
+                setLikeState(false);
+                setLikeCount(likeCount - 1);
                 const data = {
                     targetType: "POST",
                     targetId: id
@@ -190,7 +185,7 @@ function BoardDetail() {
                 })
             }
         } else {
-            alert("좋아요는 사용자만 할 수 있습니다.");
+            alert("좋아요 권한이 없습니다.");
         }
     }
     //게시글 삭제
@@ -205,34 +200,34 @@ function BoardDetail() {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
             })
-        }else {
+        } else {
             alert("삭제할 권한이 없습니다.");
         }
     }
 
     //댓글
-    const comment = [
-        {
-            writer: "익명",
-            content: "댓글입니다아",
-            date: "20/02/12/ 21:42",
-            reply: "답글달기",
-            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            id: 1,
-        },
-        {
-            writer: "익명",
-            content: "ㄴㅇ라ㅣ넝라ㅣ멍ㄹㅇ러ㅣ아ㅓ댓글임",
-            date: "20/02/12/ 21:42",
-            reply: "답글달기",
-            replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-            likeCount: "0",
-            id: 2,
-        },
-    ]
+    // const comment = [
+    //     {
+    //         writer: "익명",
+    //         content: "댓글입니다아",
+    //         date: "20/02/12/ 21:42",
+    //         reply: "답글달기",
+    //         replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
+    //         likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
+    //         likeCount: "0",
+    //         id: 1,
+    //     },
+    //     {
+    //         writer: "익명",
+    //         content: "ㄴㅇ라ㅣ넝라ㅣ멍ㄹㅇ러ㅣ아ㅓ댓글임",
+    //         date: "20/02/12/ 21:42",
+    //         reply: "답글달기",
+    //         replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
+    //         likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
+    //         likeCount: "0",
+    //         id: 2,
+    //     },
+    // ]
 
     return (
         <div>
@@ -268,7 +263,8 @@ function BoardDetail() {
             </Box >
 
             {/* 댓글 */}
-            < List sx={{ marginTop: "-0.4rem" }}>
+            <Comment user={writer} />
+            {/* < List sx={{ marginTop: "-0.4rem" }}>
                 {
                     comment.map(item => (
                         <ListItem
@@ -325,14 +321,12 @@ function BoardDetail() {
                         </ListItem>
                     ))
                 }
-            </List >
-            <WriteReply />
+            </List > */}
 
-            <input className="comment-input" type="text" name="comment" id="comment1" placeholder="댓글을 입력하세요."
-                value={commentVal} onChange={(e) => { setCommentVal(e.target.value) }} />
-            <FormControlLabel control={<Checkbox color="default" size="small" />}
-                label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "85%" }} />
-            <BorderColorIcon className={classes.registerBtn} />
+            {/* 대댓글 */}
+            {/* <WriteReply /> */}
+
+
 
             {/* 게시판따라경로분기처리 */}
             <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>

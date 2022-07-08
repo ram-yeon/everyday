@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-
-import { makeStyles } from "@material-ui/core";
-import { Box } from '@mui/material/';
-import WriteBox from './WriteBox';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
+import { useNavigate, useLocation } from 'react-router-dom';
 // import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';             //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -23,77 +17,71 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
 import * as BoardAPI from '../../api/Board';
-import { Message } from '../../component/Message';
-import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
+import { Message } from '../Message';
+import { SESSION_TOKEN_KEY } from '../Axios/Axios';
 
-const useStyles = makeStyles((theme) => ({
-    writeBoxBtn: {
-        border: "2px lightgray solid",
-        color: "gray",
-        backgroundColor: "#F6F6F6",
-        fontSize: "0.9rem",
-        textAlign: "left",
-        cursor: "pointer",
-        margin: "0.3rem auto",
-    },
-}));
-
-function BoardList(props) {
-    const {
-        title,
-        boardType,
-    } = props;
-    const boardTypeToLowerCase = boardType.toLowerCase();
-    const classes = useStyles();
+function SearchBoardList() {
     const navigate = useNavigate();
-
+    const location = useLocation();
+    const keyword = location.state.keyword;
     let token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
-    const [show, setShow] = useState(false);
     const [post, setPost] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialize, setIsInitialize] = useState(false);
 
+    const [currentKeyword, setCurrentKeyword] = useState(keyword);
+
     const handleChange = (event, value) => {
         setPage(value);
-
         getBoardList({
-            boardType: boardType,
             page: value - 1,
+            keyword: keyword,
         });
     };
 
     const getBoardList = (apiRequestData) => {
         if (tokenJson.account_authority === "USER") {
-            //게시판 별 게시글 목록 조회
-            BoardAPI.eachBoardSelect(apiRequestData).then(response => {
-                if (response.data.hasOwnProperty('content')) {
-                    const postItems = [];
-
-                    response.data.content.forEach((v, i) => {
-                        const title = JSON.stringify(v.title);                          //제목
-                        const contents = JSON.stringify(v.contents);                    //내용
-                        const registrationDate = JSON.stringify(v.registrationDate);    //등록일
-                        const writer = JSON.stringify(v.writer);                        //작성자
-                        const likeCount = JSON.stringify(v.likeCount);                //좋아요개수
-                        const commentCount = JSON.stringify(v.commentCount);            //댓글개수
-                        const views = JSON.stringify(v.views);                          //조회수
-                        const fileCount = JSON.stringify(v.fileCount);                  //파일
-
-                        const titleTrim = title.split('"');
-                        const contentsTrim = contents.split('"');
-                        const registrationDateTrim = registrationDate.split('"');
-                        const writerTrim = writer.split('"');
-                        const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
-
-                        postItems.push({
-                            user: writerTrim, postTitle: titleTrim, postContent: contentsTrim, date: dateFormat,
-                            likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
-                        });
-                    })
-                    setPost(postItems);
+            BoardAPI.search(apiRequestData).then(response => {
+                if (response.data.hasOwnProperty('post')) {
+                    if (response.data.post.hasOwnProperty('content')) {
+                        const postItems = [];
+                        response.data.post.content.forEach((v, i) => {
+                            let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
+                            let boardTypeToKor = v.boardType;                               //게시판타입(한글)
+                            const title = (v.title).split('"');                             //제목
+                            const contents = (v.contents).split('"');                       //내용
+                            const registrationDate = (v.registrationDate).split('"');       //등록일
+                            let writer = (v.writer).split('"');                             //작성자
+                            const likeCount = (v.likeCount)                                 //좋아요개수
+                            const commentCount = (v.commentCount);                          //댓글개수
+                            const views = (v.views);;                                       //조회수
+                            const fileCount = (v.fileCount);                                //파일개수
+                            const registrationDateTrim = moment(registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            switch (boardTypeToKor) {
+                                case 'FREE':
+                                    boardTypeToKor = '자유 게시판';
+                                    break;
+                                case 'INFO':
+                                    boardTypeToKor = '정보 게시판';
+                                    break;
+                                case 'CLUB':
+                                    boardTypeToKor = '동아리 게시판';
+                                    break;
+                                case 'NOTICE':
+                                    boardTypeToKor = '공지사항';
+                                    writer = '에브리타임';
+                                    break;
+                            }
+                            postItems.push({
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, user: writer, postTitle: title, postContent: contents, date: registrationDateTrim,
+                                likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
+                            });
+                        })
+                        setPost(postItems);   
+                    }
                 }
                 if (response.data.hasOwnProperty('totalPages')) {
                     setTotalPages(response.data.totalPages);
@@ -103,54 +91,53 @@ function BoardList(props) {
                 Message.error(error.message);
             }).finally(() => {
                 setIsInitialize(true);
+                setCurrentKeyword(keyword);
             });
         }
     };
 
     useEffect(() => {
-        if (!isInitialize) {
+        if (!isInitialize || currentKeyword !== keyword) {
             getBoardList({
-                boardType: boardType,
-                page: 0,  
+                page: 0,
+                keyword: keyword,
             });
         }
     });
+
     //조회수갱신
-    const clickBoardList = (itemId) => {
-        navigate('/' + boardTypeToLowerCase + 'board/detail/' + itemId, { state: { postId: itemId, headTitle: title } })
+    const clickBoardList = (itemId, boardTypeToLowerCase, boardTypeToKor) => {
+        navigate('/' + boardTypeToLowerCase + 'board/detail/' + itemId, { state: { postId: itemId, headTitle: boardTypeToKor } })
         if (tokenJson.account_authority === "USER") {
            const data = {
                 views: 1,   
             }
-            BoardAPI.boardViews(itemId, data).then(response => {
-            }).catch(error => {
-                console.log(JSON.stringify(error));
-                Message.error(error.message);
-            })
+            if (boardTypeToLowerCase === 'notice') {
+                BoardAPI.noticeBoardViews(itemId, data).then(response => {
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            } else {
+                BoardAPI.boardViews(itemId, data).then(response => {
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            }
         }
     }
 
     return (
         <div>
-            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
-                {title}
-            </Box>
-            {   //HOT게시물이면 글작성박스 안보이도록
-                (boardType !== "HOT") ?
-                    <Box p={1.8} className={classes.writeBoxBtn} onClick={() => setShow(!show)}>
-                        새 글을 작성하세요.
-                        <BorderColorIcon sx={{ float: "right" }} />
-                    </Box>
-                    : null
-            }
-            {show ? <WriteBox show={show} boardType={boardType} /> : null}
             <List sx={{ marginTop: "-0.4rem" }}>
                 {post.map(item => (
                     <ListItem
-                        sx={{ border: "1px gray solid", height: "15vh" }}
+                        sx={{ border: "1px gray solid", height: "17vh" }}
                         button
                         key={item.id}
-                        onClick={() => clickBoardList(item.id)}>
+                        onClick={() => clickBoardList(item.id, item.boardTypeToLowerCase, item.boardTypeToKor )}
+                    >
                         <div>
                             <ListItemText primary={item.postTitle}
                                 primaryTypographyProps={{
@@ -177,9 +164,15 @@ function BoardList(props) {
                                 }} />
                             <ListItemText primary={item.user}
                                 primaryTypographyProps={{
-                                    fontSize: '0.7rem',
+                                    fontSize: '0.5rem',
                                     width: "5rem",
                                     color: "#C00000"
+                                }} />
+                            <ListItemText primary={'[' + item.boardTypeToKor + ']'}
+                                primaryTypographyProps={{
+                                    fontSize: '0.3rem',
+                                    width: "7rem",
+                                    color: "gray",
                                 }} />
                         </div>
                         <ListItemIcon sx={{ color: '#C00000', marginLeft: "30%" }}><FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} /></ListItemIcon>
@@ -228,4 +221,4 @@ function BoardList(props) {
     )
 }
 
-export default BoardList;
+export default SearchBoardList;

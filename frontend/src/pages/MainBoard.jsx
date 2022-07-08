@@ -167,7 +167,7 @@ function MainBoard() {
                                     <ListItem
                                         button
                                         key={item.id}
-                                        onClick={() => navigate('/noticeboard/detail/' + item.id, { state: item.id })}
+                                        onClick={() => navigate('/noticeboard/detail/' + item.id, { state: { postId: item.id, headTitle: '공지사항' } })}                                        
                                     >
                                         <ListItemText primary={item.text}
                                             primaryTypographyProps={{

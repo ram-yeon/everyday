@@ -31,20 +31,23 @@ export const likeByMe = (data) => NewPromise(Axios.get('/posts/notices/like?page
 export const registerBoard = (data) => NewPromise(Axios.post('/posts', data));
 //게시글 수정
 export const updateBoard = (data) => NewPromise(Axios.patch('/posts' + data.postId));
-//게시글 삭제
+//게시글 삭제 ㅇ
 export const deleteBoard = (data) => NewPromise(Axios.delete('/posts' + data.postId));
 //게시글 등록(관리자)(파일제외) ㅇ
 export const registerBoardByAdmin = (data) => NewPromise(Axios.post('/posts', data));
 //게시글 수정(관리자)
 export const updateBoardByAdmin = (data) => NewPromise(Axios.patch('/posts' + data.postId));
-//게시글 삭제(관리자)
+//게시글 삭제(관리자) ㅇ
 export const deleteBoardByAdmin = (data) => NewPromise(Axios.delete('/posts' + data.postId));
 
-//좋아요 추가
+//좋아요 추가 ㅇ
 export const like = (data) => NewPromise(Axios.post('/likes', data));
-//좋아요 삭제
+//좋아요 삭제 ㅇ
 export const likeCancel = (data) => NewPromise(Axios.post('/likes/delete', data));
-//게시글 조회수 갱신
+//게시글 조회수 갱신 ㅇ
 export const boardViews = (itemId, data) => NewPromise(Axios.patch('/posts/' + itemId + '/views', data));
-//공지사항 조회수 갱신
+//공지사항 조회수 갱신 ㅇ
 export const noticeBoardViews = (itemId, data) => NewPromise(Axios.patch('/notices/' + itemId + '/views', data));
+
+//게시글 검색
+export const search = (data) => NewPromise(Axios.get('/posts/search?keyword='+data.keyword+'&page=' + data.page + '&size=' + '3'));

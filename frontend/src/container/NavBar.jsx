@@ -67,15 +67,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "0.3rem",
     cursor: "pointer",
   },
-  adminLogout:{
-    marginLeft:"82%",
+  adminLogout: {
+    marginLeft: "82%",
     cursor: "pointer",
-    border:"none",
-    background:"white",
-    color:"gray",
-    textDecoration:"underline",
+    border: "none",
+    background: "white",
+    color: "gray",
+    textDecoration: "underline",
   }
-
 }));
 
 function NavBar(props) {
@@ -86,6 +85,7 @@ function NavBar(props) {
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
   const navigate = useNavigate();
+  const [searchKeyword, setSearchKeyword] = useState('');
   let token = localStorage.getItem(SESSION_TOKEN_KEY);
   const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
@@ -124,6 +124,12 @@ function NavBar(props) {
       navigate("/");
     });
   }
+  
+  //게시글 검색
+  const onChangeKeyword = (searchKeyword) => {
+    const keyword = searchKeyword;
+    navigate('/mySearch', { state: { keyword: keyword } });
+  };
 
   return (
     <>
@@ -155,8 +161,10 @@ function NavBar(props) {
               </div>
 
               <div className={classes.search}>
-                <Search />
-                <InputBase placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
+                {/* <Search onClick={() => onChangeKeyword(searchKeyword)} sx={{ cursor: 'pointer' }} />
+                <InputBase value={searchKeyword} onChange={(e) => { setSearchKeyword(e.target.value) }} placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} /> */}
+                <Search sx={{ cursor: 'pointer' }} />
+                <InputBase value={searchKeyword} onChange={(e) => { setSearchKeyword(e.target.value); onChangeKeyword(searchKeyword); }} placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
               </div>
               <div className={classes.myImg}>
                 <Avatar alt="My계정 이미지" src={"/images/myImg.png"}

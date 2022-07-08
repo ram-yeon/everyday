@@ -11,6 +11,7 @@ import ClubBoardList from '../pages/ClubBoard/ClubBoardList';
 import BoardDetail from '../component/Table/BoardDetail';
 import NoticeBoardDetail from '../component/Table/NoticeBoardDetail';
 import BoardListAboutMe from '../component/Table/BoardListAboutMe';
+import SearchBoardList from '../component/Table/SearchBoardList';
 
 import UseTerms from '../pages/UseTerms';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
@@ -39,6 +40,7 @@ function AfterLoginRouter() {
                 <Route path="/myarticle" element={<BoardListAboutMe />} />
                 <Route path="/mycommentarticle" element={<BoardListAboutMe />} />
                 <Route path="/mylikearticle" element={<BoardListAboutMe />} />
+                <Route path="/mySearch" element={<SearchBoardList />} />                   
 
                 <Route path="/useterms" element={<UseTerms />} />
                 <Route path="/privacypolicy" element={<PrivacyPolicy />} />
