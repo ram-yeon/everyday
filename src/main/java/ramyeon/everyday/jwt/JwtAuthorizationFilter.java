@@ -18,9 +18,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 필터 적용을 제외할 리소스
     private static final String[] whitelist = {"GET/schools", "POST/login", "POST/email-authenticate", "POST/check-authenticationcode", "POST/find-id", "POST/find-password", "PATCH/users/password/edit", "POST/users"};
 
-    // DELETE /users
-    // POST /users
-
     private JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {

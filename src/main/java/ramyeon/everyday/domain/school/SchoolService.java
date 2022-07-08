@@ -13,6 +13,9 @@ public class SchoolService {
 
     private final SchoolRepository schoolRepository;
 
+    /**
+     * 학교 조회
+     */
     public List<SchoolDto.SchoolResponseDto> getAllSchoolInfo() {
         // 학교 및 학생 수 조회 - fetch join을 통한 성능 최적화로 쿼리 1번 호출
         List<School> schools = schoolRepository.findAllWithUserList();

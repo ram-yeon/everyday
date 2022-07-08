@@ -32,7 +32,9 @@ public class NoticeService {
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
 
-    // 공지사항 목록 조회
+    /**
+     * 공지사항 목록 조회
+     */
     public Page<NoticeDto.NoticeResponseDto> getNotices(Pageable pageable) {
         // 공지사항 및 관리자, 파일 조회 - fetch join을 통한 쿼리 수 감소
         List<Notice> notices = noticeRepository.findByIsDeletedWithManagerFile(Whether.N, Sort.by(Sort.Direction.DESC, "registrationDate"));
@@ -59,7 +61,9 @@ public class NoticeService {
         return new PageImpl<>(noticeDtoList.subList(start, end), pageable, noticeDtoList.size());
     }
 
-    // 공지사항 상세 조회
+    /**
+     * 공지사항 상세 조회
+     */
     public NoticeDto.NoticeResponseDto getNoticeDetail(Long noticeId, String userLoginId) {
         // 공지사항 및 관리자, 파일 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
         Notice notice = noticeRepository.findByIdAndIsDeletedWithManagerFile(noticeId, Whether.N).orElseThrow(NotFoundResourceException::new);
@@ -104,12 +108,16 @@ public class NoticeService {
                 .build();
     }
 
-    // 공지사항 목록 조회
+    /**
+     * 공지사항 목록 조회
+     */
     public Page<Notice> getNoticesPaging(Pageable pageable) {
         return noticeRepository.findByIsDeleted(Whether.N, pageable);
     }
 
-    // 공지사항 삭제
+    /**
+     * 공지사항 삭제
+     */
     @Transactional
     public int deleteNotice(String loginId, Long noticeId) {
         Manager manager = managerRepository.findByLoginId(loginId).orElse(null);  // 관리자 조회
@@ -121,16 +129,18 @@ public class NoticeService {
         return 0;
     }
 
-    // 좋아요 수 조회
-    public Long getLikeCount(Notice notice) {
-        return likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId());
-    }
-
-    // 공지사항 조회수 갱신
+    /**
+     * 공지사항 조회수 갱신
+     */
     @Transactional
     public void updateViews(Long noticeId, Long views) {
         Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);
         Long totalViews = notice.getViews() + views;  // 기존 조회수에 갱신
         notice.changeViews(totalViews);
+    }
+
+    // 좋아요 수 조회
+    public Long getLikeCount(Notice notice) {
+        return likeRepository.countByTargetTypeAndTargetId(TargetType.NOTICE, notice.getId());
     }
 }

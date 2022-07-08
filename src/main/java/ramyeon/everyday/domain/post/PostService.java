@@ -32,7 +32,9 @@ public class PostService {
     private final NoticeService noticeService;
     private final NoticeRepository noticeRepository;
 
-    // 메인화면 게시글 목록 조회
+    /**
+     * 메인화면 게시글 목록 조회
+     */
     public Map<BoardType, List<PostDto.PostResponseDto>> getPostsMain(String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
@@ -76,7 +78,9 @@ public class PostService {
         return postsMainMap;
     }
 
-    // 게시판 별 게시글 목록 조회
+    /**
+     * 게시판 별 게시글 목록 조회
+     */
     public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String type, Pageable pageable) {
         BoardType boardType = BoardType.valueOf(type);  // 게시판 종류
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
@@ -135,7 +139,9 @@ public class PostService {
         }
     }
 
-    // 게시글 상세 조회
+    /**
+     * 게시글 상세 조회
+     */
     public PostDto.PostResponseDto getPostDetail(Long postId, String loginId) {
         // 회원 및 좋아요 조회- fetch join을 통한 성능 최적화로 쿼리 수 감소
         User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(loginId).orElse(null);
@@ -190,7 +196,9 @@ public class PostService {
         }
     }
 
-    // 좋아요한 게시글, 공지사항 목록 조회
+    /**
+     * 좋아요한 게시글, 공지사항 목록 조회
+     */
     public Page<PostDto.PostResponseDto> getLikePostsAndNotices(String loginId, Pageable pageable) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
 
@@ -245,7 +253,9 @@ public class PostService {
         return new PageImpl<>(postAndNoticeDtoList.subList(start, end), pageable, postAndNoticeDtoList.size());
     }
 
-    // 내가 쓴, 댓글 단 게시글 목록 조회
+    /**
+     * 내가 쓴, 댓글 단 게시글 목록 조회
+     */
     public Page<PostDto.PostResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
         MyPostType myPostType = MyPostType.valueOf(type);  // 요청 글 종류
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
@@ -284,6 +294,54 @@ public class PostService {
         return new PageImpl<>(postDtoList.subList(start, end), pageable, postDtoList.size());
     }
 
+    /**
+     * 게시글 검색
+     */
+    public PostDto.PostsSearchResponseDto getPostsSearch(String keyword, String loginId, Pageable pageable) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        Page<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(keyword, keyword, loginUser.getSchool(), Whether.N, pageable);
+        Page<PostDto.PostResponseDto> postDtos = posts.map(
+                post -> PostDto.PostResponseDto.builder()
+                        .id(post.getId())
+                        .writer(getWriter(post.getUser(), post.getIsAnonymous()))
+                        .title(post.getTitle())
+                        .contents(post.getContents())
+                        .registrationDate(post.getRegistrationDate())
+                        .boardType(post.getBoardType())
+                        .isAnonymous(post.getIsAnonymous())
+                        .views(post.getViews())
+                        .likeCount(getLikeCount(post))
+                        .fileCount(post.getFileList().size())
+                        .commentCount(post.getCommentList().size())
+                        .build()
+        );
+        return new PostDto.PostsSearchResponseDto(keyword, postDtos);
+    }
+
+    /**
+     * 게시글 삭제
+     */
+    @Transactional
+    public int deletePost(String loginId, Long postId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElse(null);  // 게시글 조회
+        if (post.getUser() != loginUser) {  // 다른 회원의 게시글 삭제
+            return 1;
+        }
+        post.delete(loginUser);  // 게시글 삭제
+        return 0;
+    }
+
+    /**
+     * 게시글 조회수 갱신
+     */
+    @Transactional
+    public void updateViews(Long postId, Long views) {
+        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElse(null);
+        Long totalViews = post.getViews() + views;  // 기존 조회수에 갱신
+        post.changeViews(totalViews);
+    }
+
     // 핫 게시글 조회(메인화면)
     List<Post> getHotPostsMain(User user, Pageable pageable) {
         List<Post> hotPosts = new ArrayList<>();
@@ -307,7 +365,7 @@ public class PostService {
     }
 
     // 회원의 좋아요 여부 확인
-    public Whether checkUserLike(List<Like> likeList, TargetType targetType, Long targetId) {
+    public static Whether checkUserLike(List<Like> likeList, TargetType targetType, Long targetId) {
         for (Like like : likeList) {
             // 회원의 좋아요 리스트에 있을 때
             if (like.getTargetType() == targetType && like.getTargetId().equals(targetId))
@@ -359,45 +417,4 @@ public class PostService {
         }
     }
 
-    // 게시글 검색
-    public PostDto.PostsSearchResponseDto getPostsSearch(String keyword, String loginId, Pageable pageable) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        Page<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(keyword, keyword, loginUser.getSchool(), Whether.N, pageable);
-        Page<PostDto.PostResponseDto> postDtos = posts.map(
-                post -> PostDto.PostResponseDto.builder()
-                        .id(post.getId())
-                        .writer(getWriter(post.getUser(), post.getIsAnonymous()))
-                        .title(post.getTitle())
-                        .contents(post.getContents())
-                        .registrationDate(post.getRegistrationDate())
-                        .boardType(post.getBoardType())
-                        .isAnonymous(post.getIsAnonymous())
-                        .views(post.getViews())
-                        .likeCount(getLikeCount(post))
-                        .fileCount(post.getFileList().size())
-                        .commentCount(post.getCommentList().size())
-                        .build()
-        );
-        return new PostDto.PostsSearchResponseDto(keyword, postDtos);
-    }
-
-    // 게시글 삭제
-    @Transactional
-    public int deletePost(String loginId, Long postId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElse(null);  // 게시글 조회
-        if (post.getUser() != loginUser) {  // 다른 회원의 게시글 삭제
-            return 1;
-        }
-        post.delete(loginUser);  // 게시글 삭제
-        return 0;
-    }
-
-    // 게시글 조회수 갱신
-    @Transactional
-    public void updateViews(Long postId, Long views) {
-        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElse(null);
-        Long totalViews = post.getViews() + views;  // 기존 조회수에 갱신
-        post.changeViews(totalViews);
-    }
 }
