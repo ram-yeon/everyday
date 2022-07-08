@@ -136,7 +136,9 @@ public class PostService {
 
     // 게시글 상세 조회
     public PostDto.PostResponseDto getPostDetail(Long postId, String loginId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        // 회원 및 좋아요 조회- fetch join을 통한 성능 최적화로 쿼리 수 감소
+        User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(loginId).orElse(null);
+
         // 게시글 및 댓글, 사용자 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
         Post post = postRepository.findByIdAndSchoolAndIsDeletedWithUserCommentUser(postId, loginUser.getSchool(), Whether.N).orElse(null);
         if (post == null) {
