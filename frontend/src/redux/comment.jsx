@@ -9,7 +9,7 @@ export const commentSlice = createSlice({
   initialState,
   reducers: {
     addComment(state, action) {
-      const { content, writer, postId, responseTo, commentId, created_at } =
+      const { content, writer, postId, responseTo, commentId, created_at } =  //내용, 작성자, 게시글아이디, 상위댓글아이디, 댓글아이디, 등록일자
         action.payload;
       state.push({
         content,

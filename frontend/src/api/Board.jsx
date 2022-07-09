@@ -51,3 +51,9 @@ export const noticeBoardViews = (itemId, data) => NewPromise(Axios.patch('/notic
 
 //게시글 검색
 export const search = (data) => NewPromise(Axios.get('/posts/search?keyword='+data.keyword+'&page=' + data.page + '&size=' + '3'));
+
+//댓글,대댓글 등록
+export const registerComment = (data) => NewPromise(Axios.post('/comments', data));
+
+//댓글,대댓글 삭제
+export const deleteComment = (commentId) => NewPromise(Axios.post('/comments/', commentId));

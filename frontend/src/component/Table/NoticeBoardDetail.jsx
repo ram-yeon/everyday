@@ -80,7 +80,6 @@ function NoticeBoardDetail() {
     const [views, setViews] = useState('');
     const [likeCount, setLikeCount] = useState('');
     const [likeState, setLikeState] = useState('');
-    const [isLikePost, setIsLikePost] = useState('');               //해당 게시글 좋아요했는지에 대한 상태값  
 
     const [isInitialize, setIsInitialize] = useState(false);
     const data = {
@@ -99,12 +98,12 @@ function NoticeBoardDetail() {
                 setTitle(response.data.title);
                 setContents(response.data.contents);
                 setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
-                setLikeCount(response.data.likeCount);
-                setIsLikePost(JSON.stringify(response.data.isLikePost));
-                    if (isLikePost === 'Y') {
-                        setLikeState(true);
-                    } else
-                        setLikeState(false);
+                setLikeCount(Number(response.data.likeCount));
+                // let isLikePost = JSON.stringify(response.data.isLikePost).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
+                // if (isLikePost === 'Y') {
+                //     setLikeState(true);
+                // } else
+                //     setLikeState(false);
                 setViews(response.data.views);
                 setFileCount(response.data.fileCount);
 
@@ -187,7 +186,7 @@ function NoticeBoardDetail() {
                 <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
                 <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
                 <div style={{ margin: "2rem auto auto 0.3rem" }}>
-                {
+                    {
                         (!likeState) ?
                             <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
                             :

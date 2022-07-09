@@ -1,9 +1,6 @@
 import React from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
-
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-// import { dark } from "react-syntax-highlighter/dist/cjs/styles/prism/atom-dark";
-
 import ReactMarkdown from "react-markdown";
 
 const Markdown = ({ comment }) => {
@@ -17,7 +14,6 @@ const Markdown = ({ comment }) => {
             return !inline && match ? (
               <SyntaxHighlighter
                 children={String(children).replace(/\n$/, "")}
-                // style={dark}
                 language={match[1]}
                 PreTag="div"
                 {...props}

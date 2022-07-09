@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { makeStyles, Typography } from "@material-ui/core";
 import { FormControlLabel, Checkbox } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
@@ -10,12 +9,14 @@ import { useSelector, useDispatch } from "react-redux";
 import uuid from "react-uuid";
 import { addComment, editComment, removeComment } from "../../redux/comment";
 import ReplyComment from "./ReplyComment";
-// dot icon
 import { Stack, Button, Divider, Paper, Box } from "@mui/material";
-// markdown, toast editor
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import Markdown from "../../component/Markdown";
+import * as BoardAPI from '../../api/Board';
+import { Message } from '../../component/Message';
+import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
+
 import {
   check_kor,
   timeForToday,
@@ -40,17 +41,64 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const Comment = ({ user }) => {
+const Comment = (props) => {
+  let token = localStorage.getItem(SESSION_TOKEN_KEY);
+  const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
+  const list = [];
+  const commentData = props.comment;
+  let i = 0;
+  while (i < commentData.length) {
+    list.push(commentData[i])
+    i = i + 1;
+  }
+  // const [commentWriter, setCommentWriter] = useState('');
+  // const [commentContents, setCommentContents] = useState('');
+  // const [commentDateFormat, setCommentDateFormat] = useState('');
+  // const [commentId, setCommentId] = useState('');
+  // const [commentType, setCommentType] = useState('');
+  // const [preId, setPreId] = useState('');            //이 위 지울예정
+
+  const [checked, setChecked] = useState(false);
+  const handleCheckBox = (event) => {
+    setChecked(event.target.checked);
+  };
+
+  const commentItems = [];
+  commentData.forEach((v, i) => {
+    const commentWriter = v.commentWriter;
+    const commentContents = v.commentContents;
+    const commentDateFormat = v.commentDateFormat;
+    const commentId = v.commentId;
+    const commentType = v.commentType;            //댓글인지 대댓글인지
+    const likeCount = v.likeCount;
+    let likeState = ''
+    let preId = v.preId;
+    // const isLikeComment = v.isLikeComment;    //해당 댓글 좋아요했는지에 대한 상태값  (댓글좋아요고민,,,)
+    // if (isLikeComment === "Y") {
+    //   likeState = 'true';
+    // } else {
+    //   likeState = 'false';
+    // }
+    //preId가있는경우(->대댓글)
+    if (v.hasOwnProperty('preId')) {
+      preId = v.preId;
+    }
+    commentItems.push({
+      commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
+      commentId: commentId, commentType: commentType, likeCount: likeCount, likeState: likeState, preId: preId,
+    });
+  })
+
   const classes = useStyles();
-  const [commentVal, setCommentVal] = useState('');
 
   const [local, setLocal] = useState([]);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comment);
+  // const comments = commentData;
   const [display, setDisplay] = useState(false);
   const editorRef = useRef();
   const date = new Date(); // 작성 시간
-
   //댓글 편집하기 위한 에디터 open
   const [openEditor, setOpenEditor] = useState("");
 
@@ -62,32 +110,58 @@ const Comment = ({ user }) => {
     const getContent = editorInstance.getMarkdown();
     setDisplay(!display);
 
-    // 데이터 저장
+    let isAnonymous = '';
+    if (checked) {
+      isAnonymous = 'Y'
+    } else {
+      isAnonymous = 'N'
+    }
     const data = {
+      // writer: '익명',
+      // responseTo: "root",
+      // commentId: uuid(),
+      // created_at: `${date}`,
+
+      postId: props.postId,
       content: getContent,
-      writer: user,
-      postId: "123123",
-      responseTo: "root",
-      commentId: uuid(),
-      created_at: `${date}`
+      commentType: "COMMENT",
+      isAnonymous: isAnonymous,
+      preId: ""
     };
+    //댓글 등록(redux)
     dispatch(addComment(data));
+    //댓글 등록(db)
+    BoardAPI.registerComment(data).then(response => {
+      Message.success(response.message);
+    }).catch(error => {
+      console.log(JSON.stringify(error));
+      Message.error(error.message);
+    })
   };
+
 
   //댓글 편집
-  const onEdit = (commentId) => {
-    // console.log(commentId);
-    const editorInstance = editorRef.current.getInstance();
-    const getContent = editorInstance.getMarkdown();
-    console.log(getContent);
+  // const onEdit = (commentId) => {
+  //   const editorInstance = editorRef.current.getInstance();
+  //   const getContent = editorInstance.getMarkdown();
+  //   console.log(getContent);
 
-    let data = { commentId: commentId, content: getContent };
-    dispatch(editComment(data));
-  };
+  //   let data = { commentId: commentId, content: getContent };
+  //   dispatch(editComment(data));
+  // };
 
-  //댓글 삭제
+  //댓글 삭제(redux)
   const onRemove = (commentId) => {
     dispatch(removeComment(commentId));
+  };
+  //댓글 삭제(db)
+  const deleteComment = (commentId) => {
+    BoardAPI.deleteComment(commentId).then(response => {
+      Message.success(response.message);
+    }).catch(error => {
+      console.log(JSON.stringify(error));
+      Message.error(error.message);
+    })
   };
 
   useEffect(() => {
@@ -95,22 +169,64 @@ const Comment = ({ user }) => {
     setLocal(comments.filter((comment) => comment.responseTo === "root"));
   }, [comments]);
 
+  //좋아요 api
+  //   const clickLike = () => {
+  //     if (tokenJson.account_authority === "USER") {
+  //         if (!likeState) {  //좋아요추가    
+  //             setLikeState(true);
+  //             setLikeCount(likeCount + 1);
+  //             const data = {
+  //                 targetType: "COMMENT",
+  //                 targetId: commentId
+  //             }
+  //             BoardAPI.like(data).then(response => {
+  //                 Message.success(response.message);
+  //             }).catch(error => {
+  //                 console.log(JSON.stringify(error));
+  //                 Message.error(error.message);
+  //             })
+  //         } else { //좋아요취소
+  //             setLikeState(false);
+  //             setLikeCount(likeCount - 1);
+  //             const data = {
+  //                 targetType: "COMMENT",
+  //                 targetId: commentId
+  //             }
+  //             BoardAPI.likeCancel(data).then(response => {
+  //                 Message.success(response.message);
+  //             }).catch(error => {
+  //                 console.log(JSON.stringify(error));
+  //                 Message.error(error.message);
+  //             })
+  //         }
+  //     } else {
+  //         alert("좋아요 권한이 없습니다.");
+  //     }
+  // }
+
   return (
     <Paper sx={{ m: 0, p: 2 }}>
-      {local.map((comment, index) => (
+      {commentData.map((comment, index) => (
         <Box sx={{ mt: 2, mb: 2 }} key={comment.commentId}>
           {/* writer 정보, 작성 시간 */}
           <Stack direction="row" spacing={2}>
             <AccountCircleIcon sx={{ color: 'gray', mt: 0.5, mr: -1 }} >
-              {check_kor.test(comment.writer)
-                ? comment.writer.slice(0, 1)
-                : comment.writer.slice(0, 2)}
+              {check_kor.test(comment.commentWriter)
+                ? comment.commentWriter.slice(0, 1)
+                : comment.commentWriter.slice(0, 2)}
             </AccountCircleIcon>
-            <Item>{comment.writer}</Item>
+            <Item>{comment.commentWriter}</Item>
             {/* <Item>{timeForToday(comment.created_at)}</Item> */}
-            <Item sx={{ fontSize: '0.5rem' }}>2022-08-22 17:55:55</Item>
-            <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} />
-            <span style={{ marginLeft: "0.2rem", marginTop: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }}>0</span>
+            <Item sx={{ fontSize: '0.5rem' }}>{comment.commentDateFormat}</Item>
+
+            {
+              (true) ?
+                <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} />
+                :
+                <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} />
+            }<span style={{ marginLeft: "0.2rem", marginTop: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }}>0</span>
+            {/* 추후 true->!likeState,  0 -> {likeCount}, onClick={clickLike} 달기 */}
+
           </Stack>
 
           {/* comment 글 내용 */}
@@ -123,7 +239,7 @@ const Comment = ({ user }) => {
           </Box>
 
           {/* comment 수정 */}
-          {comment.exist && user === comment.writer && (
+          {comment.exist && tokenJson.sub === comment.commentWriter && (  //추후 commentWriter를 writerLoinId로 바꿔야함
             <>
               {openEditor === comment.commentId && (
                 <Editor initialValue={comment.content} ref={editorRef} />
@@ -145,6 +261,7 @@ const Comment = ({ user }) => {
               <Button sx={{ ml: 1 }}
                 onClick={() => {
                   onRemove(comment.commentId);
+                  deleteComment(comment.commentId);
                 }}
               >
                 삭제
@@ -153,29 +270,27 @@ const Comment = ({ user }) => {
           )}
 
           {/* 대댓글 컴포넌트 */}
-          <ReplyComment responseTo={comment.commentId} user={user} />
+          <ReplyComment responseTo={comment.commentId} postId={props.postId} comment={comment} />
 
           <Divider variant="middle" />
         </Box>
       ))}
 
       {/* <Button
-        
         sx={{ width: "20rem", border: "gray solid 1px", mb: 2 }}
       >
         댓글을 입력하세요.
       </Button> */}
 
-      <div style={{marginTop:'2rem', marginBottom:'-0.8rem'}}>
+      <div style={{ marginTop: '2rem', marginBottom: '-0.8rem' }}>
         <input
           readOnly
           onClick={() => {
             setDisplay(!display);
           }}
-          className="comment-input" type="text" name="comment" id="comment1" placeholder="댓글을 입력하려면 클릭하세요."
-          value={commentVal} />
+          className="comment-input" type="text" name="comment" id="comment1" placeholder="댓글을 입력하려면 클릭하세요." />
         <FormControlLabel control={<Checkbox color="default" size="small" />}
-          label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "86%" }} />
+          label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "86%" }} checked={checked} onChange={handleCheckBox} />
         <BorderColorIcon onClick={onSubmit} className={classes.registerBtn} />
       </div>
 

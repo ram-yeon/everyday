@@ -30,7 +30,6 @@ export function timeForToday(time) {
 }
 
 // style
-
 export const Item = styled(Box)(({ theme }) => ({
   ...theme.typography.body2,
   paddingTop: theme.spacing(1),

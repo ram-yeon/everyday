@@ -1,32 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './Board.css';
-// import WriteReply from './WriteReply';
 import { Link } from 'react-router-dom';
 import { Box } from '@mui/material/';
-
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-
-// import List from '@mui/material/List';
-// import ListItem from '@mui/material/ListItem';
-// import ListItemText from '@mui/material/ListItemText';
-// import ListItemIcon from '@mui/material/ListItemIcon';
-
 import { makeStyles, Typography } from "@material-ui/core";
-import { FormControlLabel, Checkbox } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-
 import moment from 'moment';
 import 'moment/locale/ko';
-
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
-
 import Comment from '../Table/Comment';
 
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +67,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "1rem",
         float: "right",
     },
-
 }));
 
 function BoardDetail() {
@@ -91,14 +78,12 @@ function BoardDetail() {
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
     const classes = useStyles();
-    const [commentVal, setCommentVal] = useState('');
     const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
     const [writer, setWriter] = useState('');
     const [writerLoginId, setWriterLoginId] = useState('');
     const [id, setId] = useState('');
     const [likeCount, setLikeCount] = useState('');
     const [likeState, setLikeState] = useState('');
-    const [isLikePost, setIsLikePost] = useState('');               //해당 게시글 좋아요했는지에 대한 상태값  
 
     const [commentCount, setCommentCount] = useState('');
     const [views, setViews] = useState('');
@@ -107,8 +92,7 @@ function BoardDetail() {
     const [contents, setContents] = useState('');
     const [dateFormat, setDateFormat] = useState('');
 
-    // const [postDetail, setPostDetail] = useState([]);
-    // const postDetailItems = [];
+    const [comment, setComment] = useState([]);
     const [isInitialize, setIsInitialize] = useState(false);
     const data = {
         postId: postId,
@@ -119,32 +103,49 @@ function BoardDetail() {
             if (tokenJson.account_authority === "USER") {
                 //게시글 상세조회
                 BoardAPI.boardDetailSelect(data).then(response => {
-                    // file comment 처리필요
-                    // if (response.data.hasOwnProperty('comment')) {
-                    //
-                    // } else if (response.data.hasOwnProperty('file')) {
-                    //
-                    // }
+                    // comment file 처리필요
+                    if (response.data.hasOwnProperty('comment')) {
+                        const commentItems = [];
+                        response.data.comment.forEach((v, i) => {
+                            const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
+                            const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
+                            const commentDateFormat = (moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                            const commentId = (v.id);
+                            // const commentLikeCount = (v.likeCount);
+                            const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값  
+                            const commentType = (JSON.stringify(v.commentType).replaceAll("\"", ""));         //댓글인지 대댓글인지
+                            let preId = '';
+                            //preId가있는경우(->대댓글)
+                            if (v.hasOwnProperty('preId')) {
+                                preId = (v.preId);
+                            }
+                            commentItems.push({
+                                commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
+                                commentId: commentId, isLikeComment: isLikeComment, commentType: commentType, preId: preId
+                            });
+                        })
+                        setComment(commentItems);
+                    } else if (response.data.hasOwnProperty('file')) {
 
+                    }
                     const boardType = response.data.boardType;
                     setBoardTypeToLowerCase(boardType.toLowerCase());
-                    setTitle((JSON.stringify(response.data.title).split('"')));
-                    setContents((JSON.stringify(response.data.contents).split('"')));
+                    setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
+                    setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
                     setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
-                    setWriter((JSON.stringify(response.data.writer).split('"')));
+                    setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));
                     setWriterLoginId(JSON.stringify(response.data.writerLoginId));
-
                     setId(JSON.stringify(response.data.id));
-                    setLikeCount(JSON.stringify(response.data.likeCount));
-                    setIsLikePost(JSON.stringify(response.data.isLikePost));
-                    if (isLikePost === 'Y') {
+                    setLikeCount(Number(response.data.likeCount));
+                    let isLikePost = JSON.stringify(response.data.isLikePost).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
+                    if (isLikePost === "Y") {
                         setLikeState(true);
-                    } else
+                    } else {
                         setLikeState(false);
+                    }
                     setCommentCount(JSON.stringify(response.data.commentCount));
                     setViews(JSON.stringify(response.data.views));
                     setFileCount(JSON.stringify(response.data.fileCount));
-
                 }).catch(error => {
                     console.log(JSON.stringify(error));
                     Message.error(error.message);
@@ -204,31 +205,6 @@ function BoardDetail() {
             alert("삭제할 권한이 없습니다.");
         }
     }
-
-    //댓글
-    // const comment = [
-    //     {
-    //         writer: "익명",
-    //         content: "댓글입니다아",
-    //         date: "20/02/12/ 21:42",
-    //         reply: "답글달기",
-    //         replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
-    //         likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-    //         likeCount: "0",
-    //         id: 1,
-    //     },
-    //     {
-    //         writer: "익명",
-    //         content: "ㄴㅇ라ㅣ넝라ㅣ멍ㄹㅇ러ㅣ아ㅓ댓글임",
-    //         date: "20/02/12/ 21:42",
-    //         reply: "답글달기",
-    //         replyIcon: <AddBoxOutlinedIcon sx={{ fontSize: '1rem' }} />,
-    //         likeIcon: <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem' }} />,
-    //         likeCount: "0",
-    //         id: 2,
-    //     },
-    // ]
-
     return (
         <div>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
@@ -263,70 +239,7 @@ function BoardDetail() {
             </Box >
 
             {/* 댓글 */}
-            <Comment user={writer} />
-            {/* < List sx={{ marginTop: "-0.4rem" }}>
-                {
-                    comment.map(item => (
-                        <ListItem
-                            sx={{ border: "1px gray solid", height: "17vh" }}
-                            key={item.id}>
-                            <div>
-                                <ListItemText primary={item.writer}
-                                    primaryTypographyProps={{
-                                        color: 'black',
-                                        fontWeight: "bold",
-                                        fontSize: "0.8rem",
-                                        width: "2rem",
-
-                                    }} />
-
-                                <ListItemText primary={item.content}
-                                    primaryTypographyProps={{
-                                        color: 'black',
-                                        fontSize: '0.8rem',
-                                        width: "50rem",
-
-                                    }} />
-
-                                <ListItemText primary={item.date}
-                                    primaryTypographyProps={{
-                                        color: 'gray',
-                                        fontSize: '0.5rem',
-                                        width: "5rem",
-                                    }} />
-                                <div style={{ display: "inline-flex" }}>
-                                    <ListItemText primary={item.reply}
-                                        primaryTypographyProps={{
-                                            fontSize: '0.7rem',
-                                            width: "5rem",
-                                            color: '#0CDAE0',
-                                            cursor: "pointer",
-
-                                        }} />
-                                    <ListItemIcon sx={{ color: '#0CDAE0', cursor: "pointer", margin: "auto auto auto -2rem" }}>{item.replyIcon}</ListItemIcon>
-                                </div>
-                                <Typography className={classes.replyDelete}>삭제</Typography>
-                            </div>
-
-                            <ListItemIcon sx={{ marginLeft: "10%", color: '#C00000', cursor: "pointer" }}>{item.likeIcon}</ListItemIcon>
-                            <ListItemText primary={item.likeCount}
-                                primaryTypographyProps={{
-                                    width: "1rem",
-                                    fontSize: "0.5rem",
-                                    color: '#C00000',
-                                    margin: "0.5rem auto auto -2.2rem",
-                                    cursor: "pointer",
-                                }} />
-
-                        </ListItem>
-                    ))
-                }
-            </List > */}
-
-            {/* 대댓글 */}
-            {/* <WriteReply /> */}
-
-
+            <Comment comment={comment} postId={postId}/>
 
             {/* 게시판따라경로분기처리 */}
             <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>

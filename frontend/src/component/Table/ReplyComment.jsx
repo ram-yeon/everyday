@@ -2,24 +2,24 @@ import React, { useState, useEffect, useRef } from "react";
 import { makeStyles, Typography } from "@material-ui/core";
 import { FormControlLabel, Checkbox } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import { Stack, Button, Divider } from "@mui/material";
 import { Box } from '@mui/material/';
 import uuid from "react-uuid";
-
 import { useSelector, useDispatch } from "react-redux";
 import { addComment, editComment, removeComment } from "../../redux/comment";
 import Markdown from "../../component/Markdown";
 import { Editor } from "@toast-ui/react-editor";
+import * as BoardAPI from '../../api/Board';
+import { Message } from '../../component/Message';
+import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
 import {
   check_kor,
   timeForToday,
   Item,
-  ProfileIcon
+  // ProfileIcon
 } from "../../component/CommentTool";
 
 const useStyles = makeStyles((theme) => ({
@@ -28,15 +28,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ReplyComment = ({ responseTo, user }) => {
+const ReplyComment = (props) => {
+  console.log(props.responseTo, props.postId, props.comment)
+
+  let token = localStorage.getItem(SESSION_TOKEN_KEY);
+  const tokenJson = JSON.parse(atob(token.split(".")[1]));
+
+  const [checked, setChecked] = useState(false);
+  const handleCheckBox = (event) => {
+    setChecked(event.target.checked);
+  };
+
   const classes = useStyles();
   const [local, setLocal] = useState([]);
   const [display, setDisplay] = useState(false);
-
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comment);
   const editorRef = useRef();
-
   //댓글 편집하기 위한 에디터 open
   const [openEditor, setOpenEditor] = useState("");
   const date = new Date(); // 작성 시간
@@ -48,9 +56,9 @@ const ReplyComment = ({ responseTo, user }) => {
 
     const data = {
       content: getContent,
-      writer: user,
+      writer: 'test',
       postId: "123123",
-      responseTo: responseTo,
+      responseTo: 1,
       commentId: uuid(),
       created_at: `${date}`
     };
@@ -71,11 +79,20 @@ const ReplyComment = ({ responseTo, user }) => {
   const onRemove = (commentId) => {
     dispatch(removeComment(commentId));
   };
+  const deleteComment = (commentId) => {
+    BoardAPI.deleteComment(commentId).then(response => {
+      Message.success(response.message);
+    }).catch(error => {
+      console.log(JSON.stringify(error));
+      Message.error(error.message);
+    })
+  };
 
-  useEffect(() => {
-    localStorage.setItem("reply", JSON.stringify(comments));
-    setLocal(comments.filter((comment) => comment.responseTo === responseTo));
-  }, [comments, responseTo]);
+  // useEffect(() => {
+  //   localStorage.setItem("reply", JSON.stringify(comments));
+  //   setLocal(comments.filter((comment) => comment.responseTo === responseTo));
+  // }, [comments, responseTo]);
+
   return (
     <Stack sx={{ m: 1, ml: 4 }}>
       <Button
@@ -114,7 +131,7 @@ const ReplyComment = ({ responseTo, user }) => {
                 <Markdown comment={comment} />
               </Box>
               {/* comment 수정 */}
-              {user === comment.writer && (
+              {'익명' === comment.writer && (
                 <>
                   {openEditor === comment.commentId && (
                     <Editor initialValue={comment.content} ref={editorRef} />
@@ -133,9 +150,10 @@ const ReplyComment = ({ responseTo, user }) => {
                   </Button> */}
 
                   {/* comment 삭제 */}
-                  <Button sx={{ml:1}}
+                  <Button sx={{ ml: 1 }}
                     onClick={() => {
                       onRemove(comment.commentId);
+                      deleteComment(comment.commentId);
                     }}
                   >
                     삭제
@@ -143,19 +161,19 @@ const ReplyComment = ({ responseTo, user }) => {
                 </>
               )}
               {/* 대댓글 컴포넌트 */}
-              <ReplyComment responseTo={comment.commentId} user={user} />
+              <ReplyComment responseTo={comment.commentId} user='test' />
               <Divider variant="middle" />{" "}
             </Box>
           ))}
 
           <Editor
-            ref={editorRef} initialValue={"내용을 입력하세요."} 
+            ref={editorRef} initialValue={"내용을 입력하세요."}
           />
 
           <div style={{ marginTop: "0.2rem" }} >
-            <Button onClick={onSubmit} sx={{ml:-1}}>등록</Button>
-          <FormControlLabel control={<Checkbox color="default" size="small" />}
-          label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "90%" }} />
+            <Button onClick={onSubmit} sx={{ ml: -1 }}>등록</Button>
+            <FormControlLabel control={<Checkbox color="default" size="small" />}
+              label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "90%" }} checked={checked} onChange={handleCheckBox} />
           </div>
         </div>
       )}
