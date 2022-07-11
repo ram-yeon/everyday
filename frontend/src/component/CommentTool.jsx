@@ -1,6 +1,8 @@
 import { styled } from "@mui/material/styles";
 import { Avatar } from "@mui/material";
 import { Box } from '@mui/material/';
+import moment from 'moment';
+import 'moment/locale/ko';
 
 // 프로필 아이콘 글자 한글일때 구분
 export const check_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
@@ -27,6 +29,17 @@ export function timeForToday(time) {
   }
 
   return `${Math.floor(day / 365)}년전`;
+}
+
+export function displayDateForComment(time) {
+  // 현재시간과 time 비교해서 일주일 이내이면 return  timeForToday(time);
+  // 아니면 monent(time).format('YYYY-MM-DD HH:mm:ss'); 
+  const current = moment();
+  if (current.diff(time, 'days') > 6) {
+    return (moment(time, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+  } else {
+    return timeForToday(time);
+  }
 }
 
 // style

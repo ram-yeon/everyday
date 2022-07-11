@@ -17,6 +17,8 @@ export const noticeBoardSelect = (data) => NewPromise(Axios.get('/notices?page='
 
 //게시글 상세조회(파일,댓글제외) ㅇ
 export const boardDetailSelect = (data) => NewPromise(Axios.get('/posts/' + data.postId));
+//게시글의 대댓글 조회
+export const boardReplySelect = (data) => NewPromise(Axios.get('/posts/test' + data.postId));
 //공지사항 상세조회(파일,댓글제외) ㅇ
 export const noticeBoardDetailSelect = (data) => NewPromise(Axios.get('/notices/' + data.noticeId));
 

@@ -19,7 +19,7 @@ import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
 import {
   check_kor,
-  timeForToday,
+  displayDateForComment,
   Item,
   // ProfileIcon
 } from "../../component/CommentTool";
@@ -45,63 +45,48 @@ const Comment = (props) => {
   let token = localStorage.getItem(SESSION_TOKEN_KEY);
   const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
-  const list = [];
   const commentData = props.comment;
-  let i = 0;
-  while (i < commentData.length) {
-    list.push(commentData[i])
-    i = i + 1;
-  }
-  // const [commentWriter, setCommentWriter] = useState('');
-  // const [commentContents, setCommentContents] = useState('');
-  // const [commentDateFormat, setCommentDateFormat] = useState('');
-  // const [commentId, setCommentId] = useState('');
-  // const [commentType, setCommentType] = useState('');
-  // const [preId, setPreId] = useState('');            //이 위 지울예정
-
   const [checked, setChecked] = useState(false);
   const handleCheckBox = (event) => {
     setChecked(event.target.checked);
   };
 
-  const commentItems = [];
-  commentData.forEach((v, i) => {
-    const commentWriter = v.commentWriter;
-    const commentContents = v.commentContents;
-    const commentDateFormat = v.commentDateFormat;
-    const commentId = v.commentId;
-    const commentType = v.commentType;            //댓글인지 대댓글인지
-    const likeCount = v.likeCount;
-    let likeState = ''
-    let preId = v.preId;
-    // const isLikeComment = v.isLikeComment;    //해당 댓글 좋아요했는지에 대한 상태값  (댓글좋아요고민,,,)
-    // if (isLikeComment === "Y") {
-    //   likeState = 'true';
-    // } else {
-    //   likeState = 'false';
-    // }
-    //preId가있는경우(->대댓글)
-    if (v.hasOwnProperty('preId')) {
-      preId = v.preId;
-    }
-    commentItems.push({
-      commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
-      commentId: commentId, commentType: commentType, likeCount: likeCount, likeState: likeState, preId: preId,
-    });
-  })
-
+  // const commentItems = [];
+  // commentData.forEach((v, i) => {
+  //   const commentWriter = v.commentWriter;
+  //   const commentContents = v.commentContents;
+  //   const commentDateFormat = v.commentDateFormat;
+  //   const commentId = v.commentId;
+  //   const commentType = v.commentType;            //댓글인지 대댓글인지
+  //   const likeCount = v.likeCount;
+  //   let likeState = ''
+  //   // const isLikeComment = v.isLikeComment;    //해당 댓글 좋아요했는지에 대한 상태값  (댓글좋아요고민,,,)
+  //   // if (isLikeComment === "Y") {
+  //   //   likeState = 'true';
+  //   // } else {
+  //   //   likeState = 'false';
+  //   // }
+  //   // //preId가있는경우(->대댓글)
+  //   // if (v.hasOwnProperty('preId')) {
+  //   //   preId = v.preId;
+  //   // }
+  //   commentItems.push({
+  //     commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
+  //     commentId: commentId, commentType: commentType, likeCount: likeCount, likeState: likeState,
+  //   });
+  // })
+ 
   const classes = useStyles();
-
   const [local, setLocal] = useState([]);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comment);
-  // const comments = commentData;
   const [display, setDisplay] = useState(false);
   const editorRef = useRef();
   const date = new Date(); // 작성 시간
   //댓글 편집하기 위한 에디터 open
   const [openEditor, setOpenEditor] = useState("");
 
+  //댓글등록
   const onSubmit = (e) => {
     e.preventDefault();
 
@@ -166,7 +151,7 @@ const Comment = (props) => {
 
   useEffect(() => {
     localStorage.setItem("reply", JSON.stringify(comments));
-    setLocal(comments.filter((comment) => comment.responseTo === "root"));
+    // setLocal(comments.filter((comment) => comment.responseTo === "root"));
   }, [comments]);
 
   //좋아요 api
@@ -215,9 +200,9 @@ const Comment = (props) => {
                 ? comment.commentWriter.slice(0, 1)
                 : comment.commentWriter.slice(0, 2)}
             </AccountCircleIcon>
-            <Item>{comment.commentWriter}</Item>
+            <Item style={{ color: 'black' }}>{comment.commentWriter}</Item>
             {/* <Item>{timeForToday(comment.created_at)}</Item> */}
-            <Item sx={{ fontSize: '0.5rem' }}>{comment.commentDateFormat}</Item>
+            <Item sx={{ fontSize: '0.5rem' }}>{displayDateForComment(comment.commentDateFormat)}</Item>
 
             {
               (true) ?
@@ -242,7 +227,7 @@ const Comment = (props) => {
           {comment.exist && tokenJson.sub === comment.commentWriter && (  //추후 commentWriter를 writerLoinId로 바꿔야함
             <>
               {openEditor === comment.commentId && (
-                <Editor initialValue={comment.content} ref={editorRef} />
+                <Editor initialValue={comment.commentContents} ref={editorRef} />
               )}
               {/* <Button
                 onClick={() => {
@@ -270,17 +255,11 @@ const Comment = (props) => {
           )}
 
           {/* 대댓글 컴포넌트 */}
-          <ReplyComment responseTo={comment.commentId} postId={props.postId} comment={comment} />
+          <ReplyComment responseTo={comment.commentId} postId={props.postId} />
 
           <Divider variant="middle" />
         </Box>
       ))}
-
-      {/* <Button
-        sx={{ width: "20rem", border: "gray solid 1px", mb: 2 }}
-      >
-        댓글을 입력하세요.
-      </Button> */}
 
       <div style={{ marginTop: '2rem', marginBottom: '-0.8rem' }}>
         <input

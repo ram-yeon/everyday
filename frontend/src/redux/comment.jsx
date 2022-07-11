@@ -9,16 +9,22 @@ export const commentSlice = createSlice({
   initialState,
   reducers: {
     addComment(state, action) {
-      const { content, writer, postId, responseTo, commentId, created_at } =  //내용, 작성자, 게시글아이디, 상위댓글아이디, 댓글아이디, 등록일자
+      // const { content, writer, postId, responseTo, commentId, created_at } =  //내용, 작성자, 게시글아이디, 상위댓글아이디, 댓글아이디, 등록일자
+      const {postId, content, commentType, isAnonymous, preId} =
         action.payload;
       state.push({
-        content,
-        writer,
+        // content,
+        // writer,
+        // postId,
+        // responseTo,
+        // commentId,
+        // created_at,
+        exist: true, // 대댓글 있는 댓글 삭제 문제 때문에 임시로 넣어둠
         postId,
-        responseTo,
-        commentId,
-        created_at,
-        exist: true // 대댓글 있는 댓글 삭제 문제 때문에 임시로 넣어둠
+        content,
+        commentType,
+        isAnonymous,
+        preId,
       });
     },
     editComment(state, action) {

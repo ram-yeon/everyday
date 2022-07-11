@@ -103,13 +103,13 @@ function BoardDetail() {
             if (tokenJson.account_authority === "USER") {
                 //게시글 상세조회
                 BoardAPI.boardDetailSelect(data).then(response => {
-                    // comment file 처리필요
+                    // file 처리필요
                     if (response.data.hasOwnProperty('comment')) {
                         const commentItems = [];
                         response.data.comment.forEach((v, i) => {
                             const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
                             const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
-                            const commentDateFormat = (moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                            const commentDateFormat = (moment(v.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
                             const commentId = (v.id);
                             // const commentLikeCount = (v.likeCount);
                             const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값  
