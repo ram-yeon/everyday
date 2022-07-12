@@ -44,6 +44,19 @@ public class CommentController {
     }
 
     /**
+     * 대댓글 조회 API
+     */
+    @GetMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity Reply(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        try {
+            CommentDto.CommentResponseDto data = commentService.getReply(principalDetails.getUsername(), postId, commentId);
+            return new ResponseEntity<>(new ResultDto(200, "대댓글 조회 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * 댓글 삭제 API
      */
     @PostMapping("/comments/{commentId}")

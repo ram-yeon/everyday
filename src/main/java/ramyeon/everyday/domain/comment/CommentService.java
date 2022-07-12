@@ -46,23 +46,13 @@ public class CommentService {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
 
+        List<Comment> commentList = commentRepository.findByPostAndCommentType(post, CommentType.COMMENT, sort);  // 댓글 조회
+
         // Comment 엔티티를 CommentResponseDto로 변환
-        List<Comment> commentList = commentRepository.findByPostAndCommentType(post, CommentType.COMMENT, sort);
         List<CommentDto.CommentResponseDto> commentDtoList = new ArrayList<>();
         for (Comment comment : commentList) {
             commentDtoList.add(
-                    CommentDto.CommentResponseDto.builder()
-                            .id(comment.getId())
-                            .writer(getCommentWriter(comment.getUser(), post.getUser(), comment.getIsAnonymous(), post.getIsAnonymous()))
-                            .writerLoginId(PostService.getWriterLoginId(comment.getUser()))
-                            .contents(comment.getContents())
-                            .registrationDate(comment.getRegistrationDate())
-                            .commentType(comment.getCommentType())
-                            .preId(comment.getPreId())
-                            .isAnonymous(comment.getIsAnonymous())
-                            .isLikeComment(PostService.checkUserLike(loginUser.getLikeList(), TargetType.COMMENT, comment.getId()))  // 해당 댓글을 좋아요 했는지 확인
-                            .likeCount(likeService.getLikeCount(TargetType.COMMENT, comment.getId()))
-                            .build()
+                    entityToDto(comment, post, loginUser)
             );
         }
 
@@ -70,6 +60,18 @@ public class CommentService {
                 .commentCount(commentDtoList.size())
                 .comment(commentDtoList)
                 .build();
+    }
+
+    /**
+     * 대댓글 조회
+     */
+    public CommentDto.CommentResponseDto getReply(String loginId, Long postId, Long preId) {
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
+
+        Comment reply = commentRepository.findByPreIdAndPostIdAndCommentType(preId, postId, CommentType.REPLY).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 대댓글"));  // 대댓글 조회
+
+        return entityToDto(reply, post, loginUser);  // Comment 엔티티를 CommentResponseDto로 변환 후 리턴
     }
 
     /**
@@ -102,5 +104,21 @@ public class CommentService {
             } else
                 return commentUser.getNickname();  // 닉네임
         }
+    }
+
+    // Comment 엔티티를 CommentResponseDto로 변환
+    private CommentDto.CommentResponseDto entityToDto(Comment comment, Post post, User loginUser) {
+        return CommentDto.CommentResponseDto.builder()
+                .id(comment.getId())
+                .writer(getCommentWriter(comment.getUser(), post.getUser(), comment.getIsAnonymous(), post.getIsAnonymous()))
+                .writerLoginId(PostService.getWriterLoginId(comment.getUser()))
+                .contents(comment.getContents())
+                .registrationDate(comment.getRegistrationDate())
+                .commentType(comment.getCommentType())
+                .preId(comment.getPreId())
+                .isAnonymous(comment.getIsAnonymous())
+                .isLikeComment(PostService.checkUserLike(loginUser.getLikeList(), TargetType.COMMENT, comment.getId()))  // 해당 댓글을 좋아요 했는지 확인
+                .likeCount(likeService.getLikeCount(TargetType.COMMENT, comment.getId()))
+                .build();
     }
 }
