@@ -42,7 +42,7 @@ const ReplyComment = (props) => {
   };
 
   const classes = useStyles();
-  const [local, setLocal] = useState([]);
+  // const [local, setLocal] = useState([]);
   const [display, setDisplay] = useState(false);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comment);
@@ -58,7 +58,6 @@ const ReplyComment = (props) => {
     //마크다운 변환
     const editorInstance = editorRef.current.getInstance();
     const getContent = editorInstance.getMarkdown();
-    setDisplay(!display);
 
     let isAnonymous = '';
     if (checked) {
@@ -76,17 +75,19 @@ const ReplyComment = (props) => {
       content: getContent,
       commentType: "REPLY",
       isAnonymous: isAnonymous,
-      preId: props.responseTo     //preId를 어떻게 줄지
+      preId: props.responseTo     
     };
-    //댓글 등록(redux)
+    //대댓글 등록(redux)
     dispatch(addComment(data));
-    //댓글 등록(db)
+    //대댓글 등록(db)
     BoardAPI.registerComment(data).then(response => {
       Message.success(response.message);
     }).catch(error => {
       console.log(JSON.stringify(error));
       Message.error(error.message);
     })
+
+    setDisplay(!display);
   };
 
   //댓글 편집
@@ -99,10 +100,11 @@ const ReplyComment = (props) => {
   //   dispatch(editComment(data));
   // };
 
-  // 댓글 삭제
+  //대댓글 삭제(redux)
   const onRemove = (commentId) => {
     dispatch(removeComment(commentId));
   };
+  //대댓글 삭제(db)
   const deleteComment = (commentId) => {
     BoardAPI.deleteComment(commentId).then(response => {
       Message.success(response.message);
@@ -227,7 +229,7 @@ const ReplyComment = (props) => {
                 </>
               )}
               {/* 대댓글 컴포넌트 -> 주석처리(대댓글까지만 구현) */}
-              <ReplyComment responseTo={comment.commentId}  />               
+              {/* <ReplyComment responseTo={comment.commentId}  /> */}
               <Divider variant="middle" />{" "}
             </Box>
           ))}

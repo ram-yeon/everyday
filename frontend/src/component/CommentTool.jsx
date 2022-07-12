@@ -36,7 +36,7 @@ export function displayDateForComment(time) {
   // 아니면 monent(time).format('YYYY-MM-DD HH:mm:ss'); 
   const current = moment();
   if (current.diff(time, 'days') > 6) {
-    return (moment(time, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+    return (moment(time).format("YYYY-MM-DD HH:mm:ss"));
   } else {
     return timeForToday(time);
   }

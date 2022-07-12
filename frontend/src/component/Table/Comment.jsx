@@ -77,7 +77,7 @@ const Comment = (props) => {
   // })
  
   const classes = useStyles();
-  const [local, setLocal] = useState([]);
+  // const [local, setLocal] = useState([]);
   const dispatch = useDispatch();
   const comments = useSelector((state) => state.comment);
   const [display, setDisplay] = useState(false);
@@ -93,7 +93,6 @@ const Comment = (props) => {
     //마크다운 변환
     const editorInstance = editorRef.current.getInstance();
     const getContent = editorInstance.getMarkdown();
-    setDisplay(!display);
 
     let isAnonymous = '';
     if (checked) {
@@ -106,22 +105,27 @@ const Comment = (props) => {
       // responseTo: "root",
       // commentId: uuid(),
       // created_at: `${date}`,
-
+      // content: getContent,
+      // postId: props.postId,
+      
       postId: props.postId,
       content: getContent,
       commentType: "COMMENT",
       isAnonymous: isAnonymous,
-      preId: ""
+      preId: "",
     };
     //댓글 등록(redux)
     dispatch(addComment(data));
     //댓글 등록(db)
-    BoardAPI.registerComment(data).then(response => {
-      Message.success(response.message);
-    }).catch(error => {
-      console.log(JSON.stringify(error));
-      Message.error(error.message);
-    })
+    // BoardAPI.registerComment(data).then(response => {
+    //   Message.success(response.message);
+    // }).catch(error => {
+    //   console.log(JSON.stringify(error));
+    //   Message.error(error.message);
+    // })
+
+    setDisplay(!display);
+
   };
 
 
