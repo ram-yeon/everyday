@@ -8,7 +8,7 @@ import ramyeon.everyday.domain.Whether;
 import ramyeon.everyday.domain.comment.Comment;
 import ramyeon.everyday.domain.file.File;
 import ramyeon.everyday.domain.like.Like;
-import ramyeon.everyday.domain.like.LikeRepository;
+import ramyeon.everyday.domain.like.LikeService;
 import ramyeon.everyday.domain.like.TargetType;
 import ramyeon.everyday.domain.notice.Notice;
 import ramyeon.everyday.domain.notice.NoticeRepository;
@@ -28,7 +28,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
+    private final LikeService likeService;
     private final NoticeService noticeService;
     private final NoticeRepository noticeRepository;
 
@@ -99,7 +99,7 @@ public class PostService {
                                 .registrationDate(post.getRegistrationDate())
                                 .isAnonymous(post.getIsAnonymous())
                                 .views(post.getViews())
-                                .likeCount(getLikeCount(post))
+                                .likeCount(likeService.getLikeCount(TargetType.POST, post.getId()))
                                 .fileCount(post.getFileList().size())
                                 .commentCount(post.getCommentList().size())
                                 .build()
@@ -122,7 +122,7 @@ public class PostService {
                             .registrationDate(post.getRegistrationDate())
                             .isAnonymous(post.getIsAnonymous())
                             .views(post.getViews())
-                            .likeCount(getLikeCount(post))
+                            .likeCount(likeService.getLikeCount(TargetType.POST, post.getId()))
                             .fileCount(post.getFileList().size())
                             .commentCount(post.getCommentList().size())
                             .build()
@@ -178,7 +178,7 @@ public class PostService {
                     .isAnonymous(post.getIsAnonymous())
                     .views(post.getViews())
                     .isLikePost(checkUserLike(loginUser.getLikeList(), TargetType.POST, post.getId()))  // 해당 글을 좋아요 했는지 확인
-                    .likeCount(getLikeCount(post))
+                    .likeCount(likeService.getLikeCount(TargetType.POST, post.getId()))
                     .fileCount(fileDtoList.size())
                     .file(fileDtoList)
                     .commentCount(commentDtoList.size())
@@ -209,7 +209,7 @@ public class PostService {
                             .boardType(post.getBoardType())
                             .isAnonymous(post.getIsAnonymous())
                             .views(post.getViews())
-                            .likeCount(getLikeCount(post))
+                            .likeCount(likeService.getLikeCount(TargetType.POST, post.getId()))
                             .fileCount(post.getFileList().size())
                             .commentCount(post.getCommentList().size())
                             .build()
@@ -272,7 +272,7 @@ public class PostService {
                             .boardType(post.getBoardType())
                             .isAnonymous(post.getIsAnonymous())
                             .views(post.getViews())
-                            .likeCount(getLikeCount(post))
+                            .likeCount(likeService.getLikeCount(TargetType.POST, post.getId()))
                             .fileCount(post.getFileList().size())
                             .commentCount(post.getCommentList().size())
                             .build()
@@ -301,7 +301,7 @@ public class PostService {
                         .boardType(post.getBoardType())
                         .isAnonymous(post.getIsAnonymous())
                         .views(post.getViews())
-                        .likeCount(getLikeCount(post))
+                        .likeCount(likeService.getLikeCount(TargetType.POST, post.getId()))
                         .fileCount(post.getFileList().size())
                         .commentCount(post.getCommentList().size())
                         .build()
@@ -351,11 +351,6 @@ public class PostService {
                 return Whether.Y;
         }
         return Whether.N;
-    }
-
-    // 좋아요 수 조회
-    Long getLikeCount(Post post) {
-        return likeRepository.countByTargetTypeAndTargetId(TargetType.POST, post.getId());
     }
 
     // 게시글 작성자 조회

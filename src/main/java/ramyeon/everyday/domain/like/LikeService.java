@@ -36,4 +36,9 @@ public class LikeService {
         likeRepository.delete(like);
         return 0;
     }
+
+    // 좋아요 수 조회
+    public Long getLikeCount(TargetType targetType, Long targetId) {
+        return likeRepository.countByTargetTypeAndTargetId(targetType, targetId);
+    }
 }
