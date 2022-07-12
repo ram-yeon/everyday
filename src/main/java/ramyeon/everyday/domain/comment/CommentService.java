@@ -66,10 +66,12 @@ public class CommentService {
      * 대댓글 조회
      */
     public CommentDto.CommentResponseDto getReply(String loginId, Long postId, Long preId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        // 회원 및 좋아요 조회- fetch join을 통한 성능 최적화로 쿼리 수 감소
+        User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
 
-        Comment reply = commentRepository.findByPreIdAndPostIdAndCommentType(preId, postId, CommentType.REPLY).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 대댓글"));  // 대댓글 조회
+        // 대댓글, 작성자 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
+        Comment reply = commentRepository.findByPreIdAndPostAndCommentTypeWithUser(preId, post, CommentType.REPLY).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 대댓글"));  // 대댓글 조회
 
         return entityToDto(reply, post, loginUser);  // Comment 엔티티를 CommentResponseDto로 변환 후 리턴
     }

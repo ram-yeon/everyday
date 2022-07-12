@@ -19,5 +19,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             " and c.commentType = ?2")
     List<Comment> findByPostAndCommentTypeWithUser(Post post, CommentType commentType, Sort sort);  // 댓글 조회 - user와 fetch join
 
-    Optional<Comment> findByPreIdAndPostIdAndCommentType(Long preId, Long postId, CommentType commentType);  // 대댓글 조회
+    @Query("SELECT c FROM Comment c" +
+            " LEFT OUTER JOIN FETCH c.user" +
+            " WHERE c.preId = ?1" +
+            " and c.post = ?2" +
+            " and c.commentType = ?3")
+    Optional<Comment> findByPreIdAndPostAndCommentTypeWithUser(Long preId, Post post, CommentType commentType);  // 대댓글 조회 - user와 fetch join
 }
