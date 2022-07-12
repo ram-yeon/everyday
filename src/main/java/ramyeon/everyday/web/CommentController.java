@@ -1,17 +1,17 @@
 package ramyeon.everyday.web;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.comment.CommentService;
 import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +27,20 @@ public class CommentController {
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
         CommentDto.CommentResponseDto data = commentService.createComment(principalDetails.getUsername(), createRequestDto);
         return new ResponseEntity<>(new ResultDto(200, "댓글 등록 성공", data), HttpStatus.OK);
+    }
+
+    /**
+     * 댓글 조회 API
+     */
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity comments(@PathVariable Long postId, @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                   @SortDefault(sort = "registrationDate", direction = Sort.Direction.ASC) Sort sort) {
+        try {
+            CommentDto.CommentsDto data = commentService.getComments(principalDetails.getUsername(), postId, sort);
+            return new ResponseEntity<>(new ResultDto(200, "댓글 조회 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 
     /**

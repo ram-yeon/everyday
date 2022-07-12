@@ -366,7 +366,7 @@ public class PostService {
     }
 
     // 게시글 작성자 id 조회
-    String getWriterLoginId(User user) {
+    public static String getWriterLoginId(User user) {
         if (user == null)  // 삭제된 유저 처리
             return "삭제된 회원";
         else
