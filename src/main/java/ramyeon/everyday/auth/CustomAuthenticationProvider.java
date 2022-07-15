@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import ramyeon.everyday.AccountAuthority;
+import ramyeon.everyday.enum_.AccountAuthority;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {

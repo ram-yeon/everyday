@@ -3,7 +3,7 @@ package ramyeon.everyday.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import ramyeon.everyday.domain.Whether;
+import ramyeon.everyday.enum_.Whether;
 
 import java.time.LocalDateTime;
 import java.util.List;

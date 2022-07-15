@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ramyeon.everyday.domain.manager.Manager;
-import ramyeon.everyday.domain.manager.ManagerRepository;
+import ramyeon.everyday.domain.manager.entity.Manager;
+import ramyeon.everyday.domain.manager.repository.ManagerRepository;
 
 import java.util.Optional;
 

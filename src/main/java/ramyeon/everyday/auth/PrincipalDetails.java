@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ramyeon.everyday.domain.user.User;
+import ramyeon.everyday.domain.user.entity.User;
 
 import java.util.ArrayList;
 import java.util.Collection;

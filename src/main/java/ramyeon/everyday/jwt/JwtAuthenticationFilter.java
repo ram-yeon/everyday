@@ -9,12 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ramyeon.everyday.AccountAuthority;
+import ramyeon.everyday.enum_.AccountAuthority;
 import ramyeon.everyday.auth.CustomAuthenticationProvider;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
-import ramyeon.everyday.domain.Whether;
-import ramyeon.everyday.domain.token.TokenService;
+import ramyeon.everyday.enum_.Whether;
+import ramyeon.everyday.domain.token.service.TokenService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
 

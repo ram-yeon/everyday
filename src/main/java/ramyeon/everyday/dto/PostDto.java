@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
-import ramyeon.everyday.domain.Whether;
-import ramyeon.everyday.domain.post.BoardType;
+import ramyeon.everyday.enum_.Whether;
+import ramyeon.everyday.enum_.BoardType;
 
 import java.time.LocalDateTime;
 import java.util.List;
