@@ -32,7 +32,7 @@ export function timeForToday(time) {
 }
 
 export function displayDateForComment(time) {
-  // 현재시간과 time 비교해서 일주일 이내이면 return  timeForToday(time);
+  // 현재시간과 time 비교해서 일주일 이내이면 return timeForToday(time);
   // 아니면 monent(time).format('YYYY-MM-DD HH:mm:ss'); 
   const current = moment();
   if (current.diff(time, 'days') > 6) {

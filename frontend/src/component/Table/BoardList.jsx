@@ -58,7 +58,7 @@ function BoardList(props) {
 
     const handleChange = (event, value) => {
         setPage(value);
-
+        
         getBoardList({
             boardType: boardType,
             page: value - 1,

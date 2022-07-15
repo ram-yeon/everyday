@@ -15,11 +15,13 @@ export const eachBoardSelect = (data) => NewPromise(Axios.get('/posts/list/' + d
 //공지사항 게시글 목록 조회ㅇ
 export const noticeBoardSelect = (data) => NewPromise(Axios.get('/notices?page=' + data.page + '&size=' + '3'));
 
-//게시글 상세조회(파일,댓글제외) ㅇ
+//게시글 상세조회(파일제외) ㅇ
 export const boardDetailSelect = (data) => NewPromise(Axios.get('/posts/' + data.postId));
+//게시글의 댓글 조회
+export const boardCommentSelect = (data) => NewPromise(Axios.get('/posts/' + data.postId + '/comments'));
 //게시글의 대댓글 조회
-export const boardReplySelect = (data) => NewPromise(Axios.get('/posts/test' + data.postId));
-//공지사항 상세조회(파일,댓글제외) ㅇ
+export const boardReplySelect = (data) => NewPromise(Axios.get('/posts/' + data.postId + '/comments/' + data.commentId));
+//공지사항 상세조회(파일제외) ㅇ
 export const noticeBoardDetailSelect = (data) => NewPromise(Axios.get('/notices/' + data.noticeId));
 
 //내가 쓴 글 목록조회 ㅇ

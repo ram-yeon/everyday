@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Board.css';
+import CommentList from './Comment/CommentList';
 import { Link } from 'react-router-dom';
 import { Box } from '@mui/material/';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -15,7 +16,6 @@ import 'moment/locale/ko';
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
-import Comment from '../Table/Comment';
 
 const useStyles = makeStyles((theme) => ({
     headLink: {
@@ -94,64 +94,65 @@ function BoardDetail() {
 
     const [comment, setComment] = useState([]);
     const [isInitialize, setIsInitialize] = useState(false);
+
     const data = {
         postId: postId,
+    }
+    //게시글상세조회api
+    const boardDetailSelect = async () => {
+        BoardAPI.boardDetailSelect(data).then(response => {
+            // file 처리필요
+            if (response.data.hasOwnProperty('file')) {
+
+            }
+            const boardType = response.data.boardType;
+            setBoardTypeToLowerCase(boardType.toLowerCase());
+            setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
+            setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
+            setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+            setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));
+            setWriterLoginId(JSON.stringify(response.data.writerLoginId));
+            setId(JSON.stringify(response.data.id));
+            setLikeCount(Number(response.data.likeCount));
+            let isLikePost = JSON.stringify(response.data.isLikePost).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
+            if (isLikePost === "Y") {
+                setLikeState(true);
+            } else {
+                setLikeState(false);
+            }
+            setCommentCount(JSON.stringify(response.data.commentCount));
+            setViews(JSON.stringify(response.data.views));
+            setFileCount(JSON.stringify(response.data.fileCount));
+        })
+    }
+    //댓글상세조회api
+    const boardCommentSelect = async () => {
+        BoardAPI.boardCommentSelect(data).then(response => {
+            const commentItems = [];
+            response.data.comment.forEach((v, i) => {
+                const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
+                const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
+                const commentDateFormat = (moment(v.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                const commentId = (v.id);
+                const likeCount = (v.likeCount);
+                const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값
+                const writerLoginId = (v.writerLoginId);
+                commentItems.push({
+                    commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
+                    commentId: commentId, isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount, 
+                    writerLoginId: writerLoginId
+                });
+            })
+            setComment(commentItems);
+        })
     }
 
     useEffect(() => {
         if (!isInitialize) {
             if (tokenJson.account_authority === "USER") {
-                //게시글 상세조회
-                BoardAPI.boardDetailSelect(data).then(response => {
-                    // file 처리필요
-                    if (response.data.hasOwnProperty('comment')) {
-                        const commentItems = [];
-                        response.data.comment.forEach((v, i) => {
-                            const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
-                            const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
-                            const commentDateFormat = (moment(v.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
-                            const commentId = (v.id);
-                            // const commentLikeCount = (v.likeCount);
-                            const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값  
-                            const commentType = (JSON.stringify(v.commentType).replaceAll("\"", ""));         //댓글인지 대댓글인지
-                            let preId = '';
-                            //preId가있는경우(->대댓글)
-                            if (v.hasOwnProperty('preId')) {
-                                preId = (v.preId);
-                            }
-                            commentItems.push({
-                                commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
-                                commentId: commentId, isLikeComment: isLikeComment, commentType: commentType, preId: preId
-                            });
-                        })
-                        setComment(commentItems);
-                    } else if (response.data.hasOwnProperty('file')) {
-
-                    }
-                    const boardType = response.data.boardType;
-                    setBoardTypeToLowerCase(boardType.toLowerCase());
-                    setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
-                    setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
-                    setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
-                    setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));
-                    setWriterLoginId(JSON.stringify(response.data.writerLoginId));
-                    setId(JSON.stringify(response.data.id));
-                    setLikeCount(Number(response.data.likeCount));
-                    let isLikePost = JSON.stringify(response.data.isLikePost).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
-                    if (isLikePost === "Y") {
-                        setLikeState(true);
-                    } else {
-                        setLikeState(false);
-                    }
-                    setCommentCount(JSON.stringify(response.data.commentCount));
-                    setViews(JSON.stringify(response.data.views));
-                    setFileCount(JSON.stringify(response.data.fileCount));
-                }).catch(error => {
-                    console.log(JSON.stringify(error));
-                    Message.error(error.message);
-                }).finally(() => {
+                Promise.all([boardDetailSelect(), boardCommentSelect()]).then(() => {
                     setIsInitialize(true);
-                });
+                }).catch(error => { console.log(error) })
             }
         }
     });
@@ -205,6 +206,7 @@ function BoardDetail() {
             alert("삭제할 권한이 없습니다.");
         }
     }
+
     return (
         <div>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
@@ -239,7 +241,7 @@ function BoardDetail() {
             </Box >
 
             {/* 댓글 */}
-            <Comment comment={comment} postId={postId}/>
+            <CommentList comment={comment} postId={postId} />
 
             {/* 게시판따라경로분기처리 */}
             <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
