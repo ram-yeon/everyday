@@ -65,15 +65,24 @@ public class CommentService {
     /**
      * 대댓글 조회
      */
-    public CommentDto.CommentResponseDto getReply(String loginId, Long postId, Long preId) {
+    public CommentDto.CommentsDto getReply(String loginId, Long postId, Long preId, Sort sort) {
         // 회원 및 좋아요 조회- fetch join을 통한 성능 최적화로 쿼리 수 감소
         User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
 
         // 대댓글, 작성자 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
-        Comment reply = commentRepository.findByPreIdAndPostAndCommentTypeWithUser(preId, post, CommentType.REPLY).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 대댓글"));  // 대댓글 조회
+        List<Comment> replyList = commentRepository.findByPreIdAndPostAndCommentTypeWithUser(preId, post, CommentType.REPLY, sort);  // 대댓글 조회
 
-        return entityToDto(reply, post, loginUser);  // Comment 엔티티를 CommentResponseDto로 변환 후 리턴
+        // Comment 엔티티를 CommentResponseDto로 변환
+        List<CommentDto.CommentResponseDto> replyDtoList = new ArrayList<>();
+        for (Comment reply : replyList) {
+            replyDtoList.add(entityToDto(reply, post, loginUser));
+        }
+
+        return CommentDto.CommentsDto.builder()
+                .commentCount(replyDtoList.size())
+                .comment(replyDtoList)
+                .build();
     }
 
     /**

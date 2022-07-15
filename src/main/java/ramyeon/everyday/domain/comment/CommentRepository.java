@@ -7,7 +7,6 @@ import ramyeon.everyday.domain.post.Post;
 import ramyeon.everyday.domain.user.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
@@ -19,10 +18,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             " and c.commentType = ?2")
     List<Comment> findByPostAndCommentTypeWithUser(Post post, CommentType commentType, Sort sort);  // 댓글 조회 - user와 fetch join
 
-    @Query("SELECT c FROM Comment c" +
+    @Query("SELECT DISTINCT c FROM Comment c" +
             " LEFT OUTER JOIN FETCH c.user" +
             " WHERE c.preId = ?1" +
             " and c.post = ?2" +
             " and c.commentType = ?3")
-    Optional<Comment> findByPreIdAndPostAndCommentTypeWithUser(Long preId, Post post, CommentType commentType);  // 대댓글 조회 - user와 fetch join
+    List<Comment> findByPreIdAndPostAndCommentTypeWithUser(Long preId, Post post, CommentType commentType, Sort sort);  // 대댓글 조회 - user와 fetch join
 }
