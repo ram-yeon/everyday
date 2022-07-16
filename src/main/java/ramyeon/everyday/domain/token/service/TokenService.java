@@ -79,14 +79,14 @@ public class TokenService {
     /**
      * 사용자의 토큰 존재 여부 확인
      */
-    public boolean isUserTokenExisted(User user) {
+    private boolean isUserTokenExisted(User user) {
         return user.getToken() != null;
     }
 
     /**
      * 관리자의 토큰 존재 여부 확인
      */
-    public boolean isManagerTokenExisted(Manager manager) {
+    private boolean isManagerTokenExisted(Manager manager) {
         return manager.getToken() != null;
     }
 
