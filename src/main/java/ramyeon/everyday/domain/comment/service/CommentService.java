@@ -3,6 +3,7 @@ package ramyeon.everyday.domain.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.comment.entity.Comment;
 import ramyeon.everyday.enum_.CommentType;
@@ -91,14 +92,14 @@ public class CommentService {
     /**
      * 댓글 삭제
      */
+    @Transactional
     public int deleteComment(String loginId, Long commentId) {
         User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
         Comment comment = commentRepository.findById(commentId).orElse(null);  // 댓글 조회
         if (comment.getUser() != loginUser) {  // 남의 댓글 삭제
             return 1;
         }
-        comment.delete(loginUser, comment.getPost());
-        commentRepository.delete(comment);
+        comment.delete(loginUser, comment.getPost());  // 댓글 삭제
         return 0;
     }
 

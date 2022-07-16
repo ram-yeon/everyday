@@ -68,6 +68,7 @@ public class Comment extends DateBaseEntity {  // 댓글
 
     // 댓글 삭제
     public void delete(User user, Post post) {
+        this.isDeleted = Whether.Y;
         deleteFromUser(user);
         deleteFromPost(post);
     }
