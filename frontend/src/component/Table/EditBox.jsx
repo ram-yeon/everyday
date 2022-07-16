@@ -1,4 +1,4 @@
-//글작성 박스
+//게시글 수정 박스
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from "@material-ui/core";
 import { Box, TextField } from '@mui/material/';
@@ -7,8 +7,8 @@ import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
 import * as BoardAPI from '../../api/Board';
-import { Message } from '../../component/Message';
-import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
+import { Message } from '../Message';
+import { SESSION_TOKEN_KEY } from '../Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
     writeBox: {
@@ -39,12 +39,31 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         float: "right",
     },
+    listBtn: {
+        width: "10%",
+        height: "2.5rem",
+        background: "#C00000",
+        color: "white",
+        border: "none",
+        cursor: "pointer",
+        boxShadow: "0.1rem 0.1rem 0.3rem 0.1rem gray",
+        borderRadius: "0.5rem",
+        marginTop: "1rem",
+        float: "right",
+    },
 }));
 
-function WriteBox(props) {
+function EditBox(props) {
+    const {
+        boardType,
+        postId,
+        writtenTitle,
+        writtenContents,
+    } = props;
+
     const classes = useStyles();
-    const [title, setTitle] = useState("");
-    const [contents, setContents] = useState("");
+    const [title, setTitle] = useState(writtenTitle);
+    const [contents, setContents] = useState(writtenContents);
     const [checked, setChecked] = useState(false);
 
     const token = localStorage.getItem(SESSION_TOKEN_KEY);
@@ -93,21 +112,21 @@ function WriteBox(props) {
             isAnonymous = 'N'
         }
         const data = {
-            boardType: props.boardType,
+            boardType: boardType,
             title: title,
             contents: contents,
             isAnonymous: isAnonymous,
         }
-        if (props.boardType === '공지사항') {   //관리자 공지등록
-            BoardAPI.registerBoardByAdmin(data).then(response => {
+        if (boardType === '공지사항') {   //관리자 공지수정
+            BoardAPI.updateBoardByAdmin(postId, data).then(response => {
 
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
             })
 
-        } else {    //일반사용자 글등록
-            BoardAPI.registerBoard(data).then(response => {
+        } else {    //일반사용자 글수정
+            BoardAPI.updateBoard(postId, data).then(response => {
 
             }).catch(error => {
                 console.log(JSON.stringify(error));
@@ -140,22 +159,6 @@ function WriteBox(props) {
                     <textarea
                         // onKeyUp={checkLength}
                         style={{ padding: "1rem", width: "96%", height: "26vh", fontSize: "0.9rem", fontFamily: "-moz-initial", marginTop: "1rem", resize: "none", whiteSpace: "pre-line" }}
-                        placeholder="에브리타임은 누구나 기분 좋게 참여할 수 있는 커뮤니티를 만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고 있습니다.
-                        위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될 수 있습니다.&#13;
-                        아래는 이 게시판에 해당하는 핵심 내용에 대한 요약 사항이며, 게시물 작성 전 커뮤니티이용규칙 전문을 반드시 확인하시기 바랍니다.
-                        *정치, 사회 관련 행위 금지
-                        - 성별, 종교, 인종, 출신, 지역, 직업, 이념 등 사회적 이슈에 대한 언급 혹은 이와 관련한 행위
-                        - 위와 같은 내용으로 유추될 수 있는 비유, 은어 사용 행위
-                        - 해당 게시물은 시사, 이슈 게시판에만 작성 가능합니다.&#13;
-                        *홍보 및 판매 관련 행위 금지
-                        - 영리 여부와 관계 없이 사업체, 기관, 단체, 개인에게 직간접적으로 영향을 줄 수 있는 게시물 작성 행위
-                        - 위와 관련된 것으로 의심되거나 예상될 수 있는 바이럴 홍보 및 명칭, 단어 언급 행위&#13;
-                        *그 밖의 규칙 위반
-                        - 타인의 권리를 침해하거나 불쾌감을 주는 행위
-                        - 범죄, 불법 행위 등 법령을 위반하는 행위
-                        - 욕설, 비하, 차별, 혐오, 자살, 폭력 관련 내용을 포함한 게시물 작성 행위
-                        - 음란물, 성적 수치심을 유발하는 행위
-                        - 스포일러, 공포, 속임, 놀라게 하는 행위"
                         value={contents}
                         onChange={(e) => handleSetContents(e)}
                     />
@@ -181,8 +184,9 @@ function WriteBox(props) {
                     <BorderColorIcon className={classes.registerBtn} onClick={handleClick} />
                 </div>
             </Box>
+            <button className={classes.listBtn} onClick={()=>props.editPost(false)} >글 수정 취소</button>
         </div>
     )
 }
 
-export default WriteBox
+export default EditBox

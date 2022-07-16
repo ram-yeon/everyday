@@ -15,7 +15,7 @@ import {
 
 const Reply = (props) => {
   const reply = props.reply;
-  let token = localStorage.getItem(SESSION_TOKEN_KEY);
+  const token = localStorage.getItem(SESSION_TOKEN_KEY);
   const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
   const [isLikeComment, setIsLikeComment] = useState(reply.isLikeComment);

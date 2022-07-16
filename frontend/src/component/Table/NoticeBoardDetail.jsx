@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom';
+import EditBox from './EditBox';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
 import { Info } from '@material-ui/icons';
@@ -66,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 function NoticeBoardDetail() {
     const classes = useStyles();
+    const navigate = useNavigate();
     const location = useLocation();
     const postId = location.state.postId;
     const headTitle = location.state.headTitle;
@@ -89,21 +91,14 @@ function NoticeBoardDetail() {
         if (!isInitialize) {
             //공지사항 상세조회
             BoardAPI.noticeBoardDetailSelect(data).then(response => {
-                // file comment 처리필요
-                // if (response.data.hasOwnProperty('comment')) {
-                //
-                // } else if (response.data.hasOwnProperty('file')) {
+                // file 처리필요  
+                // if (response.data.hasOwnProperty('file')) {
                 //
                 // }
                 setTitle(response.data.title);
                 setContents(response.data.contents);
                 setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
                 setLikeCount(Number(response.data.likeCount));
-                // let isLikePost = JSON.stringify(response.data.isLikePost).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
-                // if (isLikePost === 'Y') {
-                //     setLikeState(true);
-                // } else
-                //     setLikeState(false);
                 setViews(response.data.views);
                 setFileCount(response.data.fileCount);
 
@@ -114,39 +109,12 @@ function NoticeBoardDetail() {
                 setIsInitialize(true);
             });
         }
-
     });
-    const clickLike = () => {
-        if (tokenJson.account_authority === "USER") {
-            if (!likeState) {  //좋아요추가
-                setLikeState(true);
-                setLikeCount(likeCount + 1);
-                const data = {
-                    targetType: "NOTICE",
-                    targetId: postId
-                }
-                BoardAPI.like(data).then(response => {
-                    Message.success(response.message);
-                }).catch(error => {
-                    console.log(JSON.stringify(error));
-                    Message.error(error.message);
-                })
-            } else { //좋아요취소
-                setLikeState(false);
-                setLikeCount(likeCount - 1);
-                const data = {
-                    targetType: "NOTICE",
-                    targetId: postId
-                }
-                BoardAPI.likeCancel(data).then(response => {
-                    Message.success(response.message);
-                }).catch(error => {
-                    console.log(JSON.stringify(error));
-                    Message.error(error.message);
-                })
-            }
-        } else {
-            alert("좋아요 권한이 없습니다.");
+    const [displayEditBox, setDisplayEditBox] = useState(false);
+    //게시글 수정 버튼
+    const editPost = (value) => {
+        if (tokenJson.account_authority === 'MANAGER') {
+            setDisplayEditBox(value);
         }
     }
     //게시글 삭제
@@ -157,6 +125,7 @@ function NoticeBoardDetail() {
             }
             BoardAPI.deleteBoardByAdmin(data).then(response => {
                 Message.success(response.message);
+                navigate('/noticeboard');
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -167,37 +136,43 @@ function NoticeBoardDetail() {
     }
 
     return (
-        <div>
+        <>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
                 <Link to='/noticeboard' className={classes.headLink}>{headTitle}</Link>
             </Box>
-            <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
-                <Info className={classes.writerIcon} />
-                {
-                    (tokenJson.account_authority === 'MANAGER') ?
-                        < div style={{ float: "right" }}>
-                            <Typography className={classes.update}>수정</Typography>
-                            <Typography className={classes.delete} onClick={deletePost}>삭제</Typography>
+            {!displayEditBox ?
+                <div>
+                    <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
+                        <Info className={classes.writerIcon} />
+                        {
+                            (tokenJson.account_authority === 'MANAGER') ?
+                                < div style={{ float: "right" }}>
+                                    <Typography className={classes.update} onClick={()=>editPost(true)}>수정</Typography>
+                                    <Typography className={classes.delete} onClick={deletePost}>삭제</Typography>
+                                </div>
+                                : null
+                        }
+                        <Typography className={classes.writer}>에브리데이</Typography>
+                        <Typography className={classes.date}>{dateFormat}</Typography>
+                        <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
+                        <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
+                        <div style={{ margin: "2rem auto auto 0.3rem" }}>
+                            {
+                                (!likeState) ?
+                                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} />
+                                    :
+                                    <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} />
+                            }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>{likeCount}</span>
+                            <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
+                            <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
                         </div>
-                        : null
-                }
-                <Typography className={classes.writer}>에브리데이</Typography>
-                <Typography className={classes.date}>{dateFormat}</Typography>
-                <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
-                <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
-                <div style={{ margin: "2rem auto auto 0.3rem" }}>
-                    {
-                        (!likeState) ?
-                            <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
-                            :
-                            <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
-                    }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }} onClick={clickLike}>{likeCount}</span>
-                    <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
-                    <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
+                    </Box>
+                    <Link to='/noticeboard'><button className={classes.listBtn}>목록</button></Link>
                 </div>
-            </Box>
-            <Link to='/noticeboard'><button className={classes.listBtn}>목록</button></Link>
-        </div>
+                :
+                <EditBox boardType="NOTICE" postId={postId} writtenTitle={title} writtenContents={contents} editPost={editPost} />
+            }
+        </>
     )
 }
 

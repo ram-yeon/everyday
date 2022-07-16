@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import EditBox from './EditBox';
 import './Board.css';
 import CommentList from './Comment/CommentList';
 import { Link } from 'react-router-dom';
@@ -78,6 +79,7 @@ function BoardDetail() {
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
     const classes = useStyles();
+    const [boardType, setBoardType] = useState('');
     const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
     const [writer, setWriter] = useState('');
     const [writerLoginId, setWriterLoginId] = useState('');
@@ -106,12 +108,13 @@ function BoardDetail() {
 
             }
             const boardType = response.data.boardType;
+            setBoardType(JSON.stringify(response.data.boardType).replaceAll("\"", ""));
             setBoardTypeToLowerCase(boardType.toLowerCase());
             setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
             setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
             setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
             setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));
-            setWriterLoginId(JSON.stringify(response.data.writerLoginId));
+            setWriterLoginId(JSON.stringify(response.data.writerLoginId).replaceAll("\"", ""));
             setId(JSON.stringify(response.data.id));
             setLikeCount(Number(response.data.likeCount));
             let isLikePost = JSON.stringify(response.data.isLikePost).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
@@ -136,10 +139,10 @@ function BoardDetail() {
                 const commentId = (v.id);
                 const likeCount = (v.likeCount);
                 const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값
-                const writerLoginId = (v.writerLoginId);
+                const writerLoginId = (JSON.stringify(v.writerLoginId).replaceAll("\"", ""));
                 commentItems.push({
                     commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
-                    commentId: commentId, isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount, 
+                    commentId: commentId, isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount,
                     writerLoginId: writerLoginId
                 });
             })
@@ -190,6 +193,13 @@ function BoardDetail() {
             alert("좋아요 권한이 없습니다.");
         }
     }
+    const [displayEditBox, setDisplayEditBox] = useState(false);
+    //게시글 수정 버튼
+    const editPost = (value) => {
+        if (tokenJson.sub === writerLoginId) {
+            setDisplayEditBox(value);
+        }
+    }
     //게시글 삭제
     const deletePost = () => {
         if (tokenJson.sub === writerLoginId) {
@@ -208,44 +218,48 @@ function BoardDetail() {
     }
 
     return (
-        <div>
+        <>
             <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
                 <Link to={'/' + boardTypeToLowerCase + 'board'} className={classes.headLink}>{headTitle}</Link>
             </Box>
-            <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
-                <AccountCircleIcon className={classes.writerIcon} />
-                {
-                    (tokenJson.sub === writerLoginId) ?
-                        < div style={{ float: "right" }}>
-                            <Typography className={classes.postUpdate}>수정</Typography>
-                            <Typography className={classes.postDelete} onClick={deletePost}>삭제</Typography>
+            {!displayEditBox ?
+                <div>
+                    <Box border="2px lightgray solid" color="black" textAlign="left" marginTop="0.3rem" p={2} >
+                        <AccountCircleIcon className={classes.writerIcon} />
+                        {tokenJson.sub === writerLoginId && (
+                            <div style={{ float: "right" }}>
+                                <Typography className={classes.postUpdate} onClick={()=>editPost(true)}>수정</Typography>
+                                <Typography className={classes.postDelete} onClick={deletePost}>삭제</Typography>
+                            </div>
+                        )}
+                        <Typography className={classes.writer}>{writer}</Typography>
+                        <Typography className={classes.date}>{dateFormat}</Typography>
+                        <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
+                        <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
+
+                        <div style={{ margin: "2rem auto auto 0.3rem" }}>
+                            {
+                                (!likeState) ?
+                                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
+                                    :
+                                    <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
+                            }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }} onClick={clickLike}>{likeCount}</span>
+                            <TextsmsOutlinedIcon sx={{ fontSize: '1rem', color: '#0CDAE0', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#0CDAE0' }}>{commentCount}</span>
+                            <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
+                            <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
                         </div>
-                        : null
-                }
-                <Typography className={classes.writer}>{writer}</Typography>
-                <Typography className={classes.date}>{dateFormat}</Typography>
-                <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
-                <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
+                    </Box >
 
-                <div style={{ margin: "2rem auto auto 0.3rem" }}>
-                    {
-                        (!likeState) ?
-                            <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
-                            :
-                            <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
-                    }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }} onClick={clickLike}>{likeCount}</span>
-                    <TextsmsOutlinedIcon sx={{ fontSize: '1rem', color: '#0CDAE0', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#0CDAE0' }}>{commentCount}</span>
-                    <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
-                    <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
+                    {/* 댓글 */}
+                    <CommentList comment={comment} postId={postId} />
+
+                    {/* 게시판따라경로분기처리 */}
+                    <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
                 </div>
-            </Box >
-
-            {/* 댓글 */}
-            <CommentList comment={comment} postId={postId} />
-
-            {/* 게시판따라경로분기처리 */}
-            <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
-        </div >
+                :
+                <EditBox boardType={boardType} postId={postId} writtenTitle={title} writtenContents={contents} editPost={editPost} />
+            }
+        </>
     )
 }
 

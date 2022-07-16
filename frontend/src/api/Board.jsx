@@ -32,17 +32,17 @@ export const commentByMe = (data) => NewPromise(Axios.get('/posts/my/COMMENT?pag
 export const likeByMe = (data) => NewPromise(Axios.get('/posts/notices/like?page=' + data.page + '&size=' + '3'));
 
 //게시글 등록(파일제외) ㅇ
-export const registerBoard = (data) => NewPromise(Axios.post('/posts', data));
+export const registerBoard = (data) => NewPromise(Axios.post('/posts/', data));
 //게시글 수정
-export const updateBoard = (data) => NewPromise(Axios.patch('/posts' + data.postId));
+export const updateBoard = (postId, data) => NewPromise(Axios.patch('/posts/' + postId, data));
 //게시글 삭제 ㅇ
-export const deleteBoard = (data) => NewPromise(Axios.delete('/posts' + data.postId));
+export const deleteBoard = (data) => NewPromise(Axios.delete('/posts/' + data.postId));
 //게시글 등록(관리자)(파일제외) ㅇ
-export const registerBoardByAdmin = (data) => NewPromise(Axios.post('/posts', data));
+export const registerBoardByAdmin = (data) => NewPromise(Axios.post('/notices', data));
 //게시글 수정(관리자)
-export const updateBoardByAdmin = (data) => NewPromise(Axios.patch('/posts' + data.postId));
+export const updateBoardByAdmin = (postId, data) => NewPromise(Axios.patch('/notices/' + postId, data));
 //게시글 삭제(관리자) ㅇ
-export const deleteBoardByAdmin = (data) => NewPromise(Axios.delete('/posts' + data.postId));
+export const deleteBoardByAdmin = (data) => NewPromise(Axios.delete('/notices/' + data.postId));
 
 //좋아요 추가 ㅇ
 export const like = (data) => NewPromise(Axios.post('/likes', data));
@@ -60,4 +60,4 @@ export const search = (data) => NewPromise(Axios.get('/posts/search?keyword='+da
 export const registerComment = (data) => NewPromise(Axios.post('/comments', data));
 
 //댓글,대댓글 삭제
-export const deleteComment = (commentId) => NewPromise(Axios.post('/comments/', commentId));
+export const deleteComment = (commentId) => NewPromise(Axios.post('/comments/' + commentId));

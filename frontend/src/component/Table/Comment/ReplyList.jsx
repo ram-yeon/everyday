@@ -66,7 +66,6 @@ const ReplyList = (props) => {
   }
   useEffect(() => {
     BoardAPI.boardReplySelect(replyApiData).then(response => {
-      // const v = response.data;
       const replyItems = [];
       response.data.comment.forEach((v, i) => {
         const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
