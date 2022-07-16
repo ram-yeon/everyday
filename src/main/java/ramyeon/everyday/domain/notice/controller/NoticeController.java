@@ -1,4 +1,4 @@
-package ramyeon.everyday.web.controller;
+package ramyeon.everyday.domain.notice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

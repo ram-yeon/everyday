@@ -1,4 +1,4 @@
-package ramyeon.everyday.web.controller;
+package ramyeon.everyday.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
