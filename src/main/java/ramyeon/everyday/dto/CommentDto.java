@@ -27,6 +27,7 @@ public class CommentDto {
         private CommentType commentType;  // 댓글 종류
         private Long preId;  // 상위 번호
         private Whether isAnonymous;  // 익명 여부
+        private Whether isDeleted;  // 삭제 여부
 
         private Whether isLikeComment;  // 글을 조회한 회원의 댓글 좋아요 여부
 
