@@ -37,7 +37,7 @@ public class CommentService {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(createRequestDto.getPostId(), Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
         Comment comment = Comment.addComment(createRequestDto.getContents(), CommentType.valueOf(createRequestDto.getCommentType()), createRequestDto.getPreId(),
-                Whether.valueOf(createRequestDto.getIsAnonymous()), loginUser, post);
+                Whether.valueOf(createRequestDto.getIsAnonymous()), Whether.N, loginUser, post);
         return CommentDto.CommentResponseDto.builder()
                 .id(commentRepository.save(comment).getId())  // 댓글 등록
                 .build();

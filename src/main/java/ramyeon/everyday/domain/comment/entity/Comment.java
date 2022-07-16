@@ -4,10 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
-import ramyeon.everyday.enum_.Whether;
-import ramyeon.everyday.enum_.CommentType;
 import ramyeon.everyday.domain.post.entity.Post;
 import ramyeon.everyday.domain.user.entity.User;
+import ramyeon.everyday.enum_.CommentType;
+import ramyeon.everyday.enum_.Whether;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -55,11 +55,12 @@ public class Comment extends DateBaseEntity {  // 댓글
     }
 
     @Builder
-    public Comment(String contents, CommentType commentType, Long preId, Whether isAnonymous, User user, Post post) {
+    public Comment(String contents, CommentType commentType, Long preId, Whether isAnonymous, Whether isDeleted, User user, Post post) {
         this.contents = contents;
         this.commentType = commentType;
         this.preId = preId;
         this.isAnonymous = isAnonymous;
+        this.isDeleted = isDeleted;
         this.user = user;
         this.post = post;
     }
@@ -95,12 +96,13 @@ public class Comment extends DateBaseEntity {  // 댓글
 
 
     //== 생성 메서드 ==//
-    public static Comment addComment(String contents, CommentType commentType, Long preId, Whether isAnonymous, User user, Post post) {
+    public static Comment addComment(String contents, CommentType commentType, Long preId, Whether isAnonymous, Whether isDeleted, User user, Post post) {
         Comment comment = Comment.builder()
                 .contents(contents)
                 .commentType(commentType)
                 .preId(preId)
                 .isAnonymous(isAnonymous)
+                .isDeleted(isDeleted)
                 .user(user)
                 .post(post).build();
         comment.setUser(user);
