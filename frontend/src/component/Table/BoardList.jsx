@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-
 import { makeStyles } from "@material-ui/core";
 import { Box } from '@mui/material/';
 import WriteBox from './WriteBox';
@@ -10,18 +9,13 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-
-import moment from 'moment';
-import 'moment/locale/ko';
-
+import {displayDateFormat} from "../CommentTool";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
@@ -73,23 +67,17 @@ function BoardList(props) {
                     const postItems = [];
 
                     response.data.content.forEach((v, i) => {
-                        const title = JSON.stringify(v.title);                          //제목
-                        const contents = JSON.stringify(v.contents);                    //내용
-                        const registrationDate = JSON.stringify(v.registrationDate);    //등록일
-                        const writer = JSON.stringify(v.writer);                        //작성자
-                        const likeCount = JSON.stringify(v.likeCount);                //좋아요개수
-                        const commentCount = JSON.stringify(v.commentCount);            //댓글개수
-                        const views = JSON.stringify(v.views);                          //조회수
-                        const fileCount = JSON.stringify(v.fileCount);                  //파일
-
-                        const titleTrim = title.split('"');
-                        const contentsTrim = contents.split('"');
-                        const registrationDateTrim = registrationDate.split('"');
-                        const writerTrim = writer.split('"');
-                        const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                        const title = JSON.stringify(v.title).replaceAll("\"", "");                          
+                        const contents = JSON.stringify(v.contents).replaceAll("\"", "");                    
+                        const registrationDate = displayDateFormat(JSON.stringify(v.registrationDate).replaceAll("\"", ""));    
+                        const writer = JSON.stringify(v.writer).replaceAll("\"", "");                       
+                        const likeCount = JSON.stringify(v.likeCount);                
+                        const commentCount = JSON.stringify(v.commentCount);            
+                        const views = JSON.stringify(v.views);                          
+                        const fileCount = JSON.stringify(v.fileCount);         
 
                         postItems.push({
-                            user: writerTrim, postTitle: titleTrim, postContent: contentsTrim, date: dateFormat,
+                            user: writer, postTitle: title, postContent: contents, date: registrationDate,
                             likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                         });
                     })

@@ -10,7 +10,7 @@ import * as BoardAPI from '../../../api/Board';
 import { Message } from '../../Message';
 import { SESSION_TOKEN_KEY } from '../../Axios/Axios';
 import {
-  displayDateForComment,
+  displayDateFormat,
   Item,
 } from "../../CommentTool";
 
@@ -66,7 +66,7 @@ const Comment = (props) => {
         <Stack direction="row" spacing={2}>
           <AccountCircleIcon sx={{ color: 'gray', mt: 0.5, mr: -1 }} ></AccountCircleIcon>
           <Item style={{ color: 'black' }}>{comment.commentWriter}</Item>
-          <Item sx={{ fontSize: '0.5rem' }}>{displayDateForComment(comment.commentDateFormat)}</Item>
+          <Item sx={{ fontSize: '0.5rem' }}>{displayDateFormat(comment.commentRegistrationDate)}</Item>
 
           {
             (!isLikeComment) ?

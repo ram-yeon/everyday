@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import EditBox from './EditBox';
 import './Board.css';
 import CommentList from './Comment/CommentList';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material/';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
@@ -14,6 +14,7 @@ import { makeStyles, Typography } from "@material-ui/core";
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 import 'moment/locale/ko';
+import {displayDateFormat} from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
@@ -75,10 +76,11 @@ function BoardDetail() {
     const postId = location.state.postId;
     const headTitle = location.state.headTitle;
 
-    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
     const classes = useStyles();
+    const navigate = useNavigate();
     const [boardType, setBoardType] = useState('');
     const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
     const [writer, setWriter] = useState('');
@@ -92,7 +94,7 @@ function BoardDetail() {
     const [fileCount, setFileCount] = useState('');
     const [title, setTitle] = useState('');
     const [contents, setContents] = useState('');
-    const [dateFormat, setDateFormat] = useState('');
+    const [registrationDate, setRegistrationDate] = useState('');
 
     const [comment, setComment] = useState([]);
     const [isInitialize, setIsInitialize] = useState(false);
@@ -112,7 +114,7 @@ function BoardDetail() {
             setBoardTypeToLowerCase(boardType.toLowerCase());
             setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
             setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
-            setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+            setRegistrationDate(response.data.registrationDate);
             setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));
             setWriterLoginId(JSON.stringify(response.data.writerLoginId).replaceAll("\"", ""));
             setId(JSON.stringify(response.data.id));
@@ -135,13 +137,13 @@ function BoardDetail() {
             response.data.comment.forEach((v, i) => {
                 const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
                 const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
-                const commentDateFormat = (moment(v.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                const commentRegistrationDate = (v.registrationDate);
                 const commentId = (v.id);
                 const likeCount = (v.likeCount);
                 const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값
                 const writerLoginId = (JSON.stringify(v.writerLoginId).replaceAll("\"", ""));
                 commentItems.push({
-                    commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
+                    commentWriter: commentWriter, commentContents: commentContents, commentRegistrationDate: commentRegistrationDate,
                     commentId: commentId, isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount,
                     writerLoginId: writerLoginId
                 });
@@ -208,6 +210,7 @@ function BoardDetail() {
             }
             BoardAPI.deleteBoard(data).then(response => {
                 Message.success(response.message);
+                navigate('/' + boardTypeToLowerCase + 'board');
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -233,7 +236,7 @@ function BoardDetail() {
                             </div>
                         )}
                         <Typography className={classes.writer}>{writer}</Typography>
-                        <Typography className={classes.date}>{dateFormat}</Typography>
+                        <Typography className={classes.date}>{displayDateFormat(registrationDate)}</Typography>
                         <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
                         <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
 

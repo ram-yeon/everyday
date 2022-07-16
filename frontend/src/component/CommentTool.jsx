@@ -31,7 +31,7 @@ export function timeForToday(time) {
   return `${Math.floor(day / 365)}년전`;
 }
 
-export function displayDateForComment(time) {
+export function displayDateFormat(time) {
   // 현재시간과 time 비교해서 일주일 이내이면 return timeForToday(time);
   // 아니면 monent(time).format('YYYY-MM-DD HH:mm:ss'); 
   const current = moment();

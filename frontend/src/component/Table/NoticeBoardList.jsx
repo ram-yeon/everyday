@@ -4,25 +4,17 @@ import { makeStyles } from "@material-ui/core";
 import { Box } from '@mui/material/';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import WriteBox from './WriteBox';
-
-// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-// import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 // import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-
-import moment from 'moment';
-import 'moment/locale/ko';
-
+import { displayDateFormat } from "../CommentTool";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
@@ -69,18 +61,14 @@ function NoticeBoardList(props) {
             if (response.data.hasOwnProperty('content')) {
                 const noticeItems = [];
                 response.data.content.forEach((v, i) => {
-                    const title = JSON.stringify(v.title);
-                    const registrationDate = JSON.stringify(v.registrationDate);
+                    const title = JSON.stringify(v.title).replaceAll("\"", "");
+                    const registrationDate = displayDateFormat(JSON.stringify(v.registrationDate).replaceAll("\"", ""));
                     const likeCount = JSON.stringify(v.likeCount);
                     const views = JSON.stringify(v.views);
                     const fileCount = JSON.stringify(v.fileCount);
 
-                    const titleTrim = title.split('"');
-                    const registrationDateTrim = registrationDate.split('"');
-                    const dateFormat = moment(registrationDateTrim, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
-
                     noticeItems.push({
-                        postTitle: titleTrim, date: dateFormat, likeCount: likeCount, fileCount: fileCount, views: views, id: v.id
+                        postTitle: title, date: registrationDate, likeCount: likeCount, fileCount: fileCount, views: views, id: v.id
                     });
                 })
                 setNotice(noticeItems);

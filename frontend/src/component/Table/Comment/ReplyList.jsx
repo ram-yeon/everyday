@@ -70,12 +70,12 @@ const ReplyList = (props) => {
       response.data.comment.forEach((v, i) => {
         const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
         const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
-        const commentDateFormat = (moment(v.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+        const commentRegistrationDate = (v.registrationDate);
         const likeCount = (v.likeCount);
         const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값
         const writerLoginId = (v.writerLoginId);
         replyItems.push({
-          commentWriter: commentWriter, commentContents: commentContents, commentDateFormat: commentDateFormat,
+          commentWriter: commentWriter, commentContents: commentContents, commentRegistrationDate: commentRegistrationDate,
           isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount, writerLoginId: writerLoginId,
           commentId: v.id,
         });

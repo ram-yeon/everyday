@@ -4,15 +4,15 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { makeStyles, Typography } from "@material-ui/core";
 import { Box } from '@mui/material/';
 import { Info } from '@material-ui/icons';
-
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-
 import moment from 'moment';
 import 'moment/locale/ko';
-
+import {
+    displayDateFormat,
+  } from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
@@ -72,12 +72,12 @@ function NoticeBoardDetail() {
     const postId = location.state.postId;
     const headTitle = location.state.headTitle;
 
-    let token = localStorage.getItem(SESSION_TOKEN_KEY);
+    const token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
     const [title, setTitle] = useState('');
     const [contents, setContents] = useState('');
-    const [dateFormat, setDateFormat] = useState('');
+    const [registrationDate, setRegistrationDate] = useState('');
     const [fileCount, setFileCount] = useState('');
     const [views, setViews] = useState('');
     const [likeCount, setLikeCount] = useState('');
@@ -97,11 +97,16 @@ function NoticeBoardDetail() {
                 // }
                 setTitle(response.data.title);
                 setContents(response.data.contents);
-                setDateFormat(moment(response.data.registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
+                setRegistrationDate(response.data.registrationDate);
                 setLikeCount(Number(response.data.likeCount));
+                let isLikeNotice = JSON.stringify(response.data.isLikeNotice).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
+            if (isLikeNotice === "Y") {
+                setLikeState(true);
+            } else {
+                setLikeState(false);
+            }
                 setViews(response.data.views);
                 setFileCount(response.data.fileCount);
-
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -110,6 +115,39 @@ function NoticeBoardDetail() {
             });
         }
     });
+    const clickLike = () => {
+        if (tokenJson.account_authority === "USER") {
+            if (!likeState) {  //좋아요추가
+                setLikeState(true);
+                setLikeCount(likeCount + 1);
+                const data = {
+                    targetType: "NOTICE",
+                    targetId: postId
+                }
+                BoardAPI.like(data).then(response => {
+                    Message.success(response.message);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            } else { //좋아요취소
+                setLikeState(false);
+                setLikeCount(likeCount - 1);
+                const data = {
+                    targetType: "NOTICE",
+                    targetId: postId
+                }
+                BoardAPI.likeCancel(data).then(response => {
+                    Message.success(response.message);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            }
+        } else {
+            alert("좋아요 권한이 없습니다.");
+        }
+    }
     const [displayEditBox, setDisplayEditBox] = useState(false);
     //게시글 수정 버튼
     const editPost = (value) => {
@@ -147,22 +185,22 @@ function NoticeBoardDetail() {
                         {
                             (tokenJson.account_authority === 'MANAGER') ?
                                 < div style={{ float: "right" }}>
-                                    <Typography className={classes.update} onClick={()=>editPost(true)}>수정</Typography>
+                                    <Typography className={classes.update} onClick={() => editPost(true)}>수정</Typography>
                                     <Typography className={classes.delete} onClick={deletePost}>삭제</Typography>
                                 </div>
                                 : null
                         }
                         <Typography className={classes.writer}>에브리데이</Typography>
-                        <Typography className={classes.date}>{dateFormat}</Typography>
+                        <Typography className={classes.date}>{displayDateFormat(registrationDate)}</Typography>
                         <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
                         <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
                         <div style={{ margin: "2rem auto auto 0.3rem" }}>
                             {
                                 (!likeState) ?
-                                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} />
+                                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer'  }} onClick={clickLike}/>
                                     :
-                                    <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000' }} />
-                            }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000' }}>{likeCount}</span>
+                                    <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer'  }} onClick={clickLike}/>
+                            }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer'  }} onClick={clickLike}>{likeCount}</span>
                             <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
                             <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
                         </div>
