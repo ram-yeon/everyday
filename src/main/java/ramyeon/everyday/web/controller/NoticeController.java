@@ -54,11 +54,11 @@ public class NoticeController {
     @DeleteMapping("/notices/{noticeId}")
     public ResponseEntity deleteNotice(@PathVariable Long noticeId,
                                        @AuthenticationPrincipal ManagerDetails managerDetails) {
-        int result = noticeService.deleteNotice(managerDetails.getUsername(), noticeId);
-        if (result == 0) {
+        try {
+            noticeService.deleteNotice(managerDetails.getUsername(), noticeId);
             return new ResponseEntity<>(new ResultDto(200, "공지사항 삭제 성공"), HttpStatus.OK);
-        } else {  // 다른 관리자의 공지사항 삭제 시도
-            return new ResponseEntity(new ResultDto(403, "해당 공지사항의 삭제 권한이 없음"), HttpStatus.FORBIDDEN);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 

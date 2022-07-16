@@ -7,19 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.file.entity.File;
 import ramyeon.everyday.domain.like.repository.LikeRepository;
+import ramyeon.everyday.domain.manager.repository.ManagerRepository;
 import ramyeon.everyday.domain.notice.entity.Notice;
 import ramyeon.everyday.domain.notice.repository.NoticeRepository;
-import ramyeon.everyday.enum_.TargetType;
-import ramyeon.everyday.domain.manager.entity.Manager;
-import ramyeon.everyday.domain.manager.repository.ManagerRepository;
 import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
 import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.NoticeDto;
+import ramyeon.everyday.enum_.TargetType;
+import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.ArrayList;
@@ -121,14 +120,10 @@ public class NoticeService {
      * 공지사항 삭제
      */
     @Transactional
-    public int deleteNotice(String loginId, Long noticeId) {
-        Manager manager = managerRepository.findByLoginId(loginId).orElse(null);  // 관리자 조회
-        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);  // 공지사항 조회
-        if (notice.getManager() != manager) {  // 다른 관리자의 공지사항 삭제
-            return 1;
-        }
+    public void deleteNotice(String loginId, Long noticeId) {
+        managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회
+        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 공지사항"));  // 공지사항 조회
         notice.delete();  // 공지사항 삭제
-        return 0;
     }
 
     /**
