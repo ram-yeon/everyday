@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import ramyeon.everyday.enum_.AccountAuthority;
 import ramyeon.everyday.auth.CustomAuthenticationProvider;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.token.service.TokenService;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
+import ramyeon.everyday.enum_.AccountAuthority;
+import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.jwt.JwtTokenProvider;
 
 @Service
@@ -23,7 +23,11 @@ public class LoginService {
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenService tokenService;
 
+    /**
+     * 비밀번호 찾기
+     */
     public boolean findUserForFindPassword(String loginId) {
+        // 아이디로 가입된 회원이 있나 조회
         User findUser = userRepository.findByLoginId(loginId).orElse(null);
         return findUser != null;
     }

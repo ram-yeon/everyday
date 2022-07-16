@@ -32,7 +32,7 @@ public class EmailSendService {
         Type type = Type.findType(authType);  // 회원가입, 비밀번호 찾기 구분
 
         if (type == Type.FINDPW)  // 비밀번호 찾기 시 아이디와 이메일 정보가 맞는지 확인
-            userRepository.findByLoginIdAndEmail(loginId, email).orElseThrow(NotFoundResourceException::new);
+            userRepository.findByLoginIdAndEmail(loginId, email).orElseThrow(() -> new NotFoundResourceException("아이디와 이메일 정보가 다름"));
 
         Random random = new Random();
         StringBuilder code = new StringBuilder();
@@ -63,21 +63,16 @@ public class EmailSendService {
     }
 
     // 아이디 찾기를 위한 아이디 전송
-    public boolean sendLoginId(String email) {
-        User findUser = userRepository.findByEmail(email).orElse(null);
-        if (findUser == null) {  // 이메일로 가입된 회원이 없음
-            return false;
-        } else {  // 이메일로 아이디 전송
-            String loginId = findUser.getLoginId();
+    public void sendLoginId(String email) {
+        User findUser = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundResourceException("해당 이메일로 가입된 아이디 없음"));
+        String loginId = findUser.getLoginId();
 
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject("[에브리데이] 아이디 찾기 안내");
-            message.setText("본 이메일에 해당하는 아이디는 " + loginId + " 입니다.");
-            javaMailSender.send(message);
-
-            return true;
-        }
+        // 이메일로 아이디 전송
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("[에브리데이] 아이디 찾기 안내");
+        message.setText("본 이메일에 해당하는 아이디는 " + loginId + " 입니다.");
+        javaMailSender.send(message);
     }
 
     // 인증코드 확인
@@ -111,7 +106,7 @@ public class EmailSendService {
         private static final Map<String, Type> typeMap = Stream.of(values()).collect(Collectors.toMap(Type::name, Function.identity()));
 
         public static Type findType(String type) {
-            return Optional.ofNullable(typeMap.get(type)).orElseThrow(NotFoundEnumException::new);
+            return Optional.ofNullable(typeMap.get(type)).orElseThrow(() -> new NotFoundEnumException("잘못된 [type] 값 요청"));
         }
 
     }

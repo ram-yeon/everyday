@@ -25,8 +25,12 @@ public class CommentController {
     @PostMapping("/comments")
     public ResponseEntity createComment(@RequestBody CommentDto.CommentCreateRequestDto createRequestDto,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        CommentDto.CommentResponseDto data = commentService.createComment(principalDetails.getUsername(), createRequestDto);
-        return new ResponseEntity<>(new ResultDto(200, "댓글 등록 성공", data), HttpStatus.OK);
+        try {
+            CommentDto.CommentResponseDto data = commentService.createComment(principalDetails.getUsername(), createRequestDto);
+            return new ResponseEntity<>(new ResultDto(200, "댓글 등록 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -63,7 +67,12 @@ public class CommentController {
     @PostMapping("/comments/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Long commentId,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        int result = commentService.deleteComment(principalDetails.getUsername(), commentId);
+        int result;
+        try {
+            result = commentService.deleteComment(principalDetails.getUsername(), commentId);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
         if (result == 0) {
             return new ResponseEntity<>(new ResultDto(200, "댓글 삭제 성공"), HttpStatus.OK);
         } else {  // 남의 댓글 삭제 시도

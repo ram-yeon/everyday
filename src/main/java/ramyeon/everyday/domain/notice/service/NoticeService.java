@@ -67,7 +67,7 @@ public class NoticeService {
      */
     public NoticeDto.NoticeResponseDto getNoticeDetail(Long noticeId, String userLoginId) {
         // 공지사항 및 관리자, 파일 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
-        Notice notice = noticeRepository.findByIdAndIsDeletedWithManagerFile(noticeId, Whether.N).orElseThrow(NotFoundResourceException::new);
+        Notice notice = noticeRepository.findByIdAndIsDeletedWithManagerFile(noticeId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 공지사항"));  // 공지사항 조회
 
         // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
         List<File> fileList = notice.getFileList();
@@ -79,7 +79,7 @@ public class NoticeService {
         // 사용자가 조회
         if (userLoginId != null) {
             // 사용자 및 좋아요 조회- fetch join을 통한 성능 최적화로 쿼리 수 감소
-            User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(userLoginId).orElse(null);
+            User loginUser = userRepository.findByLoginIdTargetTypeInWithLike(userLoginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
 
             return NoticeDto.NoticeResponseDto.builder()
                     .id(notice.getId())
@@ -131,7 +131,7 @@ public class NoticeService {
      */
     @Transactional
     public void updateViews(Long noticeId, Long views) {
-        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElse(null);
+        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 공지사항"));  // 공지사항 조회
         Long totalViews = notice.getViews() + views;  // 기존 조회수에 갱신
         notice.changeViews(totalViews);
     }

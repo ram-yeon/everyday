@@ -37,17 +37,21 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity login(HttpServletResponse response, @RequestBody UserDto.LoginRequestDto loginRequestDto) {
         Authentication authentication;
+        String jwtToken;
 
         try {
             // 로그인 시도
             authentication = loginService.attemptLogin(loginRequestDto.getLoginId(), loginRequestDto.getPassword(), loginRequestDto.getType());
+            // 토큰 발급
+            jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getType(), loginRequestDto.getIsKeptLogin());
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             return new ResponseEntity<>(new ResultDto(401, e.getMessage()), HttpStatus.UNAUTHORIZED);
         } catch (InternalAuthenticationServiceException iase) {
             return new ResponseEntity<>(new ResultDto(401, "존재하지 않는 사용자입니다."), HttpStatus.UNAUTHORIZED);
+        } catch (NotFoundEnumException ee) {
+            return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        String jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getType(), loginRequestDto.getIsKeptLogin());  // 토큰 발급
         response.addHeader(HEADER_KEY_NAME, TOKEN_PREFIX + jwtToken);  // 헤더에 JWT 추가
 
         return new ResponseEntity<>(new ResultDto(200, "로그인 성공"), HttpStatus.OK);
@@ -62,9 +66,9 @@ public class LoginController {
         try {
             code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType(), emailAuthenticationRequestDto.getLoginId());  // 인증코드 발송
         } catch (NotFoundResourceException re) {
-            return new ResponseEntity<>(new ResultDto(404, "아이디와 이메일 정보가 다름"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
         } catch (NotFoundEnumException ee) {
-            return new ResponseEntity<>(new ResultDto(404, "잘못된 [type] 값"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
         Map<String, String> data = new HashMap<>();
@@ -96,11 +100,11 @@ public class LoginController {
      */
     @PostMapping("/find-id")
     public ResponseEntity findId(@RequestBody UserDto.EmailRequestDto emailRequestDto) {
-        boolean sendLoginId = emailSendService.sendLoginId(emailRequestDto.getEmail());
-        if (sendLoginId) {
+        try {
+            emailSendService.sendLoginId(emailRequestDto.getEmail());
             return new ResponseEntity<>(new ResultDto(200, "아이디 찾기 안내 이메일 발송 성공"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new ResultDto(404, "해당 이메일로 가입된 아이디 없음"), HttpStatus.NOT_FOUND);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 

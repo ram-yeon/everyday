@@ -43,7 +43,7 @@ public class NoticeController {
             else  // 관리자가 조회
                 data = noticeService.getNoticeDetail(noticeId, null);
         } catch (NotFoundResourceException e) {
-            return new ResponseEntity<>(new ResultDto(404, "존재하지 않는 공지사항"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new ResultDto(200, "공지사항 상세 조회 성공", data), HttpStatus.OK);
     }
@@ -68,7 +68,11 @@ public class NoticeController {
      */
     @PatchMapping("/notices/{noticeId}/views")
     public ResponseEntity noticeViewsUpdate(@PathVariable Long noticeId, @RequestBody NoticeDto.NoticeViewsUpdateDto viewsUpdateDto) {
-        noticeService.updateViews(noticeId, viewsUpdateDto.getViews());
-        return new ResponseEntity<>(new ResultDto(200, "공지사항 조회수 갱신 성공"), HttpStatus.OK);
+        try {
+            noticeService.updateViews(noticeId, viewsUpdateDto.getViews());
+            return new ResponseEntity<>(new ResultDto(200, "공지사항 조회수 갱신 성공"), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 }

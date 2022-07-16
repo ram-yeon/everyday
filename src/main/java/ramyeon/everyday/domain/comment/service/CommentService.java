@@ -34,8 +34,8 @@ public class CommentService {
      * 댓글 등록
      */
     public CommentDto.CommentResponseDto createComment(String loginId, CommentDto.CommentCreateRequestDto createRequestDto) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        Post post = postRepository.findByIdAndIsDeleted(createRequestDto.getPostId(), Whether.N).orElse(null);  // 게시글 조회
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        Post post = postRepository.findByIdAndIsDeleted(createRequestDto.getPostId(), Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
         Comment comment = Comment.addComment(createRequestDto.getContents(), CommentType.valueOf(createRequestDto.getCommentType()), createRequestDto.getPreId(),
                 Whether.valueOf(createRequestDto.getIsAnonymous()), loginUser, post);
         return CommentDto.CommentResponseDto.builder()
@@ -94,8 +94,8 @@ public class CommentService {
      */
     @Transactional
     public int deleteComment(String loginId, Long commentId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
-        Comment comment = commentRepository.findById(commentId).orElse(null);  // 댓글 조회
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 댓글"));  // 댓글 조회
         if (comment.getUser() != loginUser) {  // 남의 댓글 삭제
             return 1;
         }

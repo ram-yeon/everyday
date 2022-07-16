@@ -3,13 +3,13 @@ package ramyeon.everyday.domain.token.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ramyeon.everyday.domain.token.entity.Token;
-import ramyeon.everyday.domain.token.repository.TokenRepository;
-import ramyeon.everyday.enum_.AccountAuthority;
 import ramyeon.everyday.domain.manager.entity.Manager;
 import ramyeon.everyday.domain.manager.repository.ManagerRepository;
+import ramyeon.everyday.domain.token.entity.Token;
+import ramyeon.everyday.domain.token.repository.TokenRepository;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
+import ramyeon.everyday.enum_.AccountAuthority;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 @Service
@@ -28,7 +28,7 @@ public class TokenService {
         switch (accountAuthority) {
             // 사용자의 토큰 등록
             case USER:
-                User user = userRepository.findByLoginId(loginId).orElseThrow(NotFoundResourceException::new);
+                User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));
 
                 // 토큰이 이미 존재하면
                 if (isUserTokenExisted(user)) {
@@ -41,7 +41,7 @@ public class TokenService {
 
             // 관리자의 토큰 등록
             case MANAGER:
-                Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(NotFoundResourceException::new);
+                Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));
 
                 // 토큰이 이미 존재하면
                 if (isManagerTokenExisted(manager)) {
@@ -59,7 +59,7 @@ public class TokenService {
      */
     public Token getTokenWithUserManager(String token) {
         // Token 조회 시 User, Manager 조회 - fetch join을 통한 성능 최적화로 쿼리 1번 호출
-        return tokenRepository.findByAccessTokenWithUserManager(token).orElseThrow(NotFoundResourceException::new);
+        return tokenRepository.findByAccessTokenWithUserManager(token).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 토큰입니다."));
     }
 
     /**

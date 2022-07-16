@@ -6,15 +6,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-import ramyeon.everyday.enum_.AccountAuthority;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.ManagerDetailsService;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.auth.PrincipalDetailsService;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.school.service.SchoolService;
 import ramyeon.everyday.domain.token.entity.Token;
 import ramyeon.everyday.domain.token.service.TokenService;
+import ramyeon.everyday.enum_.AccountAuthority;
+import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import javax.annotation.PostConstruct;
@@ -119,7 +119,7 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (NotFoundResourceException nfre) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 토큰입니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, nfre.getMessage());
             return false;
         } catch (ExpiredJwtException eje) {
 

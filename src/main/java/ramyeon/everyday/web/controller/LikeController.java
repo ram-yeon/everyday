@@ -39,7 +39,7 @@ public class LikeController {
         try {
             result = likeService.deleteLike(principalDetails.getUsername(), likeRequestDto.getTargetType(), likeRequestDto.getTargetId());
         } catch (NotFoundResourceException re) {
-            return new ResponseEntity<>(new ResultDto(404, "존재하지 않는 좋아요"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
         }
         if (result == 0) {
             return new ResponseEntity<>(new ResultDto(200, "좋아요 삭제 성공"), HttpStatus.OK);

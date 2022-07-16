@@ -10,10 +10,10 @@ import ramyeon.everyday.domain.like.repository.LikeRepository;
 import ramyeon.everyday.domain.school.entity.School;
 import ramyeon.everyday.domain.school.repository.SchoolRepository;
 import ramyeon.everyday.domain.token.service.TokenService;
-import ramyeon.everyday.enum_.UserAuthority;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
 import ramyeon.everyday.dto.UserDto;
+import ramyeon.everyday.enum_.UserAuthority;
 import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
@@ -34,14 +34,9 @@ public class UserService {
      * 비밀번호 변경
      */
     @Transactional
-    public int changePassword(String email, String password) {
-        User findUser = userRepository.findByEmail(email).orElse(null);
-        if (findUser == null) {  // 해당 이메일로 가입된 회원이 없음
-            return 1;
-        } else {
-            findUser.changePassword(bCryptPasswordEncoder.encode(password));  // 비밀번호 변경
-            return 0;
-        }
+    public void changePassword(String email, String password) {
+        User findUser = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundResourceException("해당 이메일로 가입된 회원 없음"));  // 회원 조회
+        findUser.changePassword(bCryptPasswordEncoder.encode(password));  // 비밀번호 변경
     }
 
     /**
@@ -60,7 +55,7 @@ public class UserService {
         if (userRepository.findByNickname(nickname).isPresent())
             throw new DuplicateResourceException("이미 존재하는 닉네임");
 
-        School findSchool = schoolRepository.findBySchoolName(schoolName).orElseThrow(NotFoundResourceException::new);  // 학교 조회
+        School findSchool = schoolRepository.findBySchoolName(schoolName).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 학교"));  // 학교 조회
 
         // 회원 등록
         User user = User.registerUser(loginId, bCryptPasswordEncoder.encode(password), name, email, nickname, admissionYear, findSchool);
@@ -71,7 +66,7 @@ public class UserService {
      * 회원 탈퇴
      */
     public void deleteUser(String loginId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);  // 회원 조회
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         loginUser.delete(loginUser.getSchool());
         tokenService.deleteToken(loginUser.getToken());  // 토큰 삭제
         userRepository.delete(loginUser);
@@ -81,7 +76,7 @@ public class UserService {
      * 배너에 띄울 회원 정보 조회
      */
     public UserDto.BannerResponseDto getUserInfoForBanner(String loginId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         return new UserDto.BannerResponseDto(loginUser.getLoginId(), loginUser.getName(), loginUser.getNickname(), loginUser.getSchool().getSchoolName());
     }
 
@@ -90,7 +85,7 @@ public class UserService {
      */
     @Transactional
     public int upgradeUserAuthority(String loginId, Collection<? extends GrantedAuthority> authorities) {
-        User loginUser = userRepository.findByLoginId(loginId).orElse(null);
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
 
         // 이미 등업이 완료된 회원이면
         for (GrantedAuthority authority : authorities) {
