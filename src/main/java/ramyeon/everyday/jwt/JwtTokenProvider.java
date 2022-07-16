@@ -120,19 +120,17 @@ public class JwtTokenProvider {
             return !claims.getBody().getExpiration().before(new Date());
         } catch (NotFoundResourceException nfre) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, nfre.getMessage());
-            return false;
         } catch (ExpiredJwtException eje) {
 
             tokenService.deleteToken(token);  // 만료된 토큰이므로 DB에서 삭제
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 만료된 토큰입니다.");
-            return false;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException jwtE) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-            return false;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
+
     }
 }
