@@ -33,6 +33,9 @@ public class Comment extends DateBaseEntity {  // 댓글
     @Enumerated(EnumType.STRING)
     private Whether isAnonymous;  // 익명 여부
 
+    @Enumerated(EnumType.STRING)
+    private Whether isDeleted;  // 삭제 여부
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
