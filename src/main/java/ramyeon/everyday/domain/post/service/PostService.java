@@ -4,24 +4,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.comment.entity.Comment;
+import ramyeon.everyday.domain.comment.service.CommentService;
 import ramyeon.everyday.domain.file.entity.File;
 import ramyeon.everyday.domain.like.entity.Like;
 import ramyeon.everyday.domain.like.service.LikeService;
-import ramyeon.everyday.enum_.BoardType;
-import ramyeon.everyday.enum_.MyPostType;
-import ramyeon.everyday.domain.post.entity.Post;
-import ramyeon.everyday.domain.post.repository.PostRepository;
-import ramyeon.everyday.enum_.TargetType;
 import ramyeon.everyday.domain.notice.entity.Notice;
 import ramyeon.everyday.domain.notice.repository.NoticeRepository;
 import ramyeon.everyday.domain.notice.service.NoticeService;
+import ramyeon.everyday.domain.post.entity.Post;
+import ramyeon.everyday.domain.post.repository.PostRepository;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
 import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.PostDto;
+import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.enum_.MyPostType;
+import ramyeon.everyday.enum_.TargetType;
+import ramyeon.everyday.enum_.Whether;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class PostService {
     private final LikeService likeService;
     private final NoticeService noticeService;
     private final NoticeRepository noticeRepository;
+    private final CommentService commentService;
 
     /**
      * 메인화면 게시글 목록 조회
@@ -157,18 +159,7 @@ public class PostService {
             List<Comment> commentList = post.getCommentList();
             List<CommentDto.CommentResponseDto> commentDtoList = new ArrayList<>();
             for (Comment comment : commentList) {
-                commentDtoList.add(
-                        CommentDto.CommentResponseDto.builder()
-                                .id(comment.getId())
-                                .writer(getCommentWriter(comment.getUser(), post.getUser(), comment.getIsAnonymous(), post.getIsAnonymous()))
-                                .contents(comment.getContents())
-                                .registrationDate(comment.getRegistrationDate())
-                                .commentType(comment.getCommentType())
-                                .preId(comment.getPreId())
-                                .isAnonymous(comment.getIsAnonymous())
-                                .isLikeComment(checkUserLike(loginUser.getLikeList(), TargetType.COMMENT, comment.getId()))  // 해당 댓글을 좋아요 했는지 확인
-                                .build()
-                );
+                commentDtoList.add(commentService.entityToDto(comment, post, loginUser));
             }
 
             return PostDto.PostResponseDto.builder()
@@ -375,24 +366,6 @@ public class PostService {
             return "삭제된 회원";
         else
             return user.getLoginId();
-    }
-
-    // 댓글 작성자 조회
-    String getCommentWriter(User commentUser, User postUser, Whether commentIsAnonymous, Whether postIsAnonymous) {
-        if (commentUser == null)  // 삭제된 유저 처리
-            return "(알수없음)";
-        else {
-            // 게시글 작성자와 댓글 작성자가 같고, 게시글이 익명이 아니고, 댓글이 익명일 때
-            if (commentUser == postUser && postIsAnonymous == Whether.N && commentIsAnonymous == Whether.Y)
-                return "익명";
-            if (commentIsAnonymous == Whether.Y) {  // 익명 처리
-                if (commentUser == postUser)  // 글 작성자와 댓글 작성자가 같으면
-                    return "익명(글쓴이)";
-                else   // 글 작성자와 댓글 작성자가 다르면
-                    return "익명";
-            } else
-                return commentUser.getNickname();  // 닉네임
-        }
     }
 
 }

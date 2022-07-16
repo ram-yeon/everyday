@@ -4,18 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.comment.entity.Comment;
-import ramyeon.everyday.enum_.CommentType;
 import ramyeon.everyday.domain.comment.repository.CommentRepository;
 import ramyeon.everyday.domain.like.service.LikeService;
-import ramyeon.everyday.enum_.TargetType;
 import ramyeon.everyday.domain.post.entity.Post;
 import ramyeon.everyday.domain.post.repository.PostRepository;
 import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
 import ramyeon.everyday.dto.CommentDto;
+import ramyeon.everyday.enum_.CommentType;
+import ramyeon.everyday.enum_.TargetType;
+import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.ArrayList;
@@ -122,16 +122,29 @@ public class CommentService {
     }
 
     // Comment 엔티티를 CommentResponseDto로 변환
-    private CommentDto.CommentResponseDto entityToDto(Comment comment, Post post, User loginUser) {
+    public CommentDto.CommentResponseDto entityToDto(Comment comment, Post post, User loginUser) {
+        String writer;
+        String writerLoginId;
+        String contents;
+        if (comment.getIsDeleted() == Whether.Y) {
+            writer = "(삭제)";
+            writerLoginId = "삭제";
+            contents = "삭제된 댓글입니다,";
+        } else {
+            writer = getCommentWriter(comment.getUser(), post.getUser(), comment.getIsAnonymous(), post.getIsAnonymous());
+            writerLoginId = PostService.getWriterLoginId(comment.getUser());
+            contents = comment.getContents();
+        }
         return CommentDto.CommentResponseDto.builder()
                 .id(comment.getId())
-                .writer(getCommentWriter(comment.getUser(), post.getUser(), comment.getIsAnonymous(), post.getIsAnonymous()))
-                .writerLoginId(PostService.getWriterLoginId(comment.getUser()))
-                .contents(comment.getContents())
+                .writer(writer)
+                .writerLoginId(writerLoginId)
+                .contents(contents)
                 .registrationDate(comment.getRegistrationDate())
                 .commentType(comment.getCommentType())
                 .preId(comment.getPreId())
                 .isAnonymous(comment.getIsAnonymous())
+                .isDeleted(comment.getIsDeleted())
                 .isLikeComment(PostService.checkUserLike(loginUser.getLikeList(), TargetType.COMMENT, comment.getId()))  // 해당 댓글을 좋아요 했는지 확인
                 .likeCount(likeService.getLikeCount(TargetType.COMMENT, comment.getId()))
                 .build();
