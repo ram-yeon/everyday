@@ -64,7 +64,7 @@ public class CommentController {
     /**
      * 댓글 삭제 API
      */
-    @PostMapping("/comments/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Long commentId,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
         int result;
