@@ -1,4 +1,5 @@
 import Axios from "../component/Axios/Axios";
+import AxiosFile from "../component/Axios/AxiosFile";
 import { NewPromise } from "../component/Common";
 
 
@@ -17,9 +18,9 @@ export const noticeBoardSelect = (data) => NewPromise(Axios.get('/notices?page='
 
 //게시글 상세조회(파일제외) ㅇ
 export const boardDetailSelect = (data) => NewPromise(Axios.get('/posts/' + data.postId));
-//게시글의 댓글 조회
+//게시글의 댓글 조회 ㅇ
 export const boardCommentSelect = (data) => NewPromise(Axios.get('/posts/' + data.postId + '/comments'));
-//게시글의 대댓글 조회
+//게시글의 대댓글 조회 ㅇ
 export const boardReplySelect = (data) => NewPromise(Axios.get('/posts/' + data.postId + '/comments/' + data.commentId));
 //공지사항 상세조회(파일제외) ㅇ
 export const noticeBoardDetailSelect = (data) => NewPromise(Axios.get('/notices/' + data.noticeId));
@@ -32,14 +33,14 @@ export const commentByMe = (data) => NewPromise(Axios.get('/posts/my/COMMENT?pag
 export const likeByMe = (data) => NewPromise(Axios.get('/posts/notices/like?page=' + data.page + '&size=' + '3'));
 
 //게시글 등록(파일제외) ㅇ
-export const registerBoard = (data) => NewPromise(Axios.post('/posts/', data));
-//게시글 수정
+export const registerBoard = (data) => NewPromise(AxiosFile.post('/posts/', data));
+//게시글 수정 ㅇ
 export const updateBoard = (postId, data) => NewPromise(Axios.patch('/posts/' + postId, data));
 //게시글 삭제 ㅇ
 export const deleteBoard = (data) => NewPromise(Axios.delete('/posts/' + data.postId));
 //게시글 등록(관리자)(파일제외) ㅇ
-export const registerBoardByAdmin = (data) => NewPromise(Axios.post('/notices', data));
-//게시글 수정(관리자)
+export const registerBoardByAdmin = (data) => NewPromise(AxiosFile.post('/notices', data));
+//게시글 수정(관리자) ㅇ
 export const updateBoardByAdmin = (postId, data) => NewPromise(Axios.patch('/notices/' + postId, data));
 //게시글 삭제(관리자) ㅇ
 export const deleteBoardByAdmin = (data) => NewPromise(Axios.delete('/notices/' + data.postId));

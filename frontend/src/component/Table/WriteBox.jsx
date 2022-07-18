@@ -106,11 +106,6 @@ function WriteBox(props) {
     const handleRegister = (e) => {
         const fd = new FormData();
         Object.values(imgFile).forEach((file) => fd.append("file", file));
-        // axios.post('http://localhost:8080/', fd, {
-        //     headers: {
-        //         "Content-Type": `multipart/form-data; `,
-        //     }
-        // })
 
         let isAnonymous = '';
         if (checked) {
@@ -127,7 +122,7 @@ function WriteBox(props) {
         }
         if (props.boardType === '공지사항') {   //관리자 공지등록
             BoardAPI.registerBoardByAdmin(data).then(response => {
-
+                Message.success(response.message);
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -135,7 +130,7 @@ function WriteBox(props) {
 
         } else {    //일반사용자 글등록
             BoardAPI.registerBoard(data).then(response => {
-
+                Message.success(response.message);
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
