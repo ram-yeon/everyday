@@ -119,7 +119,7 @@ function EditBox(props) {
         }
         if (boardType === '공지사항') {   //관리자 공지수정
             BoardAPI.updateBoardByAdmin(postId, data).then(response => {
-
+                props.editPost(false)
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -127,7 +127,7 @@ function EditBox(props) {
 
         } else {    //일반사용자 글수정
             BoardAPI.updateBoard(postId, data).then(response => {
-
+                props.editPost(false)
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -184,7 +184,7 @@ function EditBox(props) {
                     <BorderColorIcon className={classes.registerBtn} onClick={handleClick} />
                 </div>
             </Box>
-            <button className={classes.listBtn} onClick={()=>props.editPost(false)} >글 수정 취소</button>
+            <button className={classes.listBtn} onClick={() => props.editPost(false)} >글 수정 취소</button>
         </div>
     )
 }

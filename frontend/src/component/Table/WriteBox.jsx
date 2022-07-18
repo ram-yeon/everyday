@@ -10,6 +10,10 @@ import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
+import Carousel from 'react-bootstrap/Carousel'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios, { post } from 'axios';
+
 const useStyles = makeStyles((theme) => ({
     writeBox: {
         height: "auto",
@@ -28,13 +32,11 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "0.3rem",
     },
     boxFooter: {
-        cursor: "pointer",
-        height: "2rem",
+        height: "1.5rem",
     },
     registerBtn: {
-        width: "1.5rem",
-        height: "1.5rem",
-        padding: "0.5rem",
+        cursor: "pointer",
+        padding: "0.2rem",
         backgroundColor: "#C00000",
         color: "white",
         float: "right",
@@ -74,17 +76,41 @@ function WriteBox(props) {
     //     }
     // };
 
-    //선택된 파일 읽기
-    const [files, setFiles] = useState('');
-    const onLoadFile = (e) => {
-        const file = e.target.files;
-        console.log(file);
-        setFiles(file);
-    };
+    const [imgBase64, setImgBase64] = useState([]); // 파일 base64(미리보기)
+    const [imgFile, setImgFile] = useState(null);	//파일	
+    const handleChangeFile = (event) => {
+        console.log(event.target.files)
+        setImgFile(event.target.files);
+        setImgBase64([]);
+        for (let i = 0; i < event.target.files.length; i++) {
+            if (event.target.files[i]) {
+                const reader = new FileReader();
+                reader.readAsDataURL(event.target.files[i]); // 1)파일을 읽어 버퍼에 저장
+                // 파일 상태 업데이트
+                reader.onloadend = () => {
+                    // 2)읽기가 완료되면 아래코드 실행
+                    const base64 = reader.result;
+                    if (base64) {
+                        const base64Sub = base64.toString()
+                        setImgBase64(imgBase64 => [...imgBase64, base64Sub]);
+                        //  setImgBase64(newObj);
+                        // 파일 base64 상태 업데이트
+                        //  console.log(images)
+                    }
+                }
+            }
+        }
+    }
+
     //글등록(+파일 전송)
-    const handleClick = (e) => {
-        const formdata = new FormData();
-        formdata.append('uploadImage', files[0]);
+    const handleRegister = (e) => {
+        const fd = new FormData();
+        Object.values(imgFile).forEach((file) => fd.append("file", file));
+        // axios.post('http://localhost:8080/', fd, {
+        //     headers: {
+        //         "Content-Type": `multipart/form-data; `,
+        //     }
+        // })
 
         let isAnonymous = '';
         if (checked) {
@@ -97,6 +123,7 @@ function WriteBox(props) {
             title: title,
             contents: contents,
             isAnonymous: isAnonymous,
+            files: fd,
         }
         if (props.boardType === '공지사항') {   //관리자 공지등록
             BoardAPI.registerBoardByAdmin(data).then(response => {
@@ -115,20 +142,7 @@ function WriteBox(props) {
             })
         }
     };
-
-    useEffect(() => {
-        preview();
-        return () => preview();
-    });
-    const preview = () => {
-        if (!files) return false;
-        const imgEl = document.querySelector('.img__box');
-        const reader = new FileReader();
-        reader.onload = () => (imgEl.style.backgroundImage = 'url(${reader.result})');
-        reader.readAsDataURL(files[0]);
-        console.log(reader);
-    }
-
+    console.log(imgFile);
     return (
         <div>
             <Box p={1.8} className={classes.writeBox}>
@@ -139,7 +153,7 @@ function WriteBox(props) {
                 <div>
                     <textarea
                         // onKeyUp={checkLength}
-                        style={{ padding: "1rem", width: "96%", height: "26vh", fontSize: "0.9rem", fontFamily: "-moz-initial", marginTop: "1rem", resize: "none", whiteSpace: "pre-line" }}
+                        style={{ padding: "1rem", width: "99%", height: "26vh", fontSize: "0.9rem", fontFamily: "-moz-initial", margin: "1rem 0.3rem", resize: "none", whiteSpace: "pre-line" }}
                         placeholder="에브리타임은 누구나 기분 좋게 참여할 수 있는 커뮤니티를 만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고 있습니다.
                         위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될 수 있습니다.&#13;
                         아래는 이 게시판에 해당하는 핵심 내용에 대한 요약 사항이며, 게시물 작성 전 커뮤니티이용규칙 전문을 반드시 확인하시기 바랍니다.
@@ -162,23 +176,35 @@ function WriteBox(props) {
                 </div>
 
                 <div>
-                    <input type="file" multiple id="image" accept="img/*" onChange={onLoadFile} />
-                    <div className='img__box'>
-                        <img src="" alt="첨부된 이미지" />
-                    </div>
+                    <Carousel>
+                        {imgBase64.map((item) => {
+                            return (
+                                <Carousel.Item>
+                                    <img
+                                        src={item}
+                                        alt="첨부된 이미지"
+                                        style={{ width: "100px", height: "100px" }}
+                                    />
+                                </Carousel.Item>
+                            )
+                        })}
+                    </Carousel>
                 </div>
 
                 <hr style={{ marginBottom: "0.3rem" }} />
 
                 <div className={classes.boxFooter}>
-                    <InsertPhotoOutlinedIcon />
+                    <div>
+                        <input type="file" id="file" style={{ display: 'none' }} onChange={handleChangeFile} multiple="multiple" />
+                        <label htmlFor="file"><InsertPhotoOutlinedIcon sx={{ cursor: 'pointer', fontSize: '2rem' }} /></label>
+                    </div>
                     {
                         (tokenJson.account_authority === 'USER') ?
                             <FormControlLabel control={<Checkbox color="default" size="small" />}
-                                label="익명" sx={{ marginLeft: "83%", marginBottom: "1.8rem" }} checked={checked} onChange={handleCheckBox} />
+                                label="익명" sx={{ margin: "-3.5rem auto auto 87%" }} checked={checked} onChange={handleCheckBox} />
                             : null
                     }
-                    <BorderColorIcon className={classes.registerBtn} onClick={handleClick} />
+                    <BorderColorIcon className={classes.registerBtn} onClick={handleRegister} sx={{ fontSize: '2rem', marginTop: '-2rem' }} />
                 </div>
             </Box>
         </div>

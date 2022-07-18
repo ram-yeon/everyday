@@ -14,7 +14,11 @@ import {
 } from "../../CommentTool";
 
 const Reply = (props) => {
-  const reply = props.reply;
+  const {
+    reply,
+    handleIsInitialize,
+  } = props;
+  // const index = reply.commentId;
   const token = localStorage.getItem(SESSION_TOKEN_KEY);
   const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
@@ -25,6 +29,7 @@ const Reply = (props) => {
   const deleteComment = (commentId) => {
     BoardAPI.deleteComment(commentId).then(response => {
       Message.success(response.message);
+      handleIsInitialize(false);
     }).catch(error => {
       console.log(JSON.stringify(error));
       Message.error(error.message);
@@ -58,8 +63,8 @@ const Reply = (props) => {
 
   return (
     <>
-      <Box sx={{ m: 2 }} key={props.index} >
-        <Divider variant="middle" sx={{mb:2}} />
+      <Box sx={{ m: 2 }} >
+        <Divider variant="middle" sx={{ mb: 2 }} />
         {/* writer 정보, 작성 시간 */}
         <Stack direction="row" spacing={2}>
           <AccountCircleIcon sx={{ color: 'gray', mt: 0.5, mr: -1 }} ></AccountCircleIcon>
@@ -80,7 +85,6 @@ const Reply = (props) => {
         </Stack>
         {/* comment 글 내용 */}
         <Box
-          key={props.index}
           sx={{ padding: "0px 20px", color: reply.exist ?? "grey", ml: 1.6 }}
         >
           <Markdown comment={reply} />
@@ -89,7 +93,7 @@ const Reply = (props) => {
         {/* comment 삭제 */}
         {tokenJson.sub === reply.writerLoginId && (
           <>
-            <Button sx={{ ml: 1.8, fontSize:'0.8rem', color:'gray' }}
+            <Button sx={{ ml: 1.8, fontSize: '0.8rem', color: 'gray' }}
               onClick={() => {
                 deleteComment(reply.commentId);
               }}

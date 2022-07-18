@@ -15,9 +15,12 @@ import {
 } from "../../CommentTool";
 
 const Comment = (props) => {
-  const comment = props.comment;
+  const {
+    comment,
+    postId,
+    handleIsInitialize,
+  } = props;
   const index = comment.commentId;
-
   const token = localStorage.getItem(SESSION_TOKEN_KEY);
   const tokenJson = JSON.parse(atob(token.split(".")[1]));
   
@@ -28,6 +31,7 @@ const Comment = (props) => {
   const deleteComment = (commentId) => {
     BoardAPI.deleteComment(commentId).then(response => {
       Message.success(response.message);
+      handleIsInitialize(false);
     }).catch(error => {
       console.log(JSON.stringify(error));
       Message.error(error.message);
@@ -102,7 +106,7 @@ const Comment = (props) => {
         )}
 
         {/* 대댓글 컴포넌트 */}
-        <ReplyList commentId={comment.commentId} postId={props.postId} />
+        <ReplyList commentId={comment.commentId} postId={postId} />
 
         <Divider variant="middle" />
       </Box>

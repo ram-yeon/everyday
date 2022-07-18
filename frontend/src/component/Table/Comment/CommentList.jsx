@@ -25,8 +25,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CommentList = (props) => {
+  const {
+    comment,
+    postId,
+    handleIsInitialize,
+  } = props;
   const classes = useStyles();
-  const commentData = props.comment;
+  // const commentData = props.comment;
   const [display, setDisplay] = useState(false);
   const editorRef = useRef();
   const [checked, setChecked] = useState(false);
@@ -50,7 +55,7 @@ const CommentList = (props) => {
       isAnonymous = 'N'
     }
     const data = {
-      postId: props.postId,
+      postId: postId,
       contents: getContent,
       commentType: "COMMENT",
       isAnonymous: isAnonymous,
@@ -58,6 +63,7 @@ const CommentList = (props) => {
     //댓글 등록(db)
     BoardAPI.registerComment(data).then(response => {
       Message.success(response.message);
+      handleIsInitialize(false);
     }).catch(error => {
       console.log(JSON.stringify(error));
       Message.error(error.message);
@@ -67,8 +73,8 @@ const CommentList = (props) => {
 
   return (
     <Paper sx={{ m: 0, p: 2 }}>
-      {commentData.map((comment, index) => (
-        <Comment comment={comment} postId={props.postId} key={index} />
+      {comment.map((comment, index) => (
+        <Comment comment={comment} postId={postId} key={index} handleIsInitialize={handleIsInitialize} />
       ))}
 
       <div style={{ marginTop: '2rem', marginBottom: '-0.8rem' }}>
@@ -85,7 +91,7 @@ const CommentList = (props) => {
 
       {display && (
         <>
-          <Editor ref={editorRef} initialValue={"내용을 입력하세요."} />
+          <Editor ref={editorRef} initialValue={" "} placeholder={"내용을 입력하세요."} />
         </>
       )}
     </Paper>

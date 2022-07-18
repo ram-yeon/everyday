@@ -53,11 +53,11 @@ export const boardViews = (itemId, data) => NewPromise(Axios.patch('/posts/' + i
 //공지사항 조회수 갱신 ㅇ
 export const noticeBoardViews = (itemId, data) => NewPromise(Axios.patch('/notices/' + itemId + '/views', data));
 
-//게시글 검색
+//게시글 검색 ㅇ
 export const search = (data) => NewPromise(Axios.get('/posts/search?keyword='+data.keyword+'&page=' + data.page + '&size=' + '3'));
 
-//댓글,대댓글 등록
+//댓글,대댓글 등록 ㅇ
 export const registerComment = (data) => NewPromise(Axios.post('/comments', data));
 
-//댓글,대댓글 삭제
-export const deleteComment = (commentId) => NewPromise(Axios.post('/comments/' + commentId));
+//댓글,대댓글 삭제 ㅇ
+export const deleteComment = (commentId) => NewPromise(Axios.delete('/comments/' + commentId));

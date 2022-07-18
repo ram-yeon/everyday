@@ -6,8 +6,6 @@ import { Stack, Button } from "@mui/material";
 import { Editor } from "@toast-ui/react-editor";
 import * as BoardAPI from '../../../api/Board';
 import { Message } from '../../Message';
-import moment from 'moment';
-import 'moment/locale/ko';
 
 const useStyles = makeStyles((theme) => ({
   checkAnonymous: {
@@ -18,12 +16,15 @@ const useStyles = makeStyles((theme) => ({
 const ReplyList = (props) => {
   const [reply, setReply] = useState([]);
   const [checked, setChecked] = useState(false);
-
-  const [initCommentId] = useState(props.commentId);
+  // const [initCommentId] = useState(props.commentId);
+  const [isInitialize, setIsInitialize] = useState(false);
 
   const handleCheckBox = (event) => {
     setChecked(event.target.checked);
   };
+  const handleIsInitialize = (value) => {
+    setIsInitialize(value);
+  }
 
   const classes = useStyles();
   const [display, setDisplay] = useState(false);
@@ -53,6 +54,7 @@ const ReplyList = (props) => {
     //대댓글 등록(db)
     BoardAPI.registerComment(data).then(response => {
       Message.success(response.message);
+      handleIsInitialize(false);
     }).catch(error => {
       console.log(JSON.stringify(error));
       Message.error(error.message);
@@ -65,31 +67,33 @@ const ReplyList = (props) => {
     commentId: props.commentId,
   }
   useEffect(() => {
-    BoardAPI.boardReplySelect(replyApiData).then(response => {
-      const replyItems = [];
-      response.data.comment.forEach((v, i) => {
-        const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
-        const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
-        const commentRegistrationDate = (v.registrationDate);
-        const likeCount = (v.likeCount);
-        const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값
-        const writerLoginId = (v.writerLoginId);
-        replyItems.push({
-          commentWriter: commentWriter, commentContents: commentContents, commentRegistrationDate: commentRegistrationDate,
-          isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount, writerLoginId: writerLoginId,
-          commentId: v.id,
-        });
+    if (!isInitialize) {
+      BoardAPI.boardReplySelect(replyApiData).then(response => {
+        const replyItems = [];
+        response.data.comment.forEach((v, i) => {
+          const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
+          const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
+          const commentRegistrationDate = (v.registrationDate);
+          const likeCount = (v.likeCount);
+          const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값
+          const writerLoginId = (v.writerLoginId);
+          replyItems.push({
+            commentWriter: commentWriter, commentContents: commentContents, commentRegistrationDate: commentRegistrationDate,
+            isLikeComment: isLikeComment === 'Y' ? true : false, likeCount: likeCount, writerLoginId: writerLoginId,
+            commentId: v.id,
+          });
+        })
+        setReply(replyItems);
+        handleIsInitialize(true);
+      }).catch(e => {
+        setReply([]);
       })
-      setReply(replyItems);
-    }).catch(e => {
-      setReply([]);
-    })
-  }, [initCommentId]);
+    }
+  });
 
   const clickToRegister = () => {
     setDisplay(!display);
   }
-
 
   return (
     <Stack sx={{ m: 1, ml: 5 }}>
@@ -100,9 +104,7 @@ const ReplyList = (props) => {
       </Button>
       {display && (
         <>
-          <Editor
-            ref={editorRef} initialValue={"내용을 입력하세요."}
-          />
+          <Editor ref={editorRef} initialValue={" "} placeholder={"내용을 입력하세요."} />
           <div style={{ marginTop: "0.2rem" }} >
             <Button onClick={onSubmit} sx={{ ml: -1 }}>등록</Button>
             <FormControlLabel control={<Checkbox color="default" size="small" />}
@@ -111,8 +113,8 @@ const ReplyList = (props) => {
         </>
       )}
 
-      {reply.map((reply, index) => (
-        <Reply reply={reply} postId={props.postId} key={index} />
+      {reply.map(reply => (
+        <Reply key={reply} reply={reply} handleIsInitialize={handleIsInitialize} />
       ))}
 
     </Stack>

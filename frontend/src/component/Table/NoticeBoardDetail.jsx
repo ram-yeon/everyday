@@ -8,11 +8,7 @@ import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';        
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-import moment from 'moment';
-import 'moment/locale/ko';
-import {
-    displayDateFormat,
-  } from "../CommentTool";
+import {displayDateFormat} from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';

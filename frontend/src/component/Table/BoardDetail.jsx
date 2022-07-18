@@ -12,9 +12,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';    
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
 import { makeStyles, Typography } from "@material-ui/core";
 import { useLocation } from 'react-router-dom';
-import moment from 'moment';
-import 'moment/locale/ko';
-import {displayDateFormat} from "../CommentTool";
+import { displayDateFormat } from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
@@ -75,12 +73,11 @@ function BoardDetail() {
     const location = useLocation();
     const postId = location.state.postId;
     const headTitle = location.state.headTitle;
-
+    const navigate = useNavigate();
+    const classes = useStyles();
     const token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
-    const classes = useStyles();
-    const navigate = useNavigate();
     const [boardType, setBoardType] = useState('');
     const [boardTypeToLowerCase, setBoardTypeToLowerCase] = useState('');
     const [writer, setWriter] = useState('');
@@ -98,6 +95,10 @@ function BoardDetail() {
 
     const [comment, setComment] = useState([]);
     const [isInitialize, setIsInitialize] = useState(false);
+    
+    const handleIsInitialize = (value) => {
+        setIsInitialize(value);
+    }
 
     const data = {
         postId: postId,
@@ -156,7 +157,7 @@ function BoardDetail() {
         if (!isInitialize) {
             if (tokenJson.account_authority === "USER") {
                 Promise.all([boardDetailSelect(), boardCommentSelect()]).then(() => {
-                    setIsInitialize(true);
+                    handleIsInitialize(true);
                 }).catch(error => { console.log(error) })
             }
         }
@@ -231,7 +232,7 @@ function BoardDetail() {
                         <AccountCircleIcon className={classes.writerIcon} />
                         {tokenJson.sub === writerLoginId && (
                             <div style={{ float: "right" }}>
-                                <Typography className={classes.postUpdate} onClick={()=>editPost(true)}>수정</Typography>
+                                <Typography className={classes.postUpdate} onClick={() => editPost(true)}>수정</Typography>
                                 <Typography className={classes.postDelete} onClick={deletePost}>삭제</Typography>
                             </div>
                         )}
@@ -254,7 +255,7 @@ function BoardDetail() {
                     </Box >
 
                     {/* 댓글 */}
-                    <CommentList comment={comment} postId={postId} />
+                    <CommentList comment={comment} postId={postId} handleIsInitialize={handleIsInitialize} />
 
                     {/* 게시판따라경로분기처리 */}
                     <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
