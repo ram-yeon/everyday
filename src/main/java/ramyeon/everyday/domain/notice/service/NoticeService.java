@@ -71,9 +71,9 @@ public class NoticeService {
 
         // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
         List<File> fileList = notice.getFileList();
-        List<FileDto.FileInPostAndNoticeResponseDto> fileDtoList = new ArrayList<>();
+        List<FileDto.FileResponseDto> fileDtoList = new ArrayList<>();
         for (File file : fileList) {
-            fileDtoList.add(new FileDto.FileInPostAndNoticeResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
+            fileDtoList.add(new FileDto.FileResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
         }
 
         // 사용자가 조회

@@ -29,7 +29,7 @@ public class NoticeDto {
 
         private Long likeCount;  // 좋아요 수
         private Integer fileCount;  // 파일 수
-        private List<FileDto.FileInPostAndNoticeResponseDto> file;  // 파일
+        private List<FileDto.FileResponseDto> file;  // 파일
     }
 
     /**

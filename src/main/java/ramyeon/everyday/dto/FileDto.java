@@ -10,7 +10,7 @@ public class FileDto {
      */
     @Getter
     @AllArgsConstructor
-    public static class FileInPostAndNoticeResponseDto {
+    public static class FileResponseDto {
 
         private Long sequence;  // 순서
         private String uploadFilename;  // 업로드 파일명

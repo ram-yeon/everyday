@@ -149,9 +149,9 @@ public class PostService {
 
         // File 엔티티를 FileInPostAndNoticeResponseDto로 변환
         List<File> fileList = post.getFileList();
-        List<FileDto.FileInPostAndNoticeResponseDto> fileDtoList = new ArrayList<>();
+        List<FileDto.FileResponseDto> fileDtoList = new ArrayList<>();
         for (File file : fileList) {
-            fileDtoList.add(new FileDto.FileInPostAndNoticeResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
+            fileDtoList.add(new FileDto.FileResponseDto(file.getSequence(), file.getUploadFilename(), file.getStoreFilename()));
         }
 
         // Comment 엔티티를 CommentInPostResponseDto로 변환
