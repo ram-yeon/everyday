@@ -1,21 +1,21 @@
 import CommonAxios from 'axios';
 
-const Axios = CommonAxios.create({
+const AxiosFile = CommonAxios.create({
     // timeout: 30000,
     headers: {
-        'Content-Type': 'multipart/form-data; charset=UTF-8;',
+        'Content-Type': 'multipart/form-data; charset=UTF-8; boundary=----WebKitFormBoundarydaeFwpUryMQuuI8t',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
     },
 });
 
 if (process.env.NODE_ENV === 'development') {
-    Axios.defaults.baseURL = 'http://localhost:8080'
+    AxiosFile.defaults.baseURL = 'http://localhost:8080'
 }
 
 export const SESSION_TOKEN_KEY = "__EVERYDAY__auth__";
 
-Axios.interceptors.request.use(function (config) {
+AxiosFile.interceptors.request.use(function (config) {
     const token = localStorage.getItem(SESSION_TOKEN_KEY);  //api요청시 토큰키 값 넣어서 요청
     // config.headers.Authorization = "Bearer" + token;
     config.headers.Authorization = token;
@@ -23,7 +23,7 @@ Axios.interceptors.request.use(function (config) {
     return config;
 });
 
-Axios.interceptors.response.use(function (response) {
+AxiosFile.interceptors.response.use(function (response) {
     if (401 === response.status) {
         window.location.href = '/login';
     } else if (403 === response.status) {
@@ -53,4 +53,4 @@ Axios.interceptors.response.use(function (response) {
 });
 
 
-export default Axios;
+export default AxiosFile;

@@ -50,6 +50,10 @@ function BoardList(props) {
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialize, setIsInitialize] = useState(false);
 
+    const handleIsInitialize = (value) => {
+        setIsInitialize(value);
+    }
+
     const handleChange = (event, value) => {
         setPage(value);
         
@@ -90,7 +94,7 @@ function BoardList(props) {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
             }).finally(() => {
-                setIsInitialize(true);
+                handleIsInitialize(true);
             });
         }
     };
@@ -131,7 +135,7 @@ function BoardList(props) {
                     </Box>
                     : null
             }
-            {show ? <WriteBox show={show} boardType={boardType} /> : null}
+            {show ? <WriteBox show={show} boardType={boardType} handleIsInitialize={handleIsInitialize} /> : null}
             <List sx={{ marginTop: "-0.4rem" }}>
                 {post.map(item => (
                     <ListItem

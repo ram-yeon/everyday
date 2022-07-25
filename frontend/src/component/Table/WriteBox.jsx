@@ -1,5 +1,5 @@
 //글작성 박스
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from "@material-ui/core";
 import { Box, TextField } from '@mui/material/';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -10,9 +10,9 @@ import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
-import Carousel from 'react-bootstrap/Carousel'
+// import Carousel from 'react-bootstrap/Carousel'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios, { post } from 'axios';
+// import axios, { post } from 'axios';
 
 const useStyles = makeStyles((theme) => ({
     writeBox: {
@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function WriteBox(props) {
+    const {
+        boardType,
+        handleIsInitialize,
+    } = props;
     const classes = useStyles();
     const [title, setTitle] = useState("");
     const [contents, setContents] = useState("");
@@ -79,7 +83,7 @@ function WriteBox(props) {
     const [imgBase64, setImgBase64] = useState([]); // 파일 base64(미리보기)
     const [imgFile, setImgFile] = useState(null);	//파일	
     const handleChangeFile = (event) => {
-        console.log(event.target.files)
+        // console.log(event.target.files)
         setImgFile(event.target.files);
         setImgBase64([]);
         for (let i = 0; i < event.target.files.length; i++) {
@@ -100,12 +104,16 @@ function WriteBox(props) {
                 }
             }
         }
+
     }
 
     //글등록(+파일 전송)
     const handleRegister = (e) => {
-        const fd = new FormData();
-        Object.values(imgFile).forEach((file) => fd.append("file", file));
+        const formData = new FormData();
+        // Object.values(imgFile).forEach((file) => formData.append("file", file));
+        for (let i = 0; i < imgFile.length; i++) {
+            formData.append(i, imgFile[i])
+        }
 
         let isAnonymous = '';
         if (checked) {
@@ -114,30 +122,36 @@ function WriteBox(props) {
             isAnonymous = 'N'
         }
         const data = {
-            boardType: props.boardType,
+            boardType: boardType,
             title: title,
             contents: contents,
             isAnonymous: isAnonymous,
-            files: fd,
         }
-        if (props.boardType === '공지사항') {   //관리자 공지등록
-            BoardAPI.registerBoardByAdmin(data).then(response => {
+
+        // formData.append("data", new Blob([JSON.stringify(data)] , {type: "application/json"}))
+        formData.append("data", JSON.stringify(data))
+
+        if (boardType === '공지사항') {   //관리자 공지등록
+            BoardAPI.registerBoardByAdmin(formData).then(response => {
                 Message.success(response.message);
+                handleIsInitialize(false);
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
             })
 
         } else {    //일반사용자 글등록
-            BoardAPI.registerBoard(data).then(response => {
+            BoardAPI.registerBoard(formData).then(response => {
                 Message.success(response.message);
+                handleIsInitialize(false);
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
             })
         }
+        console.log(Object.fromEntries(formData));
     };
-    console.log(imgFile);
+
     return (
         <div>
             <Box p={1.8} className={classes.writeBox}>
@@ -171,19 +185,19 @@ function WriteBox(props) {
                 </div>
 
                 <div>
-                    <Carousel>
-                        {imgBase64.map((item) => {
-                            return (
-                                <Carousel.Item>
-                                    <img
-                                        src={item}
-                                        alt="첨부된 이미지"
-                                        style={{ width: "100px", height: "100px" }}
-                                    />
-                                </Carousel.Item>
-                            )
-                        })}
-                    </Carousel>
+                    {/* <Carousel> */}
+                    {imgBase64.map((item) => {
+                        return (
+                            // <Carousel.Item>
+                            <img
+                                src={item}
+                                alt="첨부된 이미지"
+                                style={{ width: "100px", height: "100px", margin: "0.2rem" }}
+                            />
+                            // </Carousel.Item>
+                        )
+                    })}
+                    {/* </Carousel> */}
                 </div>
 
                 <hr style={{ marginBottom: "0.3rem" }} />
