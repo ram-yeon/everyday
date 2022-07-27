@@ -33,6 +33,15 @@ public class NoticeDto {
     }
 
     /**
+     * 공지사항 등록, 수정 DTO
+     */
+    @Getter
+    public static class NoticeRequestDto {
+        private String title;  // 제목
+        private String contents;  // 내용
+    }
+
+    /**
      * 공지사항 조회수 갱신 DTO
      */
     @Getter

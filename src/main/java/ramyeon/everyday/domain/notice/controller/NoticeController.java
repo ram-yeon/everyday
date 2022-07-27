@@ -49,6 +49,20 @@ public class NoticeController {
     }
 
     /**
+     * 공지사항 등록 API (첨부 파일 제외)
+     */
+    @PostMapping("/notices")
+    public ResponseEntity createNotice(@RequestBody NoticeDto.NoticeRequestDto noticeRequestDto,
+                                       @AuthenticationPrincipal ManagerDetails managerDetails) {
+        try {
+            NoticeDto.NoticeResponseDto data = noticeService.createNotice(managerDetails.getUsername(), noticeRequestDto.getTitle(), noticeRequestDto.getContents());
+            return new ResponseEntity<>(new ResultDto(200, "공지사항 등록 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * 공지사항 삭제 API
      */
     @DeleteMapping("/notices/{noticeId}")

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.file.entity.File;
 import ramyeon.everyday.domain.like.repository.LikeRepository;
+import ramyeon.everyday.domain.manager.entity.Manager;
 import ramyeon.everyday.domain.manager.repository.ManagerRepository;
 import ramyeon.everyday.domain.notice.entity.Notice;
 import ramyeon.everyday.domain.notice.repository.NoticeRepository;
@@ -114,6 +115,17 @@ public class NoticeService {
      */
     public Page<Notice> getNoticesPaging(Pageable pageable) {
         return noticeRepository.findByIsDeleted(Whether.N, pageable);
+    }
+
+    /**
+     * 공지사항 등록
+     */
+    public NoticeDto.NoticeResponseDto createNotice(String loginId, String title, String contents) {
+        Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회
+        Notice notice = Notice.createNotice(manager, Whether.N, 0L, title, contents);  // 공지사항 생성
+        return NoticeDto.NoticeResponseDto.builder()
+                .id(noticeRepository.save(notice).getId())  // 공지사항 등록 및 등록된 공지사항 번호 반환
+                .build();
     }
 
     /**
