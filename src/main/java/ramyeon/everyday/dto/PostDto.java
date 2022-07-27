@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.enum_.Whether;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,6 +54,16 @@ public class PostDto {
         private Page<PostResponseDto> post;  // 게시글
     }
 
+    /**
+     * 게시글 등록, 수정 DTO
+     */
+    @Getter
+    public static class PostRequestDto {
+        private BoardType boardType;  // 게시판 종류
+        private Whether isAnonymous;  // 익명 여부
+        private String title;  // 제목
+        private String contents;  // 내용
+    }
 
     /**
      * 게시글 조회수 갱신 DTO

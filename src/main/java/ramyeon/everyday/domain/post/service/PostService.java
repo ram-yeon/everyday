@@ -304,6 +304,17 @@ public class PostService {
     }
 
     /**
+     * 게시글 등록
+     */
+    public PostDto.PostResponseDto createPost(String loginId, BoardType boardType, Whether isAnonymous, String title, String contents) {
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        Post post = Post.createPost(loginUser, loginUser.getSchool(), boardType, isAnonymous, Whether.N, 0L, title, contents);  // 게시글 생성
+        return PostDto.PostResponseDto.builder()
+                .id(postRepository.save(post).getId())  // 게시글 등록 및 등록된 게시글 번호 반환
+                .build();
+    }
+
+    /**
      * 게시글 삭제
      */
     @Transactional

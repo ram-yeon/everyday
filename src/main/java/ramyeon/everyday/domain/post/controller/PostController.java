@@ -115,6 +115,20 @@ public class PostController {
     }
 
     /**
+     * 게시글 등록 API (첨부 파일 제외)
+     */
+    @PostMapping("/posts")
+    public ResponseEntity createPost(@RequestBody PostDto.PostRequestDto postRequestDto,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        try {
+            PostDto.PostResponseDto data = postService.createPost(principalDetails.getUsername(), postRequestDto.getBoardType(), postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
+            return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * 게시글 삭제 API
      */
     @DeleteMapping("/posts/{postId}")

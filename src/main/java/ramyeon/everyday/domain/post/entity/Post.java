@@ -1,15 +1,16 @@
 package ramyeon.everyday.domain.post.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import ramyeon.everyday.domain.DateBaseEntity;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.comment.entity.Comment;
 import ramyeon.everyday.domain.file.entity.File;
-import ramyeon.everyday.enum_.BoardType;
 import ramyeon.everyday.domain.school.entity.School;
 import ramyeon.everyday.domain.user.entity.User;
+import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.enum_.Whether;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -66,6 +67,18 @@ public class Post extends DateBaseEntity {  // 게시글
         this.registrationDate = registrationDate;
     }
 
+    @Builder
+    public Post(BoardType boardType, String title, String contents, Whether isAnonymous, Whether isDeleted, Long views, User user, School school, List<File> fileList) {
+        this.boardType = boardType;
+        this.title = title;
+        this.contents = contents;
+        this.isAnonymous = isAnonymous;
+        this.isDeleted = isDeleted;
+        this.views = views;
+        this.user = user;
+        this.school = school;
+        this.fileList = fileList;
+    }
 
     //== 비즈니스 로직 ==//
 
@@ -82,7 +95,27 @@ public class Post extends DateBaseEntity {  // 게시글
 
 
     //== 연관관계 메서드 ==//
+    public void setUser(User user) {
+        this.user = user;
+        user.getPostList().add(this);
+    }
+
     public void deleteFromUser(User user) {
         user.getPostList().remove(this);
+    }
+
+    //== 생성 메서드 ==//
+    public static Post createPost(User user, School school, BoardType boardType, Whether isAnonymous, Whether isDeleted, Long views, String title, String contents) {
+        Post post = Post.builder()
+                .boardType(boardType)
+                .title(title)
+                .contents(contents)
+                .isAnonymous(isAnonymous)
+                .isDeleted(isDeleted)
+                .views(views)
+                .user(user)
+                .school(school).build();
+        post.setUser(user);
+        return post;
     }
 }
