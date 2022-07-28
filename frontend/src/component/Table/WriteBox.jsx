@@ -12,7 +12,8 @@ import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
 // import Carousel from 'react-bootstrap/Carousel'
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import axios, { post } from 'axios';
+// import axios from 'axios';
+import UploadFile from './UploadFile'
 
 const useStyles = makeStyles((theme) => ({
     writeBox: {
@@ -81,7 +82,7 @@ function WriteBox(props) {
     // };
 
     const [imgBase64, setImgBase64] = useState([]); // 파일 base64(미리보기)
-    const [imgFile, setImgFile] = useState(null);	//파일	
+    const [imgFile, setImgFile] = useState(0);	//파일	
     const handleChangeFile = (event) => {
         // console.log(event.target.files)
         setImgFile(event.target.files);
@@ -104,17 +105,55 @@ function WriteBox(props) {
                 }
             }
         }
-
     }
 
-    //글등록(+파일 전송)
-    const handleRegister = (e) => {
-        const formData = new FormData();
-        // Object.values(imgFile).forEach((file) => formData.append("file", file));
-        for (let i = 0; i < imgFile.length; i++) {
-            formData.append(i, imgFile[i])
-        }
+    //글등록(파일포함)
+    // const handleRegister = (e) => {
+    //     const formData = new FormData();
+    //     // Object.values(imgFile).forEach((file) => formData.append("file", file));
+    //     for (let i = 0; i < imgFile.length; i++) {
+    //         formData.append("file", imgFile[i])
+    //     }
 
+    //     let isAnonymous = '';
+    //     if (checked) {
+    //         isAnonymous = 'Y'
+    //     } else {
+    //         isAnonymous = 'N'
+    //     }
+    //     const data = {
+    //         boardType: boardType,
+    //         title: title,
+    //         contents: contents,
+    //         isAnonymous: isAnonymous,
+    //     }
+
+    //     // formData.append("data", new Blob([JSON.stringify(data)] , {type: "application/json"}))
+    //     formData.append("data", JSON.stringify(data))
+
+    //     if (boardType === '공지사항') {   //관리자 공지등록
+    //         BoardAPI.registerBoardByAdmin(formData).then(response => {
+    //             Message.success(response.message);
+    //             handleIsInitialize(false);
+    //         }).catch(error => {
+    //             console.log(JSON.stringify(error));
+    //             Message.error(error.message);
+    //         })
+
+    //     } else {    //일반사용자 글등록
+    //         BoardAPI.registerBoard(formData).then(response => {
+    //             Message.success(response.message);
+    //             handleIsInitialize(false);
+    //         }).catch(error => {
+    //             console.log(JSON.stringify(error));
+    //             Message.error(error.message);
+    //         })
+    //     }
+    //     // console.log(Object.fromEntries(formData));
+    // };
+
+    //글등록(파일제외)
+    const handleRegister = (e) => {
         let isAnonymous = '';
         if (checked) {
             isAnonymous = 'Y'
@@ -127,21 +166,16 @@ function WriteBox(props) {
             contents: contents,
             isAnonymous: isAnonymous,
         }
-
-        // formData.append("data", new Blob([JSON.stringify(data)] , {type: "application/json"}))
-        formData.append("data", JSON.stringify(data))
-
         if (boardType === '공지사항') {   //관리자 공지등록
-            BoardAPI.registerBoardByAdmin(formData).then(response => {
+            BoardAPI.registerBoardByAdmin(data).then(response => {
                 Message.success(response.message);
                 handleIsInitialize(false);
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
             })
-
         } else {    //일반사용자 글등록
-            BoardAPI.registerBoard(formData).then(response => {
+            BoardAPI.registerBoard(data).then(response => {
                 Message.success(response.message);
                 handleIsInitialize(false);
             }).catch(error => {
@@ -149,11 +183,10 @@ function WriteBox(props) {
                 Message.error(error.message);
             })
         }
-        console.log(Object.fromEntries(formData));
     };
 
     return (
-        <div>
+        <>
             <Box p={1.8} className={classes.writeBox}>
                 <div>
                     <TextField id="standard-basic" label="글 제목" variant="standard" sx={{ width: "100%" }}
@@ -184,6 +217,7 @@ function WriteBox(props) {
                     />
                 </div>
 
+                {/* 파일첨부 시 미리보기 */}
                 <div>
                     {/* <Carousel> */}
                     {imgBase64.map((item) => {
@@ -198,25 +232,36 @@ function WriteBox(props) {
                         )
                     })}
                     {/* </Carousel> */}
+                    {/* <UploadFile /> */}
                 </div>
 
                 <hr style={{ marginBottom: "0.3rem" }} />
 
                 <div className={classes.boxFooter}>
                     <div>
-                        <input type="file" id="file" style={{ display: 'none' }} onChange={handleChangeFile} multiple="multiple" />
+                        <input
+                            type="file"
+                            id="file"
+                            style={{ display: 'none' }}
+                            onChange={handleChangeFile}
+                            multiple
+                            accept="image/png, image/jpeg, image/jpg"
+                        />
                         <label htmlFor="file"><InsertPhotoOutlinedIcon sx={{ cursor: 'pointer', fontSize: '2rem' }} /></label>
                     </div>
                     {
-                        (tokenJson.account_authority === 'USER') ?
-                            <FormControlLabel control={<Checkbox color="default" size="small" />}
-                                label="익명" sx={{ margin: "-3.5rem auto auto 87%" }} checked={checked} onChange={handleCheckBox} />
-                            : null
+                        (tokenJson.account_authority === 'USER') &&
+                        <FormControlLabel
+                            control={<Checkbox color="default" size="small" />}
+                            label="익명"
+                            sx={{ margin: "-3.5rem auto auto 87%" }}
+                            checked={checked}
+                            onChange={handleCheckBox} />
                     }
                     <BorderColorIcon className={classes.registerBtn} onClick={handleRegister} sx={{ fontSize: '2rem', marginTop: '-2rem' }} />
                 </div>
             </Box>
-        </div>
+        </>
     )
 }
 

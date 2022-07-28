@@ -9,18 +9,23 @@ import * as BoardAPI from '../../../api/Board';
 import { Message } from '../../Message';
 
 const useStyles = makeStyles((theme) => ({
+  commentInputBox: {
+    border: "lightgray 1px solid",
+    backgroundColor: "#F6F6F6",
+    height: "2.5rem",
+    padding: "0.5rem",
+    width: "95%",
+  },
   checkAnonymous: {
     marginTop: "-4.3rem",
   },
   registerBtn: {
-    width: "1.5rem",
-    height: "1.5rem",
-    padding: "0.5rem",
+    padding: "0.3rem",
     backgroundColor: "#C00000",
     color: "white",
     float: "right",
     cursor: "pointer",
-    marginTop: "-2.6rem",
+    marginTop: "-2.5rem",
   },
 }));
 
@@ -78,15 +83,14 @@ const CommentList = (props) => {
       ))}
 
       <div style={{ marginTop: '2rem', marginBottom: '-0.8rem' }}>
-        <input
-          readOnly
-          onClick={() => {
-            setDisplay(!display);
-          }}
-          className="comment-input" type="text" name="comment" id="comment1" placeholder="댓글을 입력하려면 클릭하세요." />
+        <div
+          onClick={() => { setDisplay(!display); }}
+          className={classes.commentInputBox}>
+          댓글을 입력하려면 클릭하세요.
+        </div>
         <FormControlLabel control={<Checkbox color="default" size="small" />}
           label="익명" className={classes.checkAnonymous} sx={{ marginLeft: "86%" }} checked={checked} onChange={handleCheckBox} />
-        <BorderColorIcon onClick={onSubmit} className={classes.registerBtn} />
+        <BorderColorIcon onClick={onSubmit} className={classes.registerBtn} sx={{ fontSize: "2.5rem" }} />
       </div>
 
       {display && (

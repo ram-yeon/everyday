@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import EditBox from './EditBox';
-import './Board.css';
 import CommentList from './Comment/CommentList';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material/';

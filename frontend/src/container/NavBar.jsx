@@ -44,12 +44,12 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     color: "gray",
-    paddingLeft: "0.8rem",
-    paddingTop: "0.5rem",
+    paddingLeft: "0.7rem",
     display: "flex",
-    height: "1.8rem",
+    height: "2.5rem",
     width: "25%",
     marginLeft: "55%",
+    marginTop: "5px",
     border: "2px lightgray solid",
     backgroundColor: alpha(theme.palette.common.white, 1),
     borderRadius: theme.shape.borderRadius,
@@ -124,7 +124,7 @@ function NavBar(props) {
       navigate("/");
     });
   }
-  
+
   //게시글 검색
   const onChangeKeyword = (searchKeyword) => {
     const keyword = searchKeyword;
@@ -163,7 +163,7 @@ function NavBar(props) {
               <div className={classes.search}>
                 {/* <Search onClick={() => onChangeKeyword(searchKeyword)} sx={{ cursor: 'pointer' }} />
                 <InputBase value={searchKeyword} onChange={(e) => { setSearchKeyword(e.target.value) }} placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} /> */}
-                <Search sx={{ cursor: 'pointer' }} />
+                <Search sx={{marginTop:'0.3rem'}}/>
                 <InputBase value={searchKeyword} onChange={(e) => { setSearchKeyword(e.target.value); onChangeKeyword(searchKeyword); }} placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
               </div>
               <div className={classes.myImg}>
