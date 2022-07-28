@@ -36,14 +36,12 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity login(HttpServletResponse response, @RequestBody UserDto.LoginRequestDto loginRequestDto) {
-        Authentication authentication;
         String jwtToken;
-
         try {
             // 로그인 시도
-            authentication = loginService.attemptLogin(loginRequestDto.getLoginId(), loginRequestDto.getPassword(), loginRequestDto.getType());
-            // 토큰 발급
-            jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getType(), loginRequestDto.getIsKeptLogin());
+            Authentication authentication = loginService.attemptLogin(loginRequestDto.getLoginId(), loginRequestDto.getPassword(), loginRequestDto.getType());
+            // JWT 토큰 발급
+            jwtToken = loginService.generateJwtToken(authentication, loginRequestDto.getIsKeptLogin());
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             return new ResponseEntity<>(new ResultDto(401, e.getMessage()), HttpStatus.UNAUTHORIZED);
         } catch (InternalAuthenticationServiceException iase) {

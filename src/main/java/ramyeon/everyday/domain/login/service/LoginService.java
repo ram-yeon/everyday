@@ -1,10 +1,10 @@
 package ramyeon.everyday.domain.login.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ramyeon.everyday.auth.CustomAuthenticationProvider;
+import ramyeon.everyday.auth.CustomAuthenticationToken;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.token.service.TokenService;
@@ -37,27 +37,27 @@ public class LoginService {
      */
     public Authentication attemptLogin(String loginId, String password, String type) {
         // 토큰 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
+        CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(loginId, password, AccountAuthority.valueOf(type));
         // 로그인 시도
-        return customAuthenticationProvider.authenticate(authenticationToken, AccountAuthority.valueOf(type));
+        return customAuthenticationProvider.authenticate(authenticationToken);
     }
 
     /**
      * 토큰 발급
      */
-    public String generateJwtToken(Authentication authentication, String type, String isKeptLogin) {
-        // 로그인 계정 권한 구분
-        AccountAuthority accountAuthority = AccountAuthority.valueOf(type);
+    public String generateJwtToken(Authentication authentication, String isKeptLogin) {
+        CustomAuthenticationToken authenticationToken = (CustomAuthenticationToken) authentication;
+        AccountAuthority accountAuthority = authenticationToken.getAccountAuthority();  // 로그인 계정 권한 구분
 
         String jwtToken = null;
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            PrincipalDetails principalDetails = (PrincipalDetails) authenticationToken.getPrincipal();
             jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), principalDetails.getAuthorities(), accountAuthority, Whether.valueOf(isKeptLogin));  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, principalDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
 
         } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인
-            ManagerDetails managerDetails = (ManagerDetails) authentication.getPrincipal();
+            ManagerDetails managerDetails = (ManagerDetails) authenticationToken.getPrincipal();
             jwtToken = jwtTokenProvider.createAccessToken(managerDetails.getUsername(), managerDetails.getManager().getId(), managerDetails.getAuthorities(), accountAuthority, Whether.N);  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, managerDetails.getUsername(), accountAuthority);  // DB에 토큰 저장

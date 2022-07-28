@@ -1,22 +1,24 @@
 package ramyeon.everyday.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import ramyeon.everyday.enum_.AccountAuthority;
+import ramyeon.everyday.exception.NotFoundEnumException;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    private PrincipalDetailsService principalDetailsService;
-    private ManagerDetailsService managerDetailsService;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final PrincipalDetailsService principalDetailsService;
+    private final ManagerDetailsService managerDetailsService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
     public CustomAuthenticationProvider(BCryptPasswordEncoder passwordEncoder, PrincipalDetailsService principalDetailsService, ManagerDetailsService managerDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.principalDetailsService = principalDetailsService;
@@ -25,41 +27,33 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        return null;
-    }
+        CustomAuthenticationToken authenticationToken = (CustomAuthenticationToken) authentication;
 
-    public Authentication authenticate(Authentication authentication, AccountAuthority accountAuthority) throws AuthenticationException {
-
-        String loginId = String.valueOf(authentication.getPrincipal());
-        String password = String.valueOf(authentication.getCredentials());
-
+        String loginId = String.valueOf(authenticationToken.getPrincipal());
+        String password = String.valueOf(authenticationToken.getCredentials());
+        AccountAuthority accountAuthority = authenticationToken.getAccountAuthority();
 
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인 요청
             UserDetails user = principalDetailsService.loadUserByUsername(loginId);
-
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw new BadCredentialsException("비밀번호가 틀립니다.");
             }
 
-            return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
-        }
-
-        if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인 요청
+            return new CustomAuthenticationToken(user, password, accountAuthority, user.getAuthorities());
+        } else if (accountAuthority == AccountAuthority.MANAGER) {  // 관리자 로그인 요청
             UserDetails user = managerDetailsService.loadUserByUsername(loginId);
-
             if (!user.getPassword().equals(password)) {
                 throw new BadCredentialsException("비밀번호가 틀립니다.");
             }
 
-            return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
+            return new CustomAuthenticationToken(user, password, accountAuthority, user.getAuthorities());
+        } else {
+            throw new NotFoundEnumException("잘못된 로그인 [type] 값 요청");
         }
-
-        return null;
-
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+        return CustomAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
