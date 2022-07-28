@@ -140,7 +140,7 @@ function NavBar(props) {
             <Toolbar className={classes.Toolbar}>
               <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
               <div>
-                <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>
+                <Typography className={classes.textLogo} style={{ fontWeight:'bold', fontSize: '0.8rem', color: '#C00000' }}>
                   에브리데이
                 </Typography>
               </div>
@@ -152,7 +152,7 @@ function NavBar(props) {
             <Toolbar className={classes.Toolbar}>
               <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
               <div>
-                <Typography className={classes.textLogo} style={{ fontSize: '0.8rem', color: '#C00000' }}>
+                <Typography className={classes.textLogo} style={{ fontWeight:'bold', fontSize: '0.8rem', color: '#C00000' }}>
                   에브리데이
                 </Typography>
                 <Typography className={classes.schoolName}>
@@ -161,10 +161,12 @@ function NavBar(props) {
               </div>
 
               <div className={classes.search}>
-                {/* <Search onClick={() => onChangeKeyword(searchKeyword)} sx={{ cursor: 'pointer' }} />
-                <InputBase value={searchKeyword} onChange={(e) => { setSearchKeyword(e.target.value) }} placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} /> */}
-                <Search sx={{marginTop:'0.3rem'}}/>
-                <InputBase value={searchKeyword} onChange={(e) => { setSearchKeyword(e.target.value); onChangeKeyword(searchKeyword); }} placeholder="전체 게시판의 글을 검색해보세요!" className={classes.input} />
+                <Search sx={{ marginTop: '0.3rem' }} />
+                <InputBase
+                  value={searchKeyword}
+                  onChange={(e) => { setSearchKeyword(e.target.value); onChangeKeyword(searchKeyword); }}
+                  placeholder="전체 게시판의 글을 검색해보세요!"
+                  className={classes.input} />
               </div>
               <div className={classes.myImg}>
                 <Avatar alt="My계정 이미지" src={"/images/myImg.png"}

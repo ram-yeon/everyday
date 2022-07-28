@@ -33,11 +33,11 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "0.3rem",
     },
     boxFooter: {
-        height: "1.5rem",
+        height: "1.7rem",
     },
     registerBtn: {
         cursor: "pointer",
-        padding: "0.2rem",
+        padding: "0.3rem",
         backgroundColor: "#C00000",
         color: "white",
         float: "right",
@@ -48,6 +48,7 @@ function WriteBox(props) {
     const {
         boardType,
         handleIsInitialize,
+        handleWriteBoxShow,
     } = props;
     const classes = useStyles();
     const [title, setTitle] = useState("");
@@ -154,34 +155,40 @@ function WriteBox(props) {
 
     //글등록(파일제외)
     const handleRegister = (e) => {
-        let isAnonymous = '';
-        if (checked) {
-            isAnonymous = 'Y'
+        if (!title || !contents) { //입력값체크
+            alert("정확하게 입력하였는지 확인해주세요.");
         } else {
-            isAnonymous = 'N'
-        }
-        const data = {
-            boardType: boardType,
-            title: title,
-            contents: contents,
-            isAnonymous: isAnonymous,
-        }
-        if (boardType === '공지사항') {   //관리자 공지등록
-            BoardAPI.registerBoardByAdmin(data).then(response => {
-                Message.success(response.message);
-                handleIsInitialize(false);
-            }).catch(error => {
-                console.log(JSON.stringify(error));
-                Message.error(error.message);
-            })
-        } else {    //일반사용자 글등록
-            BoardAPI.registerBoard(data).then(response => {
-                Message.success(response.message);
-                handleIsInitialize(false);
-            }).catch(error => {
-                console.log(JSON.stringify(error));
-                Message.error(error.message);
-            })
+            let isAnonymous = '';
+            if (checked) {
+                isAnonymous = 'Y'
+            } else {
+                isAnonymous = 'N'
+            }
+            const data = {
+                boardType: boardType,
+                title: title,
+                contents: contents,
+                isAnonymous: isAnonymous,
+            }
+            if (boardType === '공지사항') {   //관리자 공지등록
+                BoardAPI.registerBoardByAdmin(data).then(response => {
+                    Message.success(response.message);
+                    handleIsInitialize(false);
+                    handleWriteBoxShow(false);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            } else {    //일반사용자 글등록
+                BoardAPI.registerBoard(data).then(response => {
+                    Message.success(response.message);
+                    handleIsInitialize(false);
+                    handleWriteBoxShow(false);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            }
         }
     };
 
@@ -258,7 +265,7 @@ function WriteBox(props) {
                             checked={checked}
                             onChange={handleCheckBox} />
                     }
-                    <BorderColorIcon className={classes.registerBtn} onClick={handleRegister} sx={{ fontSize: '2rem', marginTop: '-2rem' }} />
+                    <BorderColorIcon className={classes.registerBtn} onClick={handleRegister} sx={{ fontSize: '2.5rem', marginTop: '-2.1rem' }} />
                 </div>
             </Box>
         </>

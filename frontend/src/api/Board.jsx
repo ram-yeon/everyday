@@ -34,13 +34,13 @@ export const commentByMe = (data) => NewPromise(Axios.get(`/posts/my/COMMENT?pag
 export const likeByMe = (data) => NewPromise(Axios.get(`/posts/notices/like?page=${data.page}&size=3`));
 
 //게시글 등록
-export const registerBoard = (data) => NewPromise(AxiosFile.post('/posts', data));
+export const registerBoard = (data) => NewPromise(Axios.post('/posts', data));
 //게시글 수정
 export const updateBoard = (postId, data) => NewPromise(Axios.patch('/posts/' + postId, data));
 //게시글 삭제
 export const deleteBoard = (data) => NewPromise(Axios.delete('/posts/' + data.postId));
 //게시글 등록(관리자)
-export const registerBoardByAdmin = (data) => NewPromise(AxiosFile.post('/notices', data));
+export const registerBoardByAdmin = (data) => NewPromise(Axios.post('/notices', data));
 //게시글 수정(관리자)
 export const updateBoardByAdmin = (postId, data) => NewPromise(Axios.patch('/notices/' + postId, data));
 //게시글 삭제(관리자)

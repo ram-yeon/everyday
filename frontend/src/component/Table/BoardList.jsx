@@ -13,7 +13,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import {displayDateFormat} from "../CommentTool";
+import { displayDateFormat } from "../CommentTool";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import * as BoardAPI from '../../api/Board';
@@ -44,19 +44,21 @@ function BoardList(props) {
     let token = localStorage.getItem(SESSION_TOKEN_KEY);
     const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
-    const [show, setShow] = useState(false);
     const [post, setPost] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialize, setIsInitialize] = useState(false);
+    const [show, setShow] = useState(false);
 
     const handleIsInitialize = (value) => {
         setIsInitialize(value);
     }
-
+    const handleWriteBoxShow = (value) => {
+        setShow(value);
+    }
     const handleChange = (event, value) => {
         setPage(value);
-        
+
         getBoardList({
             boardType: boardType,
             page: value - 1,
@@ -71,14 +73,14 @@ function BoardList(props) {
                     const postItems = [];
 
                     response.data.content.forEach((v, i) => {
-                        const title = JSON.stringify(v.title).replaceAll("\"", "");                          
-                        const contents = JSON.stringify(v.contents).replaceAll("\"", "");                    
-                        const registrationDate = displayDateFormat(JSON.stringify(v.registrationDate).replaceAll("\"", ""));    
-                        const writer = JSON.stringify(v.writer).replaceAll("\"", "");                       
-                        const likeCount = JSON.stringify(v.likeCount);                
-                        const commentCount = JSON.stringify(v.commentCount);            
-                        const views = JSON.stringify(v.views);                          
-                        const fileCount = JSON.stringify(v.fileCount);         
+                        const title = JSON.stringify(v.title).replaceAll("\"", "");
+                        const contents = (v.contents).replaceAll("\"", "");
+                        const registrationDate = displayDateFormat(JSON.stringify(v.registrationDate).replaceAll("\"", ""));
+                        const writer = JSON.stringify(v.writer).replaceAll("\"", "");
+                        const likeCount = JSON.stringify(v.likeCount);
+                        const commentCount = JSON.stringify(v.commentCount);
+                        const views = JSON.stringify(v.views);
+                        const fileCount = JSON.stringify(v.fileCount);
 
                         postItems.push({
                             user: writer, postTitle: title, postContent: contents, date: registrationDate,
@@ -103,7 +105,7 @@ function BoardList(props) {
         if (!isInitialize) {
             getBoardList({
                 boardType: boardType,
-                page: 0,  
+                page: 0,
             });
         }
     });
@@ -111,8 +113,8 @@ function BoardList(props) {
     const clickBoardList = (itemId) => {
         navigate('/' + boardTypeToLowerCase + 'board/detail/' + itemId, { state: { postId: itemId, headTitle: title } })
         if (tokenJson.account_authority === "USER") {
-           const data = {
-                views: 1,   
+            const data = {
+                views: 1,
             }
             BoardAPI.boardViews(itemId, data).then(response => {
             }).catch(error => {
@@ -124,7 +126,7 @@ function BoardList(props) {
 
     return (
         <div>
-            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
+            <Box border="2px lightgray solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={1.5}>
                 {title}
             </Box>
             {   //HOT게시물이면 글작성박스 안보이도록
@@ -135,7 +137,7 @@ function BoardList(props) {
                     </Box>
                     : null
             }
-            {show ? <WriteBox show={show} boardType={boardType} handleIsInitialize={handleIsInitialize} /> : null}
+            {show && <WriteBox boardType={boardType} handleWriteBoxShow={handleWriteBoxShow} handleIsInitialize={handleIsInitialize} />}
             <List sx={{ marginTop: "-0.4rem" }}>
                 {post.map(item => (
                     <ListItem
@@ -152,7 +154,8 @@ function BoardList(props) {
                                     whiteSpace: "nowrap",
                                     textOverflow: "ellipsis",
                                 }} />
-                            <ListItemText primary={item.postContent}
+                            <ListItemText
+                                primary={item.postContent.replaceAll("\n", " ")}
                                 primaryTypographyProps={{
                                     color: 'gray',
                                     width: "30rem",

@@ -22,7 +22,7 @@ function App() {
   }
   
   return (
-    <div>
+    <div className='stop-dragging'>
       {
         //로그인 후
         isLogin &&

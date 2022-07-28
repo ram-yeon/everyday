@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Modal, makeStyles, ListItemIcon } from "@material-ui/core";
 import ChatIcon from '@mui/icons-material/Chat';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
@@ -50,19 +50,19 @@ function ModalContainer(props) {
     const myDataList = [
         {
             text: "내가 쓴 글",
-            icon: <ChatIcon />,
+            icon: <ChatIcon sx={{color:'#7FBEFF'}}/>,
             idx: '0',
             path: '/'
         },
         {
             text: "댓글 단 글",
-            icon: <TextsmsIcon />,
+            icon: <TextsmsIcon sx={{color:'#0CDAE0'}}/>,
             idx: '1',
             path: '/'
         },
         {
             text: "좋아요 한 글",
-            icon: <ThumbUpIcon />,
+            icon: <FavoriteOutlinedIcon sx={{color:'#C00000'}}/>,
             idx: '2',
             path: '/'
         },

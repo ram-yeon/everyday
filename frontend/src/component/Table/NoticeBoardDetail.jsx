@@ -8,7 +8,7 @@ import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';        
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-import {displayDateFormat} from "../CommentTool";
+import { displayDateFormat } from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: 'none',
         cursor: 'pointer',
         color: 'black',
+        "&:hover": {
+            color: '#C00000',
+        }
     },
     writerIcon: {
         color: "#C00000",
@@ -77,9 +80,12 @@ function NoticeBoardDetail() {
     const [fileCount, setFileCount] = useState('');
     const [views, setViews] = useState('');
     const [likeCount, setLikeCount] = useState('');
-    const [likeState, setLikeState] = useState('');
-
+    const [likeState, setLikeState] = useState(false);
     const [isInitialize, setIsInitialize] = useState(false);
+    const handleIsInitialize = (value) => {
+        setIsInitialize(value);
+    }
+
     const data = {
         noticeId: postId,
     }
@@ -87,22 +93,20 @@ function NoticeBoardDetail() {
         if (!isInitialize) {
             //공지사항 상세조회
             BoardAPI.noticeBoardDetailSelect(data).then(response => {
-                // file 처리필요  
-                // if (response.data.hasOwnProperty('file')) {
-                //
-                // }
                 setTitle(response.data.title);
                 setContents(response.data.contents);
                 setRegistrationDate(response.data.registrationDate);
                 setLikeCount(Number(response.data.likeCount));
-                let isLikeNotice = JSON.stringify(response.data.isLikeNotice).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
-            if (isLikeNotice === "Y") {
-                setLikeState(true);
-            } else {
-                setLikeState(false);
-            }
-                setViews(response.data.views);
-                setFileCount(response.data.fileCount);
+                if (response.data.hasOwnProperty('isLikeNotice')) {
+                    let isLikeNotice = JSON.stringify(response.data.isLikeNotice).replaceAll("\"", ""); //해당 게시글 좋아요했는지에 대한 상태값  
+                    if (isLikeNotice === "Y") {
+                        setLikeState(true);
+                    } else {
+                        setLikeState(false);
+                    }
+                }
+                setViews(JSON.stringify(response.data.views));
+                setFileCount(JSON.stringify(response.data.fileCount));
             }).catch(error => {
                 console.log(JSON.stringify(error));
                 Message.error(error.message);
@@ -193,10 +197,10 @@ function NoticeBoardDetail() {
                         <div style={{ margin: "2rem auto auto 0.3rem" }}>
                             {
                                 (!likeState) ?
-                                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer'  }} onClick={clickLike}/>
+                                    <FavoriteBorderOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
                                     :
-                                    <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer'  }} onClick={clickLike}/>
-                            }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer'  }} onClick={clickLike}>{likeCount}</span>
+                                    <FavoriteOutlinedIcon sx={{ fontSize: '1rem', color: '#C00000', cursor: 'pointer' }} onClick={clickLike} />
+                            }<span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#C00000', cursor: 'pointer' }} onClick={clickLike}>{likeCount}</span>
                             <VisibilityOutlinedIcon sx={{ fontSize: '1rem', color: '#6666ff', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: '#6666ff' }}>{views}</span>
                             <InsertPhotoOutlinedIcon sx={{ fontSize: '1rem', color: 'gray', marginLeft: "1rem" }} /><span style={{ marginLeft: "0.2rem", fontSize: "0.7rem", color: 'gray' }}>{fileCount}</span>
                         </div>
@@ -204,7 +208,8 @@ function NoticeBoardDetail() {
                     <Link to='/noticeboard'><button className={classes.listBtn}>목록</button></Link>
                 </div>
                 :
-                <EditBox boardType="NOTICE" postId={postId} writtenTitle={title} writtenContents={contents} editPost={editPost} />
+                <EditBox boardType="NOTICE" postId={postId} writtenTitle={title} writtenContents={contents}
+                    editPost={editPost} handleIsInitialize={handleIsInitialize} />
             }
         </>
     )

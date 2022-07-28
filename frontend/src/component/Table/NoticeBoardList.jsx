@@ -47,9 +47,14 @@ function NoticeBoardList(props) {
     const [totalPages, setTotalPages] = useState(1);
     const [isInitialize, setIsInitialize] = useState(false);
 
+    const handleIsInitialize = (value) => {
+        setIsInitialize(value);
+    }
+    const handleWriteBoxShow = (value) => {
+        setShow(value);
+    }
     const handleChange = (event, value) => {
         setPage(value);
-
         getBoardList({
             page: value - 1,    //추후 -1 제거 필요
         });
@@ -117,17 +122,14 @@ function NoticeBoardList(props) {
                     </Box>
                     : null
             }
-            {show ? <WriteBox show={show} boardType='공지사항' /> : null}
-
+            {show && <WriteBox boardType='공지사항' handleWriteBoxShow={handleWriteBoxShow} handleIsInitialize={handleIsInitialize} />}
             <List sx={{ marginTop: "-0.4rem" }}>
                 {notice.map(item => (
                     <ListItem
                         sx={{ border: "1px gray solid", height: "12vh" }}
                         button
                         key={item.id}
-                        onClick={() => clickNoticeBoardList(item.id)}
-                    >
-
+                        onClick={() => clickNoticeBoardList(item.id)} >
                         <div>
                             <ListItemText primary={item.postTitle}
                                 primaryTypographyProps={{

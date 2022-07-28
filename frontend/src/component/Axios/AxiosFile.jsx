@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === 'development') {
 
 export const SESSION_TOKEN_KEY = "__EVERYDAY__auth__";
 
+// 파일첨부할때
 AxiosFile.interceptors.request.use(function (config) {
     const token = localStorage.getItem(SESSION_TOKEN_KEY);  //api요청시 토큰키 값 넣어서 요청
     config.headers.Authorization = token;

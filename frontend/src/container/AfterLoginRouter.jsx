@@ -1,8 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-
 import MainBoard from '../pages/MainBoard';
-
 import NoticeBoard from '../pages/Notice/NoticeBoard';
 import HotBoardList from '../pages/HotBoard/HotBoardList';
 import InformationBoardList from '../pages/InfoBoard/InfoBoardList';
@@ -12,11 +10,9 @@ import BoardDetail from '../component/Table/BoardDetail';
 import NoticeBoardDetail from '../component/Table/NoticeBoardDetail';
 import BoardListAboutMe from '../component/Table/BoardListAboutMe';
 import SearchBoardList from '../component/Table/SearchBoardList';
-
 import UseTerms from '../pages/UseTerms';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import CommunityRule from '../pages/CommunityRule';
-
 import Error from "../component/Error";
 
 function AfterLoginRouter() {

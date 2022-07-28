@@ -20,7 +20,9 @@ const Markdown = ({ comment }) => {
               />
             ) : (
               <code className={className} {...props}>
-                {comment.commentContents}
+                {comment.commentContents.split("\n").map((data) => {
+                  return (<span>{data}<br /></span>);
+                })}
               </code>
             );
           },

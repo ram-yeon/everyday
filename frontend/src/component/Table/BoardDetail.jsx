@@ -21,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: 'none',
         cursor: 'pointer',
         color: 'black',
+        "&:hover": {
+            color: '#C00000',
+        }
     },
     writerIcon: {
         color: "gray",
@@ -94,7 +97,7 @@ function BoardDetail() {
 
     const [comment, setComment] = useState([]);
     const [isInitialize, setIsInitialize] = useState(false);
-    
+
     const handleIsInitialize = (value) => {
         setIsInitialize(value);
     }
@@ -106,14 +109,14 @@ function BoardDetail() {
     const boardDetailSelect = async () => {
         BoardAPI.boardDetailSelect(data).then(response => {
             // file 처리필요
-            if (response.data.hasOwnProperty('file')) {
-
-            }
+            // if (response.data.hasOwnProperty('file')) {
+            // }
             const boardType = response.data.boardType;
             setBoardType(JSON.stringify(response.data.boardType).replaceAll("\"", ""));
             setBoardTypeToLowerCase(boardType.toLowerCase());
             setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
-            setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
+            // setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
+            setContents((response.data.contents).replaceAll("\"", ""));
             setRegistrationDate(response.data.registrationDate);
             setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));
             setWriterLoginId(JSON.stringify(response.data.writerLoginId).replaceAll("\"", ""));
@@ -130,13 +133,14 @@ function BoardDetail() {
             setFileCount(JSON.stringify(response.data.fileCount));
         })
     }
+
     //댓글상세조회api
     const boardCommentSelect = async () => {
         BoardAPI.boardCommentSelect(data).then(response => {
             const commentItems = [];
             response.data.comment.forEach((v, i) => {
                 const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
-                const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
+                const commentContents = ((v.contents).replaceAll("\"", ""));
                 const commentRegistrationDate = (v.registrationDate);
                 const commentId = (v.id);
                 const likeCount = (v.likeCount);
@@ -221,8 +225,8 @@ function BoardDetail() {
     }
 
     return (
-        <>
-            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
+        <div>
+            <Box border="2px lightgray solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={1.5}>
                 <Link to={'/' + boardTypeToLowerCase + 'board'} className={classes.headLink}>{headTitle}</Link>
             </Box>
             {!displayEditBox ?
@@ -238,7 +242,11 @@ function BoardDetail() {
                         <Typography className={classes.writer}>{writer}</Typography>
                         <Typography className={classes.date}>{displayDateFormat(registrationDate)}</Typography>
                         <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
-                        <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
+                        <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>
+                            {contents.split("\n").map((data) => { 
+                                return (<span>{data}<br /></span>);
+                            })}
+                        </Typography>
 
                         <div style={{ margin: "2rem auto auto 0.3rem" }}>
                             {
@@ -254,15 +262,16 @@ function BoardDetail() {
                     </Box >
 
                     {/* 댓글 */}
-                    <CommentList comment={comment} postId={postId} handleIsInitialize={handleIsInitialize} />
+                    <CommentList key={comment.commentId} comment={comment} postId={postId} handleIsInitialize={handleIsInitialize} />
 
                     {/* 게시판따라경로분기처리 */}
                     <Link to={'/' + boardTypeToLowerCase + 'board'}><button className={classes.listBtn}>목록</button></Link>
                 </div>
                 :
-                <EditBox boardType={boardType} postId={postId} writtenTitle={title} writtenContents={contents} editPost={editPost} />
+                <EditBox boardType={boardType} postId={postId} writtenTitle={title} writtenContents={contents}
+                    editPost={editPost} handleIsInitialize={handleIsInitialize} />
             }
-        </>
+        </div>
     )
 }
 

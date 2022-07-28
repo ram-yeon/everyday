@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { makeStyles } from "@material-ui/core";
 import { Box, TextField } from '@mui/material/';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
+// import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
 import * as BoardAPI from '../../api/Board';
@@ -28,13 +28,11 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "0.3rem",
     },
     boxFooter: {
-        cursor: "pointer",
-        height: "2rem",
+        height: "1.7rem",
     },
     registerBtn: {
-        width: "1.5rem",
-        height: "1.5rem",
-        padding: "0.5rem",
+        cursor: "pointer",
+        padding: "0.3rem",
         backgroundColor: "#C00000",
         color: "white",
         float: "right",
@@ -59,6 +57,8 @@ function EditBox(props) {
         postId,
         writtenTitle,
         writtenContents,
+        editPost,
+        handleIsInitialize,
     } = props;
 
     const classes = useStyles();
@@ -93,60 +93,44 @@ function EditBox(props) {
     //     }
     // };
 
-    //선택된 파일 읽기
-    const [files, setFiles] = useState('');
-    const onLoadFile = (e) => {
-        const file = e.target.files;
-        console.log(file);
-        setFiles(file);
-    };
-    //글등록(+파일 전송)
-    const handleClick = (e) => {
-        const formdata = new FormData();
-        formdata.append('uploadImage', files[0]);
-
-        let isAnonymous = '';
-        if (checked) {
-            isAnonymous = 'Y'
+    //글수정(파일제외)
+    const handleUpdate = (e) => {
+        if (!title || !contents) { //입력값체크
+            alert("정확하게 입력하였는지 확인해주세요.");
         } else {
-            isAnonymous = 'N'
-        }
-        const data = {
-            boardType: boardType,
-            title: title,
-            contents: contents,
-            isAnonymous: isAnonymous,
-        }
-        if (boardType === '공지사항') {   //관리자 공지수정
-            BoardAPI.updateBoardByAdmin(postId, data).then(response => {
-                props.editPost(false)
-            }).catch(error => {
-                console.log(JSON.stringify(error));
-                Message.error(error.message);
-            })
-
-        } else {    //일반사용자 글수정
-            BoardAPI.updateBoard(postId, data).then(response => {
-                props.editPost(false)
-            }).catch(error => {
-                console.log(JSON.stringify(error));
-                Message.error(error.message);
-            })
+            let isAnonymous = '';
+            if (checked) {
+                isAnonymous = 'Y'
+            } else {
+                isAnonymous = 'N'
+            }
+            const data = {
+                boardType: boardType,
+                title: title,
+                contents: contents,
+                isAnonymous: isAnonymous,
+            }
+            if (boardType === '공지사항') {   //관리자 공지수정
+                BoardAPI.updateBoardByAdmin(postId, data).then(response => {
+                    Message.success(response.message);
+                    editPost(false);
+                    handleIsInitialize(false);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            } else {    //일반사용자 글수정
+                BoardAPI.updateBoard(postId, data).then(response => {
+                    Message.success(response.message);
+                    editPost(false);
+                    handleIsInitialize(false);
+                }).catch(error => {
+                    console.log(JSON.stringify(error));
+                    Message.error(error.message);
+                })
+            }
         }
     };
-
-    useEffect(() => {
-        preview();
-        return () => preview();
-    });
-    const preview = () => {
-        if (!files) return false;
-        const imgEl = document.querySelector('.img__box');
-        const reader = new FileReader();
-        reader.onload = () => (imgEl.style.backgroundImage = 'url(${reader.result})');
-        reader.readAsDataURL(files[0]);
-        console.log(reader);
-    }
 
     return (
         <div>
@@ -158,33 +142,28 @@ function EditBox(props) {
                 <div>
                     <textarea
                         // onKeyUp={checkLength}
-                        style={{ padding: "1rem", width: "96%", height: "26vh", fontSize: "0.9rem", fontFamily: "-moz-initial", marginTop: "1rem", resize: "none", whiteSpace: "pre-line" }}
+                        style={{ padding: "1rem", width: "100%", height: "26vh", fontSize: "0.9rem", fontFamily: "-moz-initial", marginTop: "1rem", resize: "none", whiteSpace: "pre-line" }}
                         value={contents}
                         onChange={(e) => handleSetContents(e)}
                     />
                 </div>
 
-                <div>
-                    <input type="file" multiple id="image" accept="img/*" onChange={onLoadFile} />
-                    <div className='img__box'>
-                        <img src="" alt="첨부된 이미지" />
-                    </div>
-                </div>
-
                 <hr style={{ marginBottom: "0.3rem" }} />
 
                 <div className={classes.boxFooter}>
-                    <InsertPhotoOutlinedIcon />
                     {
-                        (tokenJson.account_authority === 'USER') ?
-                            <FormControlLabel control={<Checkbox color="default" size="small" />}
-                                label="익명" sx={{ marginLeft: "83%", marginBottom: "1.8rem" }} checked={checked} onChange={handleCheckBox} />
-                            : null
+                        (tokenJson.account_authority === 'USER') &&
+                        <FormControlLabel
+                            control={<Checkbox color="default" size="small" />}
+                            label="익명"
+                            sx={{ margin: "auto auto auto 87%" }}
+                            checked={checked}
+                            onChange={handleCheckBox} />
                     }
-                    <BorderColorIcon className={classes.registerBtn} onClick={handleClick} />
+                    <BorderColorIcon className={classes.registerBtn} onClick={handleUpdate} sx={{ fontSize: '2.5rem', marginTop: '-0.1rem' }} />
                 </div>
             </Box>
-            <button className={classes.listBtn} onClick={() => props.editPost(false)} >글 수정 취소</button>
+            <button className={classes.listBtn} onClick={() => editPost(false)} >수정 취소</button>
         </div>
     )
 }

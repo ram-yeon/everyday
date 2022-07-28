@@ -44,6 +44,9 @@ const ReplyList = (props) => {
     } else {
       isAnonymous = 'N'
     }
+    // const contentsReplaceNewline = () => {
+    //   return getContent.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    // }
     const data = {
       postId: props.postId,
       contents: getContent,
@@ -72,7 +75,7 @@ const ReplyList = (props) => {
         const replyItems = [];
         response.data.comment.forEach((v, i) => {
           const commentWriter = (JSON.stringify(v.writer).replaceAll("\"", ""));
-          const commentContents = (JSON.stringify(v.contents).replaceAll("\"", ""));
+          const commentContents = ((v.contents).replaceAll("\"", ""));
           const commentRegistrationDate = (v.registrationDate);
           const likeCount = (v.likeCount);
           const isLikeComment = (JSON.stringify(v.isLikeComment).replaceAll("\"", ""));     //해당 댓글 좋아요했는지에 대한 상태값

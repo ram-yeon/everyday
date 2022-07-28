@@ -35,20 +35,35 @@ const useStyles = makeStyles((theme) => ({
             cursor: "pointer",
             marginLeft: "1.8rem",
         },
-
     },
-    icon: {
+    hotIcon: {
+        marginRight: theme.spacing(1),
+        color: "#C00000",
+    },
+    freeIcon: {
+        marginRight: theme.spacing(1),
+        color: "#7FBEFF",
+    },
+    infoIcon: {
+        marginRight: theme.spacing(1),
+        color: "#FFD300",
+    },
+    clubIcon: {
         marginRight: theme.spacing(1),
         color: "black",
-        [theme.breakpoints.up("sm")]: {
-            fontSize: "18px",
-        },
+    },
+    noticeIcon: {
+        marginRight: theme.spacing(1),
+        color: "gray",
     },
     text: {
         fontWeight: "bold",
         color: "black",
         [theme.breakpoints.down("sm")]: {
             display: "none",
+        },
+        "&:hover": {
+            color: '#C00000',
         },
     },
     menuLink: {
@@ -78,7 +93,7 @@ function LeftBar() {
                     <Container className={classes.container}>
                         <span className={classes.menuLink} onClick={() => clickHotBoard()}>
                             <div className={classes.item}>
-                                <LocalFireDepartmentIcon className={classes.icon} />
+                                <LocalFireDepartmentIcon className={classes.hotIcon} />
                                 <Typography className={classes.text}>
                                     HOT 게시물
                                 </Typography>
@@ -87,7 +102,7 @@ function LeftBar() {
 
                         <Link to='/freeboard' className={classes.menuLink} >
                             <div className={classes.item}>
-                                <ChatIcon className={classes.icon} />
+                                <ChatIcon className={classes.freeIcon} />
                                 <Typography className={classes.text}>
                                     자유 게시판
                                 </Typography>
@@ -96,7 +111,7 @@ function LeftBar() {
 
                         <Link to='/infoboard' className={classes.menuLink} >
                             <div className={classes.item} >
-                                <CircleNotificationsIcon className={classes.icon} />
+                                <CircleNotificationsIcon className={classes.infoIcon} />
                                 <Typography className={classes.text}>
                                     정보 게시판
                                 </Typography>
@@ -105,7 +120,7 @@ function LeftBar() {
 
                         <Link to='/clubboard' className={classes.menuLink} >
                             <div className={classes.item} >
-                                <GroupIcon className={classes.icon} />
+                                <GroupIcon className={classes.clubIcon} />
                                 <Typography className={classes.text}>
                                     동아리 게시판
                                 </Typography>
@@ -114,7 +129,7 @@ function LeftBar() {
 
                         <Link to='/noticeboard' className={classes.menuLink} >
                             <div className={classes.item}>
-                                <Info className={classes.icon} />
+                                <Info className={classes.noticeIcon} />
                                 <Typography className={classes.text}>
                                     공지사항
                                 </Typography>
@@ -125,7 +140,7 @@ function LeftBar() {
                     <Container className={classes.container}>
                         <Link to='/noticeboard' className={classes.menuLink} >
                             <div className={classes.item}>
-                                <Info className={classes.icon} />
+                                <Info className={classes.noticeIcon} />
                                 <Typography className={classes.text}>
                                     공지사항
                                 </Typography>
