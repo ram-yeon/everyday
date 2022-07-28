@@ -5,12 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ramyeon.everyday.enum_.Whether;
-import ramyeon.everyday.enum_.BoardType;
 import ramyeon.everyday.domain.post.entity.Post;
-import ramyeon.everyday.enum_.TargetType;
 import ramyeon.everyday.domain.school.entity.School;
 import ramyeon.everyday.domain.user.entity.User;
+import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.enum_.TargetType;
+import ramyeon.everyday.enum_.Whether;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +27,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             " and p.id IN (select l.targetId from Like l where targetType = ?3 group by l.targetId having count(l.targetId) >= ?4)" +
             " order by p.registrationDate desc")
     List<Post> findBySchoolAndIsDeletedAndId(School school, Whether isDeleted, TargetType targetType, Long likeCount, Pageable pageable);  // 핫 게시글 조회 - subQuery
+
+    @Query("SELECT p FROM Post p" +
+            " WHERE p.school = ?1" +
+            " and p.isDeleted = ?2" +
+            " and p.id IN (select l.targetId from Like l where targetType = ?3 group by l.targetId having count(l.targetId) >= ?4)" +
+            " order by p.registrationDate desc")
+    List<Post> findBySchoolAndIsDeletedAndId(School school, Whether isDeleted, TargetType targetType, Long likeCount);  // 핫 게시글 조회 - subQuery
 
     @Query("SELECT DISTINCT p FROM Post p" +
             " LEFT OUTER JOIN FETCH p.user u" +

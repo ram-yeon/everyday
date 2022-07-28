@@ -93,7 +93,7 @@ public class PostService {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         if (boardType == BoardType.HOT) {  // 핫 게시판
             // 핫 게시글 조회
-            List<Post> postsHot = getHotPostsMain(loginUser, pageable);
+            List<Post> postsHot = getHotPostsMain(loginUser);
             // Post 엔티티를 PostsBoardDto로 변환
             List<PostDto.PostResponseDto> postsBoardDtos = new ArrayList<>();
             for (Post post : postsHot) {
@@ -354,6 +354,11 @@ public class PostService {
     // 핫 게시글 조회(메인화면)
     List<Post> getHotPostsMain(User user, Pageable pageable) {
         return postRepository.findBySchoolAndIsDeletedAndId(user.getSchool(), Whether.N, TargetType.POST, 10L, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+    }
+
+    // 핫 게시글 조회(HOT 게시판)
+    List<Post> getHotPostsMain(User user) {
+        return postRepository.findBySchoolAndIsDeletedAndId(user.getSchool(), Whether.N, TargetType.POST, 10L);
     }
 
     // 게시판 별 게시글 조회
