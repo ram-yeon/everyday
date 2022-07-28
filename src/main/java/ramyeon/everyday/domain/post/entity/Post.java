@@ -88,6 +88,13 @@ public class Post extends DateBaseEntity {  // 게시글
         deleteFromUser(user);
     }
 
+    // 게시글 수정 (첨부 파일 제외)
+    public void edit(Whether isAnonymous, String title, String contents) {
+        this.isAnonymous = isAnonymous;
+        this.title = title;
+        this.contents = contents;
+    }
+
     // 게시글 수정 - 조회수 갱신
     public void changeViews(Long views) {
         this.views = views;

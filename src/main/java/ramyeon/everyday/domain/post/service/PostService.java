@@ -315,6 +315,19 @@ public class PostService {
     }
 
     /**
+     * 게시글 수정 (첨부 파일 제외)
+     */
+    @Transactional
+    public int updatePost(String loginId, Long postId, Whether isAnonymous, String title, String contents) {
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
+        if (post.getUser() != loginUser)  // 다른 회원의 게시글 수정
+            return 1;
+        post.edit(isAnonymous, title, contents);  // 게시글 수정
+        return 0;
+    }
+
+    /**
      * 게시글 삭제
      */
     @Transactional

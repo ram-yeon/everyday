@@ -129,6 +129,24 @@ public class PostController {
     }
 
     /**
+     * 게시글 수정 API (첨부 파일 제외)
+     */
+    @PatchMapping("/posts/{postId}")
+    public ResponseEntity updatePost(@PathVariable Long postId,
+                                     @RequestBody PostDto.PostRequestDto postRequestDto,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        try {
+            int result = postService.updatePost(principalDetails.getUsername(), postId, postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
+            if (result == 0)
+                return new ResponseEntity<>(new ResultDto(200, "게시글 수정 성공"), HttpStatus.OK);
+            else  // 다른 회원의 게시글 수정 시도
+                return new ResponseEntity(new ResultDto(403, "해당 게시글의 수정 권한이 없음"), HttpStatus.FORBIDDEN);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * 게시글 삭제 API
      */
     @DeleteMapping("/posts/{postId}")
