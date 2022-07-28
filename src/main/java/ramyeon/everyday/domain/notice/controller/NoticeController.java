@@ -63,6 +63,21 @@ public class NoticeController {
     }
 
     /**
+     * 공지사항 수정 API (첨부 파일 제외)
+     */
+    @PatchMapping("/notices/{noticeId}")
+    public ResponseEntity updateNotice(@PathVariable Long noticeId,
+                                       @RequestBody NoticeDto.NoticeRequestDto noticeRequestDto,
+                                       @AuthenticationPrincipal ManagerDetails managerDetails) {
+        try {
+            noticeService.updateNotice(managerDetails.getUsername(), noticeId, noticeRequestDto.getTitle(), noticeRequestDto.getContents());
+            return new ResponseEntity<>(new ResultDto(200, "공지사항 수정 성공"), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * 공지사항 삭제 API
      */
     @DeleteMapping("/notices/{noticeId}")

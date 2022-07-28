@@ -68,6 +68,12 @@ public class Notice extends DateBaseEntity {  // 공지사항
         this.isDeleted = Whether.Y;
     }
 
+    // 공지사항 수정 (첨부 파일 제외)
+    public void edit(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+    }
+
     // 공지사항 수정 - 조회수 갱신
     public void changeViews(Long views) {
         this.views = views;

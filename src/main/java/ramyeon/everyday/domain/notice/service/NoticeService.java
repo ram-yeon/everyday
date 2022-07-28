@@ -129,6 +129,16 @@ public class NoticeService {
     }
 
     /**
+     * 공지사항 수정 (첨부 파일 제외)
+     */
+    @Transactional
+    public void updateNotice(String loginId, Long noticeId, String title, String contents) {
+        managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회
+        Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 공지사항"));  // 공지사항 조회
+        notice.edit(title, contents);  // 공지사항 수정
+    }
+
+    /**
      * 공지사항 삭제
      */
     @Transactional
