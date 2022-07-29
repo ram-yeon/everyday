@@ -2,6 +2,7 @@ package ramyeon.everyday.jwt;
 
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,7 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     private final PrincipalDetailsService principalDetailsService;
@@ -128,7 +130,7 @@ public class JwtTokenProvider {
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException jwtE) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to Token validate - response message: {}", e.getMessage());
         }
         return false;
 
