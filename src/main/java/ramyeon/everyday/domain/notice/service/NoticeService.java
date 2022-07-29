@@ -60,7 +60,14 @@ public class NoticeService {
         // List를 Page로 변환
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), noticeDtoList.size());
-        return new PageImpl<>(noticeDtoList.subList(start, end), pageable, noticeDtoList.size());
+        PageImpl<NoticeDto.NoticeResponseDto> noticeDtosPage = new PageImpl<>(new ArrayList<>(), pageable, noticeDtoList.size());
+        try {
+            List<NoticeDto.NoticeResponseDto> noticeResponseDtos = noticeDtoList.subList(start, end);
+            noticeDtosPage = new PageImpl<>(noticeResponseDtos, pageable, noticeDtoList.size());
+        } catch (IllegalArgumentException ie) {
+            // illegal endpoint index value
+        }
+        return noticeDtosPage;
     }
 
     /**

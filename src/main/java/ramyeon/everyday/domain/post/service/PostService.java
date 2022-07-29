@@ -117,7 +117,14 @@ public class PostService {
             // List를 Page로 변환
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), postsBoardDtos.size());
-            return new PageImpl<>(postsBoardDtos.subList(start, end), pageable, postsBoardDtos.size());
+            PageImpl<PostDto.PostResponseDto> postDtosPage = new PageImpl<>(new ArrayList<>(), pageable, postsBoardDtos.size());
+            try {
+                List<PostDto.PostResponseDto> postResponseDtos = postsBoardDtos.subList(start, end);
+                postDtosPage = new PageImpl<>(postResponseDtos, pageable, postsBoardDtos.size());
+            } catch (IllegalArgumentException ie) {
+                // illegal endpoint index value
+            }
+            return postDtosPage;
 
         } else {  // 자유, 정보, 동아리 게시판
             Page<Post> posts = getBoardPosts(loginUser, boardType, pageable);// 게시글 조회 최근순 정렬
@@ -236,7 +243,14 @@ public class PostService {
         // List를 Page로 변환
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), postAndNoticeDtoList.size());
-        return new PageImpl<>(postAndNoticeDtoList.subList(start, end), pageable, postAndNoticeDtoList.size());
+        PageImpl<PostDto.PostResponseDto> postAndNoticeDtosPage = new PageImpl<>(new ArrayList<>(), pageable, postAndNoticeDtoList.size());
+        try {
+            List<PostDto.PostResponseDto> postResponseDtos = postAndNoticeDtoList.subList(start, end);
+            postAndNoticeDtosPage = new PageImpl<>(postResponseDtos, pageable, postAndNoticeDtoList.size());
+        } catch (IllegalArgumentException ie) {
+            // illegal endpoint index value
+        }
+        return postAndNoticeDtosPage;
     }
 
     /**
@@ -277,7 +291,14 @@ public class PostService {
         // List를 Page로 변환
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), postDtoList.size());
-        return new PageImpl<>(postDtoList.subList(start, end), pageable, postDtoList.size());
+        PageImpl<PostDto.PostResponseDto> postDtosPage = new PageImpl<>(new ArrayList<>(), pageable, postDtoList.size());
+        try {
+            List<PostDto.PostResponseDto> postResponseDtos = postDtoList.subList(start, end);
+            postDtosPage = new PageImpl<>(postResponseDtos, pageable, postDtoList.size());
+        } catch (IllegalArgumentException ie) {
+            // illegal endpoint index value
+        }
+        return postDtosPage;
     }
 
     /**
