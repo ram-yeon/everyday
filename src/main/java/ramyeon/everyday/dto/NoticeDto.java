@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import ramyeon.everyday.enum_.Whether;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,7 +38,10 @@ public class NoticeDto {
      */
     @Getter
     public static class NoticeRequestDto {
+        @NotBlank(message = "제목을 입력하세요")
         private String title;  // 제목
+
+        @NotBlank(message = "내용을 입력하세요")
         private String contents;  // 내용
     }
 

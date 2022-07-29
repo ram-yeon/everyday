@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import ramyeon.everyday.enum_.BoardType;
 import ramyeon.everyday.enum_.Whether;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -61,7 +62,11 @@ public class PostDto {
     public static class PostRequestDto {
         private String boardType;  // 게시판 종류
         private String isAnonymous;  // 익명 여부
+
+        @NotBlank(message = "제목을 입력하세요")
         private String title;  // 제목
+
+        @NotBlank(message = "내용을 입력하세요")
         private String contents;  // 내용
     }
 

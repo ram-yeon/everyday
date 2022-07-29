@@ -31,7 +31,7 @@ public class User extends DateBaseEntity {  // 회원
     private String name;  // 이름
     private String email;  // 이메일
     private String nickname;  // 닉네임
-    private String admissionYear;  // 입학 연도
+    private String admissionYear;  // 입학년도
 
     @Enumerated(EnumType.STRING)
     private UserAuthority authority;  // 권한

@@ -16,6 +16,8 @@ import ramyeon.everyday.dto.NoticeDto;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class NoticeController {
@@ -52,7 +54,7 @@ public class NoticeController {
      * 공지사항 등록 API (첨부 파일 제외)
      */
     @PostMapping("/notices")
-    public ResponseEntity createNotice(@RequestBody NoticeDto.NoticeRequestDto noticeRequestDto,
+    public ResponseEntity createNotice(@Valid @RequestBody NoticeDto.NoticeRequestDto noticeRequestDto,
                                        @AuthenticationPrincipal ManagerDetails managerDetails) {
         try {
             NoticeDto.NoticeResponseDto data = noticeService.createNotice(managerDetails.getUsername(), noticeRequestDto.getTitle(), noticeRequestDto.getContents());
@@ -67,7 +69,7 @@ public class NoticeController {
      */
     @PatchMapping("/notices/{noticeId}")
     public ResponseEntity updateNotice(@PathVariable Long noticeId,
-                                       @RequestBody NoticeDto.NoticeRequestDto noticeRequestDto,
+                                       @Valid @RequestBody NoticeDto.NoticeRequestDto noticeRequestDto,
                                        @AuthenticationPrincipal ManagerDetails managerDetails) {
         try {
             noticeService.updateNotice(managerDetails.getUsername(), noticeId, noticeRequestDto.getTitle(), noticeRequestDto.getContents());

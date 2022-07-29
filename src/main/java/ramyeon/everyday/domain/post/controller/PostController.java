@@ -18,6 +18,7 @@ import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -120,13 +121,15 @@ public class PostController {
      * 게시글 등록 API (첨부 파일 제외)
      */
     @PostMapping("/posts")
-    public ResponseEntity createPost(@RequestBody PostDto.PostRequestDto postRequestDto,
+    public ResponseEntity createPost(@Valid @RequestBody PostDto.PostRequestDto postRequestDto,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
         try {
             PostDto.PostResponseDto data = postService.createPost(principalDetails.getUsername(), postRequestDto.getBoardType(), postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
             return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -135,14 +138,17 @@ public class PostController {
      */
     @PatchMapping("/posts/{postId}")
     public ResponseEntity updatePost(@PathVariable Long postId,
-                                     @RequestBody PostDto.PostRequestDto postRequestDto,
+                                     @Valid @RequestBody PostDto.PostRequestDto postRequestDto,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        try {postService.updatePost(principalDetails.getUsername(), postId, postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
-                return new ResponseEntity<>(new ResultDto(200, "게시글 수정 성공"), HttpStatus.OK);
+        try {
+            postService.updatePost(principalDetails.getUsername(), postId, postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
+            return new ResponseEntity<>(new ResultDto(200, "게시글 수정 성공"), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (NoRightsOfAccessException nre) {
             return new ResponseEntity(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 

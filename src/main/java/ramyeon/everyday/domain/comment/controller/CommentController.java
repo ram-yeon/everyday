@@ -15,6 +15,8 @@ import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
@@ -25,7 +27,7 @@ public class CommentController {
      * 댓글 등록 API
      */
     @PostMapping("/comments")
-    public ResponseEntity createComment(@RequestBody CommentDto.CommentCreateRequestDto createRequestDto,
+    public ResponseEntity createComment(@Valid @RequestBody CommentDto.CommentCreateRequestDto createRequestDto,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
         try {
             CommentDto.CommentResponseDto data = commentService.createComment(principalDetails.getUsername(), createRequestDto);
@@ -33,7 +35,7 @@ public class CommentController {
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (NotFoundEnumException nfe) {
-            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 

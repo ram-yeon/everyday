@@ -3,9 +3,10 @@ package ramyeon.everyday.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.enum_.CommentType;
+import ramyeon.everyday.enum_.Whether;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class CommentDto {
     public static class CommentCreateRequestDto {
         private Long postId;  // 게시글 ID
 
+        @NotBlank(message = "댓글을 입력하세요")
         private String contents;  // 내용
         private String commentType;  // 댓글 종류
         private String isAnonymous;  // 익명 여부

@@ -14,10 +14,12 @@ import ramyeon.everyday.domain.login.service.EmailSendService;
 import ramyeon.everyday.domain.login.service.LoginService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
+import ramyeon.everyday.exception.InvalidInputValueException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public class LoginController {
      * 로그인 API
      */
     @PostMapping("/login")
-    public ResponseEntity login(HttpServletResponse response, @RequestBody UserDto.LoginRequestDto loginRequestDto) {
+    public ResponseEntity login(HttpServletResponse response, @Valid @RequestBody UserDto.LoginRequestDto loginRequestDto) {
         String jwtToken;
         try {
             // 로그인 시도
@@ -59,13 +61,13 @@ public class LoginController {
      * 이메일 인증 API
      */
     @PostMapping("/email-authenticate")
-    public ResponseEntity emailAuthenticate(@RequestBody UserDto.EmailAuthenticationRequestDto emailAuthenticationRequestDto) {
+    public ResponseEntity emailAuthenticate(@Valid @RequestBody UserDto.EmailAuthenticationRequestDto emailAuthenticationRequestDto) {
         String code;
         try {
             code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType(), emailAuthenticationRequestDto.getLoginId());  // 인증코드 발송
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (NotFoundEnumException ee) {
+        } catch (NotFoundEnumException | InvalidInputValueException ee) {
             return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
@@ -79,7 +81,7 @@ public class LoginController {
      * 인증코드 확인 API
      */
     @PostMapping("/check-authenticationcode")
-    public ResponseEntity checkAuthenticationCode(@RequestBody UserDto.CheckAuthenticationCodeRequestDto authenticationCodeRequestDto) {
+    public ResponseEntity checkAuthenticationCode(@Valid @RequestBody UserDto.CheckAuthenticationCodeRequestDto authenticationCodeRequestDto) {
         boolean isSuccess;
         try {
             isSuccess = emailSendService.checkAuthenticationCode(authenticationCodeRequestDto.getEmail(), authenticationCodeRequestDto.getAuthenticationCode());
@@ -96,7 +98,7 @@ public class LoginController {
      * 아이디 찾기 API
      */
     @PostMapping("/find-id")
-    public ResponseEntity findId(@RequestBody UserDto.EmailRequestDto emailRequestDto) {
+    public ResponseEntity findId(@Valid @RequestBody UserDto.EmailRequestDto emailRequestDto) {
         try {
             emailSendService.sendLoginId(emailRequestDto.getEmail());
             return new ResponseEntity<>(new ResultDto(200, "아이디 찾기 안내 이메일 발송 성공"), HttpStatus.OK);
@@ -109,7 +111,7 @@ public class LoginController {
      * 비밀번호 찾기 API
      */
     @PostMapping("/find-password")
-    public ResponseEntity findPassword(@RequestBody UserDto.FindPasswordRequestDto findPasswordRequestDto) {
+    public ResponseEntity findPassword(@Valid @RequestBody UserDto.FindPasswordRequestDto findPasswordRequestDto) {
         boolean isSuccess = loginService.findUserForFindPassword(findPasswordRequestDto.getLoginId());
         if (isSuccess) {
             return new ResponseEntity<>(new ResultDto(200, "가입된 아이디 있음"), HttpStatus.OK);

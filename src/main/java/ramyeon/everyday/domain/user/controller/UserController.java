@@ -12,6 +12,8 @@ import ramyeon.everyday.dto.UserDto;
 import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -22,7 +24,7 @@ public class UserController {
      * 비밀번호 변경 API
      */
     @PatchMapping("/users/password/edit")
-    public ResponseEntity changePassword(@RequestBody UserDto.ChangePasswordRequestDto changePasswordRequestDto) {
+    public ResponseEntity changePassword(@Valid @RequestBody UserDto.ChangePasswordRequestDto changePasswordRequestDto) {
         try {
             userService.changePassword(changePasswordRequestDto.getEmail(), changePasswordRequestDto.getPassword());
             return new ResponseEntity<>(new ResultDto(200, "비밀번호 변경 성공"), HttpStatus.OK);
@@ -35,7 +37,7 @@ public class UserController {
      * 회원 등록 API
      */
     @PostMapping("/users")
-    public ResponseEntity register(@RequestBody UserDto.RegisterRequestDto registerRequestDto) {
+    public ResponseEntity register(@Valid @RequestBody UserDto.RegisterRequestDto registerRequestDto) {
         try {
             userService.register(registerRequestDto.getLoginId(), registerRequestDto.getPassword(), registerRequestDto.getName(), registerRequestDto.getEmail(), registerRequestDto.getNickname(), registerRequestDto.getAdmissionYear(), registerRequestDto.getSchoolName());
         } catch (NotFoundResourceException | DuplicateResourceException e) {
