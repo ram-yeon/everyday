@@ -355,9 +355,18 @@ public class PostService {
     @Transactional
     public void deletePost(String loginId, Long postId) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
-        Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
+        // 게시글 및 댓글, 사용자 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
+        Post post = postRepository.findByIdAndIsDeletedWithUserCommentUser(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));
+
         if (post.getUser() != loginUser)  // 다른 회원의 게시글 삭제
             throw new NoRightsOfAccessException("해당 게시글의 삭제 권한이 없음");
+
+        // 댓글 삭제
+        List<Comment> commentList = post.getCommentList();
+        for (int i = commentList.size() - 1; i >= 0; i--) {
+            commentList.get(i).delete(commentList.get(i).getUser(), post);
+        }
+
         post.delete(loginUser);  // 게시글 삭제
     }
 

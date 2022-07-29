@@ -66,6 +66,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             " order by p.registrationDate desc")
     List<Post> findByUserFetchJoinComment(User user, Whether isDeleted);  // 댓글 단 글 목록 조회
 
+    @Query("SELECT DISTINCT p FROM Post p" +
+            " LEFT OUTER JOIN FETCH p.user u" +
+            " LEFT OUTER JOIN FETCH p.commentList c" +
+            " LEFT OUTER JOIN FETCH c.user cu" +
+            " WHERE p.id = ?1" +
+            " and p.isDeleted = ?2")
+    Optional<Post> findByIdAndIsDeletedWithUserCommentUser(Long id, Whether isDeleted);  // 게시글 삭제 시 조회 - commentList, user와 fetch join
+
     Optional<Post> findByIdAndIsDeleted(Long id, Whether isDeleted);
 
     Page<Post> findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(String title, String contents, School school, Whether isDeleted, Pageable pageable);  // 게시글 검색
