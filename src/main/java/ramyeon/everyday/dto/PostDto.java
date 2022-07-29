@@ -59,8 +59,8 @@ public class PostDto {
      */
     @Getter
     public static class PostRequestDto {
-        private BoardType boardType;  // 게시판 종류
-        private Whether isAnonymous;  // 익명 여부
+        private String boardType;  // 게시판 종류
+        private String isAnonymous;  // 익명 여부
         private String title;  // 제목
         private String contents;  // 내용
     }

@@ -329,9 +329,9 @@ public class PostService {
     /**
      * 게시글 등록
      */
-    public PostDto.PostResponseDto createPost(String loginId, BoardType boardType, Whether isAnonymous, String title, String contents) {
+    public PostDto.PostResponseDto createPost(String loginId, String boardType, String isAnonymous, String title, String contents) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
-        Post post = Post.createPost(loginUser, loginUser.getSchool(), boardType, isAnonymous, Whether.N, 0L, title, contents);  // 게시글 생성
+        Post post = Post.createPost(loginUser, loginUser.getSchool(), BoardType.findBoardType(boardType), Whether.findWhether(isAnonymous), Whether.N, 0L, title, contents);  // 게시글 생성
         return PostDto.PostResponseDto.builder()
                 .id(postRepository.save(post).getId())  // 게시글 등록 및 등록된 게시글 번호 반환
                 .build();
@@ -341,12 +341,12 @@ public class PostService {
      * 게시글 수정 (첨부 파일 제외)
      */
     @Transactional
-    public void updatePost(String loginId, Long postId, Whether isAnonymous, String title, String contents) {
+    public void updatePost(String loginId, Long postId, String isAnonymous, String title, String contents) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
         if (post.getUser() != loginUser)  // 다른 회원의 게시글 수정
             throw new NoRightsOfAccessException("해당 게시글의 수정 권한이 없음");
-        post.edit(isAnonymous, title, contents);  // 게시글 수정
+        post.edit(Whether.findWhether(isAnonymous), title, contents);  // 게시글 수정
     }
 
     /**
