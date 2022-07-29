@@ -96,7 +96,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(String loginId, Long commentId) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 댓글"));  // 댓글 조회
+        Comment comment = commentRepository.findByIdAndIsDeleted(commentId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 댓글"));  // 댓글 조회
         if (comment.getUser() != loginUser)  // 남의 댓글 삭제
             throw new NoRightsOfAccessException("해당 댓글의 삭제 권한이 없음");
         comment.delete(loginUser, comment.getPost());  // 댓글 삭제
