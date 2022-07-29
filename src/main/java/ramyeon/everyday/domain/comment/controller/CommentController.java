@@ -11,6 +11,7 @@ import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.comment.service.CommentService;
 import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
@@ -70,16 +71,13 @@ public class CommentController {
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Long commentId,
                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        int result;
         try {
-            result = commentService.deleteComment(principalDetails.getUsername(), commentId);
+            commentService.deleteComment(principalDetails.getUsername(), commentId);
+            return new ResponseEntity<>(new ResultDto(200, "댓글 삭제 성공"), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
-        }
-        if (result == 0) {
-            return new ResponseEntity<>(new ResultDto(200, "댓글 삭제 성공"), HttpStatus.OK);
-        } else {  // 남의 댓글 삭제 시도
-            return new ResponseEntity(new ResultDto(403, "해당 댓글의 삭제 권한이 없음"), HttpStatus.FORBIDDEN);
+        } catch (NoRightsOfAccessException nre) {
+            return new ResponseEntity(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 

@@ -14,6 +14,7 @@ import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.dto.PostDto;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
@@ -136,14 +137,12 @@ public class PostController {
     public ResponseEntity updatePost(@PathVariable Long postId,
                                      @RequestBody PostDto.PostRequestDto postRequestDto,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        try {
-            int result = postService.updatePost(principalDetails.getUsername(), postId, postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
-            if (result == 0)
+        try {postService.updatePost(principalDetails.getUsername(), postId, postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents());
                 return new ResponseEntity<>(new ResultDto(200, "게시글 수정 성공"), HttpStatus.OK);
-            else  // 다른 회원의 게시글 수정 시도
-                return new ResponseEntity(new ResultDto(403, "해당 게시글의 수정 권한이 없음"), HttpStatus.FORBIDDEN);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NoRightsOfAccessException nre) {
+            return new ResponseEntity(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -153,16 +152,13 @@ public class PostController {
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity deletePost(@PathVariable Long postId,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        int result;
         try {
-            result = postService.deletePost(principalDetails.getUsername(), postId);
+            postService.deletePost(principalDetails.getUsername(), postId);
+            return new ResponseEntity<>(new ResultDto(200, "게시글 삭제 성공"), HttpStatus.OK);
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
-        }
-        if (result == 0) {
-            return new ResponseEntity<>(new ResultDto(200, "게시글 삭제 성공"), HttpStatus.OK);
-        } else {  // 다른 회원의 게시글 삭제 시도
-            return new ResponseEntity(new ResultDto(403, "해당 게시글의 삭제 권한이 없음"), HttpStatus.FORBIDDEN);
+        } catch (NoRightsOfAccessException nre) {
+            return new ResponseEntity(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 

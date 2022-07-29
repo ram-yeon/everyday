@@ -8,6 +8,7 @@ import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
 import ramyeon.everyday.dto.LikeDto;
 import ramyeon.everyday.enum_.TargetType;
+import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RequiredArgsConstructor
@@ -29,15 +30,13 @@ public class LikeService {
     /**
      * 좋아요 삭제
      */
-    public int deleteLike(String loginId, String targetType, Long targetId) {
+    public void deleteLike(String loginId, String targetType, Long targetId) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Like like = likeRepository.findByUserAndTargetTypeAndTargetId(loginUser, TargetType.findTargetType(targetType), targetId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 좋아요")); // 좋아요 조회
-        if (like.getUser() != loginUser) {  // 남의 좋아요 삭제
-            return 1;
-        }
+        if (like.getUser() != loginUser)  // 남의 좋아요 삭제
+            throw new NoRightsOfAccessException("해당 좋아요의 삭제 권한이 없음");
         like.delete(loginUser);
         likeRepository.delete(like);
-        return 0;
     }
 
     // 좋아요 수 조회

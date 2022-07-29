@@ -80,18 +80,17 @@ public class LoginController {
      */
     @PostMapping("/check-authenticationcode")
     public ResponseEntity checkAuthenticationCode(@RequestBody UserDto.CheckAuthenticationCodeRequestDto authenticationCodeRequestDto) {
-        int result = emailSendService.checkAuthenticationCode(authenticationCodeRequestDto.getEmail(), authenticationCodeRequestDto.getAuthenticationCode());
-        if (result > 0) {
-            if (result == 1) {  // 인증코드가 틀림
-                return new ResponseEntity<>(new ResultDto(400, "인증 실패: 인증코드가 틀림"), HttpStatus.BAD_REQUEST);
-            } else {  // 이메일이 틀림
-                return new ResponseEntity<>(new ResultDto(400, "인증 실패: 이메일이 틀림"), HttpStatus.BAD_REQUEST);
-            }
-        } else {
-            return new ResponseEntity<>(new ResultDto(200, "인증 성공"), HttpStatus.OK);
+        boolean isSuccess;
+        try {
+            isSuccess = emailSendService.checkAuthenticationCode(authenticationCodeRequestDto.getEmail(), authenticationCodeRequestDto.getAuthenticationCode());
+        } catch (NotFoundResourceException re) {
+            return new ResponseEntity<>(new ResultDto(400, re.getMessage()), HttpStatus.BAD_REQUEST);
         }
+        if (isSuccess)
+            return new ResponseEntity<>(new ResultDto(200, "인증 성공"), HttpStatus.OK);
+        else   // 인증코드가 틀림
+            return new ResponseEntity<>(new ResultDto(401, "인증 실패: 인증코드가 틀림"), HttpStatus.UNAUTHORIZED);
     }
-
 
     /**
      * 아이디 찾기 API

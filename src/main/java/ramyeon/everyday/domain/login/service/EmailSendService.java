@@ -76,17 +76,17 @@ public class EmailSendService {
     }
 
     // 인증코드 확인
-    public int checkAuthenticationCode(String email, String inputAuthenticationCode) {
+    public boolean checkAuthenticationCode(String email, String inputAuthenticationCode) {
         StringBuilder authenticationCode = emailAndCodeStore.get(email);
 
-        if (authenticationCode == null) {  // 이메일이 틀림
-            return 2;
+        if (authenticationCode == null) {  // 해당 이메일로 전송된 인증코드가 없음
+            throw new NotFoundResourceException("해당 이메일로 전송된 인증코드가 없음");
         }
         if (inputAuthenticationCode.contentEquals(authenticationCode)) {  // 인증 성공
             emailAndCodeStore.remove(email);  // 인증이 완료되었으므로 저장소에서 삭제
-            return 0;
+            return true;
         } else {  // 인증코드가 틀림
-            return 1;
+            return false;
         }
     }
 

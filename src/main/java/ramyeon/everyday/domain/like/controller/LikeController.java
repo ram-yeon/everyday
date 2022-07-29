@@ -11,6 +11,7 @@ import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.like.service.LikeService;
 import ramyeon.everyday.dto.LikeDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
@@ -40,18 +41,15 @@ public class LikeController {
     @PostMapping("/likes/delete")
     public ResponseEntity deleteLike(@RequestBody LikeDto.LikeRequestDto likeRequestDto,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        int result;
         try {
-            result = likeService.deleteLike(principalDetails.getUsername(), likeRequestDto.getTargetType(), likeRequestDto.getTargetId());
+            likeService.deleteLike(principalDetails.getUsername(), likeRequestDto.getTargetType(), likeRequestDto.getTargetId());
+            return new ResponseEntity<>(new ResultDto(200, "좋아요 삭제 성공"), HttpStatus.OK);
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
         } catch (NotFoundEnumException nfe) {
             return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
-        }
-        if (result == 0) {
-            return new ResponseEntity<>(new ResultDto(200, "좋아요 삭제 성공"), HttpStatus.OK);
-        } else {  // 남의 좋아요 삭제 시도
-            return new ResponseEntity(new ResultDto(403, "해당 좋아요의 삭제 권한이 없음"), HttpStatus.FORBIDDEN);
+        } catch (NoRightsOfAccessException nre) {
+            return new ResponseEntity(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 }

@@ -16,6 +16,7 @@ import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.enum_.CommentType;
 import ramyeon.everyday.enum_.TargetType;
 import ramyeon.everyday.enum_.Whether;
+import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.ArrayList;
@@ -93,14 +94,12 @@ public class CommentService {
      * 댓글 삭제
      */
     @Transactional
-    public int deleteComment(String loginId, Long commentId) {
+    public void deleteComment(String loginId, Long commentId) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 댓글"));  // 댓글 조회
-        if (comment.getUser() != loginUser) {  // 남의 댓글 삭제
-            return 1;
-        }
+        if (comment.getUser() != loginUser)  // 남의 댓글 삭제
+            throw new NoRightsOfAccessException("해당 댓글의 삭제 권한이 없음");
         comment.delete(loginUser, comment.getPost());  // 댓글 삭제
-        return 0;
     }
 
     // 댓글 작성자 조회
