@@ -11,6 +11,7 @@ import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.like.service.LikeService;
 import ramyeon.everyday.dto.LikeDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RestController
@@ -25,8 +26,12 @@ public class LikeController {
     @PostMapping("/likes")
     public ResponseEntity createLike(@RequestBody LikeDto.LikeRequestDto createRequestDto,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        likeService.createLike(principalDetails.getUsername(), createRequestDto);
-        return new ResponseEntity<>(new ResultDto(200, "좋아요 등록 성공"), HttpStatus.OK);
+        try {
+            likeService.createLike(principalDetails.getUsername(), createRequestDto);
+            return new ResponseEntity<>(new ResultDto(200, "좋아요 등록 성공"), HttpStatus.OK);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -40,6 +45,8 @@ public class LikeController {
             result = likeService.deleteLike(principalDetails.getUsername(), likeRequestDto.getTargetType(), likeRequestDto.getTargetId());
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
         }
         if (result == 0) {
             return new ResponseEntity<>(new ResultDto(200, "좋아요 삭제 성공"), HttpStatus.OK);

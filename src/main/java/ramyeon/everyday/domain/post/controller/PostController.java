@@ -14,6 +14,7 @@ import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.dto.PostDto;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import java.util.List;
@@ -51,8 +52,8 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(200, boardType + " 게시판 게시글 목록 조회 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (IllegalArgumentException iae) {
-            return new ResponseEntity<>(new ResultDto(400, "존재하지 않는 게시판"), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -80,8 +81,8 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(200, "내가 쓴 or 댓글 단 게시글 목록 조회 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(new ResultDto(400, "잘못된 API URI 요청"), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 

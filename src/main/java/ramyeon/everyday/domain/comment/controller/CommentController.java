@@ -11,6 +11,7 @@ import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.comment.service.CommentService;
 import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 @RestController
@@ -30,6 +31,8 @@ public class CommentController {
             return new ResponseEntity<>(new ResultDto(200, "댓글 등록 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NotFoundEnumException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 

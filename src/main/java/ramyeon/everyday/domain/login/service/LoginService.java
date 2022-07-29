@@ -37,7 +37,7 @@ public class LoginService {
      */
     public Authentication attemptLogin(String loginId, String password, String type) {
         // 토큰 생성
-        CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(loginId, password, AccountAuthority.valueOf(type));
+        CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(loginId, password, AccountAuthority.findAccountAuthority(type));
         // 로그인 시도
         return customAuthenticationProvider.authenticate(authenticationToken);
     }
@@ -52,7 +52,7 @@ public class LoginService {
         String jwtToken = null;
         if (accountAuthority == AccountAuthority.USER) {  // 사용자 로그인
             PrincipalDetails principalDetails = (PrincipalDetails) authenticationToken.getPrincipal();
-            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), principalDetails.getAuthorities(), accountAuthority, Whether.valueOf(isKeptLogin));  // JWT 토큰 생성
+            jwtToken = jwtTokenProvider.createAccessToken(principalDetails.getUsername(), principalDetails.getUser().getId(), principalDetails.getAuthorities(), accountAuthority, Whether.findWhether(isKeptLogin));  // JWT 토큰 생성
 
             tokenService.addToken(jwtToken, principalDetails.getUsername(), accountAuthority);  // DB에 토큰 저장
 

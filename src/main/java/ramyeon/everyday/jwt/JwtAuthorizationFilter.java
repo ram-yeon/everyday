@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.PatternMatchUtils;
+import ramyeon.everyday.exception.NotFoundEnumException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,7 +19,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 필터 적용을 제외할 리소스
     private static final String[] whitelist = {"GET/schools", "POST/login", "POST/email-authenticate", "POST/check-authenticationcode", "POST/find-id", "POST/find-password", "PATCH/users/password/edit", "POST/users"};
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         super(authenticationManager);
@@ -37,12 +38,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
                 // JWT 토큰을 검증해서 정상적인 사용자인지 확인
                 if (jwtTokenProvider.validateToken(jwtToken, response)) {  // 유효한 토큰
+                    try {
+                        // Jwt 토큰 인증 정보 조회
+                        Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);
 
-                    // Jwt 토큰 인증 정보 조회
-                    Authentication authentication = jwtTokenProvider.getAuthentication(jwtToken);
-
-                    // 시큐리티의 세션에 접근하여 Authentication 객체 저장
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                        // 시큐리티의 세션에 접근하여 Authentication 객체 저장
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } catch (NotFoundEnumException nfe) {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, nfe.getMessage());
+                    }
 
                     chain.doFilter(request, response);
                 }

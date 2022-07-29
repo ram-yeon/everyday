@@ -22,8 +22,7 @@ public class LikeService {
      */
     public void createLike(String loginId, LikeDto.LikeRequestDto createRequestDto) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
-
-        Like like = Like.addLike(TargetType.valueOf(createRequestDto.getTargetType()), createRequestDto.getTargetId(), loginUser);
+        Like like = Like.addLike(TargetType.findTargetType(createRequestDto.getTargetType()), createRequestDto.getTargetId(), loginUser);
         likeRepository.save(like);  // 좋아요 등록
     }
 
@@ -32,7 +31,7 @@ public class LikeService {
      */
     public int deleteLike(String loginId, String targetType, Long targetId) {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
-        Like like = likeRepository.findByUserAndTargetTypeAndTargetId(loginUser, TargetType.valueOf(targetType), targetId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 좋아요")); // 좋아요 조회
+        Like like = likeRepository.findByUserAndTargetTypeAndTargetId(loginUser, TargetType.findTargetType(targetType), targetId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 좋아요")); // 좋아요 조회
         if (like.getUser() != loginUser) {  // 남의 좋아요 삭제
             return 1;
         }

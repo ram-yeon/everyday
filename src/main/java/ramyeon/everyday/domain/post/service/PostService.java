@@ -89,7 +89,8 @@ public class PostService {
      * 게시판 별 게시글 목록 조회
      */
     public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String type, Pageable pageable) {
-        BoardType boardType = BoardType.valueOf(type);  // 게시판 종류
+        BoardType boardType = BoardType.findBoardType(type);  // 게시판 종류
+
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         if (boardType == BoardType.HOT) {  // 핫 게시판
             // 핫 게시글 조회
@@ -242,7 +243,7 @@ public class PostService {
      * 내가 쓴, 댓글 단 게시글 목록 조회
      */
     public Page<PostDto.PostResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
-        MyPostType myPostType = MyPostType.valueOf(type);  // 요청 글 종류
+        MyPostType myPostType = MyPostType.findMyPostType(type);  // 요청 글 종류
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
 
         List<Post> posts = new ArrayList<>();
