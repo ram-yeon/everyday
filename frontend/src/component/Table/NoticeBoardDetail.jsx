@@ -175,7 +175,7 @@ function NoticeBoardDetail() {
 
     return (
         <>
-            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
+            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={1.5}>
                 <Link to='/noticeboard' className={classes.headLink}>{headTitle}</Link>
             </Box>
             {!displayEditBox ?
@@ -193,7 +193,11 @@ function NoticeBoardDetail() {
                         <Typography className={classes.writer}>에브리데이</Typography>
                         <Typography className={classes.date}>{displayDateFormat(registrationDate)}</Typography>
                         <Typography style={{ fontSize: '1.8rem', marginTop: "1rem" }}><strong>{title}</strong></Typography>
-                        <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>{contents}</Typography>
+                        <Typography style={{ margin: "0.5rem auto auto 0.3rem" }}>
+                            {contents.split("\n").map((data) => {
+                                return (<span>{data}<br /></span>);
+                            })}
+                        </Typography>
                         <div style={{ margin: "2rem auto auto 0.3rem" }}>
                             {
                                 (!likeState) ?

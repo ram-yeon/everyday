@@ -13,7 +13,7 @@ import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 // import Carousel from 'react-bootstrap/Carousel'
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import axios from 'axios';
-import UploadFile from './UploadFile'
+// import UploadFile from './UploadFile'
 
 const useStyles = makeStyles((theme) => ({
     writeBox: {

@@ -1,5 +1,5 @@
 //게시글 수정 박스
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from "@material-ui/core";
 import { Box, TextField } from '@mui/material/';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -110,7 +110,7 @@ function EditBox(props) {
                 contents: contents,
                 isAnonymous: isAnonymous,
             }
-            if (boardType === '공지사항') {   //관리자 공지수정
+            if (boardType === 'NOTICE') {   //관리자 공지수정
                 BoardAPI.updateBoardByAdmin(postId, data).then(response => {
                     Message.success(response.message);
                     editPost(false);

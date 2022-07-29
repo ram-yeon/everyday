@@ -111,7 +111,7 @@ function NoticeBoardList(props) {
 
     return (
         <div>
-            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={2}>
+            <Box border="2px black solid" color="black" fontWeight="bold" fontSize="1.4rem" textAlign="left" p={1.5}>
                 {title}
             </Box>
             {   //공지 등록은 관리자만 글작성박스 보이도록
