@@ -29,9 +29,9 @@ public class EmailSendService {
     // 이메일 인증을 위한 인증코드 전송
     public String sendCode(String email, String authType, String loginId) {
 
-        Type type = Type.findType(authType);  // 회원가입, 비밀번호 찾기 구분
+        EmailAuthenticateType type = EmailAuthenticateType.findEmailAuthenticateType(authType);  // 회원가입, 비밀번호 찾기 구분
 
-        if (type == Type.FINDPW)  // 비밀번호 찾기 시 아이디와 이메일 정보가 맞는지 확인
+        if (type == EmailAuthenticateType.FINDPW)  // 비밀번호 찾기 시 아이디와 이메일 정보가 맞는지 확인
             userRepository.findByLoginIdAndEmail(loginId, email).orElseThrow(() -> new NotFoundResourceException("아이디와 이메일 정보가 다름"));
 
         Random random = new Random();
@@ -90,12 +90,12 @@ public class EmailSendService {
         }
     }
 
-    public enum Type {
+    public enum EmailAuthenticateType {  // 이메일 인증 종류
         JOIN("회원가입"), FINDPW("비밀번호 찾기");
 
         private final String contents;  // 내용
 
-        Type(String contents) {
+        EmailAuthenticateType(String contents) {
             this.contents = contents;
         }
 
@@ -103,12 +103,12 @@ public class EmailSendService {
             return contents;
         }
 
-        private static final Map<String, Type> typeMap = Stream.of(values()).collect(Collectors.toMap(Type::name, Function.identity()));
+        private static final Map<String, EmailAuthenticateType> typeMap = Stream.of(values()).collect(Collectors.toMap(EmailAuthenticateType::name, Function.identity()));
 
-        public static Type findType(String type) {
-            return Optional.ofNullable(typeMap.get(type)).orElseThrow(() -> new NotFoundEnumException("잘못된 [type] 값 요청"));
+        // String to EmailAuthenticateType
+        public static EmailAuthenticateType findEmailAuthenticateType(String emailAuthenticateType) {
+            return Optional.ofNullable(typeMap.get(emailAuthenticateType)).orElseThrow(() -> new NotFoundEnumException("잘못된 [이메일 인증 종류] 값"));
         }
-
     }
 
 }
