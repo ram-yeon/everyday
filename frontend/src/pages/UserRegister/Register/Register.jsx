@@ -61,7 +61,7 @@ function Register(props) {
   return (
     <>
       <div className="register-content">
-        <div style={{ marginLeft: '2rem', marginBottom: '3rem' }}>
+        <div style={{ margin:'1rem auto 3rem 2rem'}}>
           <h2><strong>에브리데이 회원가입</strong></h2>
           <p>에브리데이 계정으로 <strong>캠퍼스픽, 에브리데이</strong> 등 <br />다양한 대학생 서비스를 모두 이용하실 수 있습니다.</p>
         </div>
@@ -82,7 +82,7 @@ function Register(props) {
           }}
         />
 
-        <FormControl sx={{ width: '82%', backgroundColor: 'white', ml: '2.5rem', mt: '0.5rem', mb: '0.5rem' }}>
+        <FormControl sx={{ width: '82%', ml: '2.5rem', mt: '0.5rem', mb: '0.5rem' }}>
           <Select
             displayEmpty
             value={admissionYearVal}

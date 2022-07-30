@@ -55,7 +55,7 @@ function Certification(props) {
 
     return (
         <div className="certification-content">
-            <h2 style={{ fontWeight: 'bold', marginLeft: "2rem" }}>이메일 인증</h2>
+            <h2 style={{ fontWeight: 'bold', marginTop: '1rem', marginLeft: "2rem" }}>이메일 인증</h2>
             <div style={{ marginTop: '2rem', marginLeft: '2rem' }}>
                 <TextField
                     label="이메일을 입력하세요"

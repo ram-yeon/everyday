@@ -92,7 +92,7 @@ function Agreement(props) {
   return (
 
     <div className="register-content">
-      <h2 style={{ textAlign: 'left', marginLeft: "2rem" }}>약관 동의</h2>
+      <h2 style={{ textAlign: 'left',margin:'1rem auto auto 2rem', fontWeight:'bold' }}>약관 동의</h2>
       <div>
         <div>
           <FormControlLabel control={<Checkbox value="all-check" color="default" size="small" checked={allCheck} onChange={allBtnEvent} />}

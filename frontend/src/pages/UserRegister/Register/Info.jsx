@@ -81,7 +81,7 @@ function Info(props) {
   return (
 
     <div className="register-content" style={{ padding: '1rem' }}>
-      <h2 style={{ fontWeight: 'bold', textAlign: 'left' }}>회원 정보</h2>
+      <h2 style={{ fontWeight: 'bold', textAlign: 'left',margin:'1rem auto auto 0.5rem' }}>회원 정보</h2>
 
       <div style={{ marginTop: '2rem' }}>
         <TextField
@@ -96,7 +96,7 @@ function Info(props) {
       <div style={{ marginTop: '0.8rem' }}>
         <TextField
           fullWidth
-          label="아이디 (*영문, 숫자 4~20자)"
+          label="아이디 (*영문+숫자 4~20자)"
           InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
           variant="outlined"
           name="id"
@@ -106,7 +106,7 @@ function Info(props) {
       <div style={{ marginTop: '0.8rem' }}>
         <TextField
           fullWidth
-          label="비밀번호 (*영문, 숫자, 특문이 2종류 이상 조합된 8~20자)"
+          label="비밀번호 (*영문+숫자+특문 2종류 이상 조합된 8~20자)"
           InputLabelProps={{ style: { fontSize: '0.9rem', paddingTop: '4px' } }}
           variant="outlined"
           type={showPassword ? 'text' : 'password'}
@@ -171,7 +171,7 @@ function Info(props) {
       </button>
 
       <div>
-        <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem' }}>이미 에브리데이 계정이 있으신가요? <Link id="login-link" to='../login'>로그인</Link></p>
+        <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem', marginTop:'1rem' }}>이미 에브리데이 계정이 있으신가요? <Link id="login-link" to='../login'>로그인</Link></p>
       </div>
 
     </div >

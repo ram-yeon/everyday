@@ -55,7 +55,7 @@
 }
 
 .signUpBtnAction{
-    width: 87%;
+    width: 70%;
     height: 2.5rem;
     border-radius: 0.5rem;
     background: var(--main-color);
@@ -63,7 +63,7 @@
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    margin-left: 2rem;
+    margin-left: 4rem;
     margin-top: 1rem;
     
 }
@@ -79,7 +79,7 @@
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    margin-left: 4.5rem;
+    margin-left: 4rem;
     margin-top: 1rem;
     
 }
