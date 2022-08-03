@@ -50,6 +50,7 @@ function Certification(props) {
         }).catch(error => {
             console.log(JSON.stringify(error));
             Message.error(error.message);
+            props.goBack(3);
         });
     };
 

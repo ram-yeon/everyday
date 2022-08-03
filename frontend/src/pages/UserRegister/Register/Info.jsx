@@ -79,9 +79,8 @@ function Info(props) {
   }
 
   return (
-
     <div className="register-content" style={{ padding: '1rem' }}>
-      <h2 style={{ fontWeight: 'bold', textAlign: 'left',margin:'1rem auto auto 0.5rem' }}>회원 정보</h2>
+      <h2 style={{ fontWeight: 'bold', textAlign: 'left', margin: '1rem auto auto 0.5rem' }}>회원 정보</h2>
 
       <div style={{ marginTop: '2rem' }}>
         <TextField
@@ -160,18 +159,21 @@ function Info(props) {
           defaultValue={props.email}
         />
       </div>
-      <button
-        type="submit"
-        className={
-          getIsActive ? 'signUpBtnAction' : 'signUpBtnInaction'
-        }
-        onClick={handleButton}
-      >
-        회원가입
-      </button>
+
+      <div style={{ textAlign: 'center', marginTop:'1rem' }}>
+        <button onClick={() => props.goBack(4)} className="cancelBtn">이전</button>
+        <button
+          type="submit"
+          className={
+            getIsActive ? 'signUpBtnAction' : 'signUpBtnInaction'
+          }
+          onClick={handleButton}
+        >회원가입</button>
+      </div>
+
 
       <div>
-        <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem', marginTop:'1rem' }}>이미 에브리데이 계정이 있으신가요? <Link id="login-link" to='../login'>로그인</Link></p>
+        <p style={{ color: 'gray', textAlign: 'center', fontSize: '0.8rem', marginTop: '1rem' }}>이미 에브리데이 계정이 있으신가요? <Link id="login-link" to='../login'>로그인</Link></p>
       </div>
 
     </div >

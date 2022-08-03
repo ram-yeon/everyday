@@ -28,7 +28,6 @@ function BeforeLoginRouter(props) {
 
                 <Route path="*" element={<Error />} />
             </Routes>
-
         </div>
     )
 }

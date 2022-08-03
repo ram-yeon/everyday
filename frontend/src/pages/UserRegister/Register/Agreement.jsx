@@ -4,7 +4,6 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 import TextareaAutosize from '@mui/base/TextareaAutosize';
 
 function Agreement(props) {
-
   const [allCheck, setAllCheck] = useState(false);
   const [serviceCheck, setServiceCheck] = useState(false);
   const [infoCollectionCheck, setInfoCollectionCheck] = useState(false);
@@ -149,7 +148,11 @@ function Agreement(props) {
           />
         </div>
       </div>
-      <button onClick={handleButton} className="emailAuth-btn" type="submit">이메일 인증</button>
+
+      <div style={{textAlign:'center'}}>
+          <button onClick={() => props.goBack(2)} className="cancelBtn">이전</button>
+          <button onClick={handleButton} className="emailAuth-btn">이메일 인증</button>
+        </div>
     </div>
   )
 }

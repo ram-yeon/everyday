@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './Register.css'
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { TextField, OutlinedInput, MenuItem, FormControl, Select } from '@mui/material/';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -35,7 +36,7 @@ function getStyles(yearValue, admissionYearVal, theme) {
 }
 
 function Register(props) {
-
+  const navigate = useNavigate();
   const [selectedSchool, setSelectedSchool] = useState('');
   const theme = useTheme();
   const [admissionYearVal, setAdmissionYearVal] = useState('');
@@ -61,7 +62,7 @@ function Register(props) {
   return (
     <>
       <div className="register-content">
-        <div style={{ margin:'1rem auto 3rem 2rem'}}>
+        <div style={{ margin: '1rem auto 3rem 2rem' }}>
           <h2><strong>에브리데이 회원가입</strong></h2>
           <p>에브리데이 계정으로 <strong>캠퍼스픽, 에브리데이</strong> 등 <br />다양한 대학생 서비스를 모두 이용하실 수 있습니다.</p>
         </div>
@@ -105,12 +106,12 @@ function Register(props) {
           </Select>
         </FormControl>
 
-        <button onClick={handlebtn} type="submit" className="signUpBtnAction">다음</button>
-
+        <div style={{textAlign:'center'}}>
+          <button onClick={() => navigate(-1)} className="cancelBtn">이전</button>
+          <button onClick={handlebtn} className="signUpBtnAction">다음</button>
+        </div>
       </div>
-
     </>
-
   )
 }
 

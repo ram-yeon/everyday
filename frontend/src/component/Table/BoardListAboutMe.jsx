@@ -10,10 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-
-import moment from 'moment';
-import 'moment/locale/ko';
-
+import { displayDateFormat } from "../CommentTool";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
@@ -52,15 +49,14 @@ function BoardListAboutMe() {
                         response.data.content.forEach((v, i) => {
                             let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
                             let boardTypeToKor = v.boardType;                               //게시판타입(한글)
-                            const title = (v.title).split('"');                             //제목
-                            const contents = (v.contents).split('"');                       //내용
-                            const registrationDate = (v.registrationDate).split('"');       //등록일
-                            let writer = (v.writer).split('"');                             //작성자
-                            const likeCount = (v.likeCount)                                 //좋아요개수
-                            const commentCount = (v.commentCount);                          //댓글개수
-                            const views = (v.views);;                                       //조회수
-                            const fileCount = (v.fileCount);                                //파일개수
-                            const registrationDateTrim = moment(registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            const title = (v.title).replaceAll("\"", "");                            
+                            const contents = (v.contents).replaceAll("\"", "");                      
+                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));        
+                            let writer = (v.writer).replaceAll("\"", "");                         
+                            const likeCount = (v.likeCount)                                 
+                            const commentCount = (v.commentCount);                         
+                            const views = (v.views);;                                       
+                            const fileCount = (v.fileCount);
                             switch (boardTypeToKor) {
                                 case 'FREE':
                                     boardTypeToKor = '자유 게시판';
@@ -77,7 +73,8 @@ function BoardListAboutMe() {
                                     break;
                             }
                             postItems.push({
-                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, user: writer, postTitle: title, postContent: contents, date: registrationDateTrim,
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, 
+                                user: writer, postTitle: title, postContent: contents, date: registrationDate,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
                         })
@@ -101,15 +98,14 @@ function BoardListAboutMe() {
                         response.data.content.forEach((v, i) => {
                             let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
                             let boardTypeToKor = v.boardType;                               //게시판타입(한글)
-                            const title = (v.title).split('"');                             //제목
-                            const contents = (v.contents).split('"');                       //내용
-                            const registrationDate = (v.registrationDate).split('"');       //등록일
-                            let writer = (v.writer).split('"');                           //작성자
-                            const likeCount = (v.likeCount)                                 //좋아요개수
-                            const commentCount = (v.commentCount);                          //댓글개수
-                            const views = (v.views);;                                       //조회수
-                            const fileCount = (v.fileCount);                                //파일개수
-                            const registrationDateTrim = moment(registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            const title = (v.title).replaceAll("\"", "");                            
+                            const contents = (v.contents).replaceAll("\"", "");                      
+                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));        
+                            let writer = (v.writer).replaceAll("\"", "");                         
+                            const likeCount = (v.likeCount)                                 
+                            const commentCount = (v.commentCount);                         
+                            const views = (v.views);;                                       
+                            const fileCount = (v.fileCount);                                
                             switch (boardTypeToKor) {
                                 case 'FREE':
                                     boardTypeToKor = '자유 게시판';
@@ -126,7 +122,8 @@ function BoardListAboutMe() {
                                     break;
                             }
                             postItems.push({
-                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, user: writer, postTitle: title, postContent: contents, date: registrationDateTrim,
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, 
+                                user: writer, postTitle: title, postContent: contents, date: registrationDate,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
                         })
@@ -150,15 +147,14 @@ function BoardListAboutMe() {
                         response.data.content.forEach((v, i) => {
                             let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
                             let boardTypeToKor = v.boardType;                               //게시판타입(한글)
-                            const title = (v.title).split('"');                             //제목
-                            const contents = (v.contents).split('"');                       //내용
-                            const registrationDate = (v.registrationDate).split('"');       //등록일
-                            let writer = (v.writer).split('"');                           //작성자
-                            const likeCount = (v.likeCount)                                 //좋아요개수
-                            const commentCount = (v.commentCount);                          //댓글개수
-                            const views = (v.views);;                                       //조회수
-                            const fileCount = (v.fileCount);                                //파일개수
-                            const registrationDateTrim = moment(registrationDate, "YYYY.MM.DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                            const title = (v.title).replaceAll("\"", "");                            
+                            const contents = (v.contents).replaceAll("\"", "");                      
+                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));        
+                            let writer = (v.writer).replaceAll("\"", "");                         
+                            const likeCount = (v.likeCount)                                 
+                            const commentCount = (v.commentCount);                         
+                            const views = (v.views);;                                       
+                            const fileCount = (v.fileCount);
                             switch (boardTypeToKor) {
                                 case 'FREE':
                                     boardTypeToKor = '자유 게시판';
@@ -175,7 +171,8 @@ function BoardListAboutMe() {
                                     break;
                             }
                             postItems.push({
-                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, user: writer, postTitle: title, postContent: contents, date: registrationDateTrim,
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, 
+                                user: writer, postTitle: title, postContent: contents, date: registrationDate,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
                         })

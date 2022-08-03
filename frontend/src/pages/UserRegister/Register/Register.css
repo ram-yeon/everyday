@@ -53,9 +53,8 @@
     outline: 0.5px solid var(--main-color);
     box-shadow: 4px 3px 9px -1px gray;
 }
-
-.signUpBtnAction{
-    width: 70%;
+.cancelBtn{
+    width: 40%;
     height: 2.5rem;
     border-radius: 0.5rem;
     background: var(--main-color);
@@ -63,15 +62,24 @@
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    margin-left: 4rem;
-    margin-top: 1rem;
-    
+    margin: 0.5rem;
+}
+.signUpBtnAction{
+    width: 40%;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background: var(--main-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
+    margin: 0.5rem;
 }
 .signUpBtnAction:hover{
     box-shadow: 4px 3px 9px -1px gray;
 }
 .signUpBtnInaction{
-    width: 70%;
+    width: 40%;
     height: 2.5rem;
     border-radius: 0.5rem;
     background: lightgray;
@@ -79,12 +87,11 @@
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    margin-left: 4rem;
-    margin-top: 1rem;
+    margin: 0.5rem;
     
 }
 .emailAuth-btn{
-    width: 85%;
+    width: 40%;
     height: 2.5rem;
     border-radius: 0.5rem;
     background: var(--main-color);
@@ -92,7 +99,7 @@
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    margin-left: 2rem;
+    /* margin-left: 2rem; */
     margin-top: 2rem;
 }
 .emailAuth-btn:hover{
