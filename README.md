@@ -1,8 +1,9 @@
+<p align="right">
+<a href="https://github.com/ram-yeon/everyday"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fbo-ram-jeong&count_bg=%23F12793&title_bg=%23171617&icon=github.svg&icon_color=%23E7E7E7&title=GitHub&edge_flat=false)"/></a>
+</p>
+
 # 에브리데이 <img src="https://user-images.githubusercontent.com/84834172/182754138-323a3cad-79d1-4b48-abc9-c4d2ddaec498.png" alt="에브리데이 웹사이트 로고" width=26px />
 > <a href="https://everytime.kr/">에브리타임</a> 카피사이트 프로젝트
-
-<a href="https://github.com/ram-yeon"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fseondal&count_bg=%23000000&title_bg=%23000000&icon=github.svg&icon_color=%23E7E7E7&title=GitHub&edge_flat=false)"/></a>
-[![NPM version](https://badge.fury.io/js/your-project-name.svg)](6.14.14)
 
 ## Table of Contents
 1. [About The Project](#about-the-project)
