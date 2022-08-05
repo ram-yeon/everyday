@@ -11,9 +11,8 @@
 2. [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
-3. [Usage](#usage)
-4. [Contact](#contact)
-5. [Acknowledgments](#acknowledgments)
+3. [Contact](#contact)
+4. [Acknowledgments](#acknowledgments)
 
 ## About The Project
 [(back to top)](#table-of-contents)<br/><br/>
@@ -67,8 +66,6 @@ if yarn version upgrade<br/>
 ```npm install or yarn install```<br/>
 3. ```npm start or yarn start```
 
-## Usage
-[(back to top)](#table-of-contents)<br/>
 ## Contact
 [(back to top)](#table-of-contents)<br/>
 <h4>Organizations</h4>
@@ -83,9 +80,6 @@ https://github.com/Won-dy<br/>
 https://github.com/bo-ram-jeong<br/>
 https://bo-ram-jeong.github.io<br/>
 <a href="mailto:boram33377@gmail.com?">boram33377@gmail.com</a>
-
-## Complement
-[(back to top)](#table-of-contents)<br/>
 
 ## Acknowledgments
 [(back to top)](#table-of-contents)<br/>
