@@ -37,10 +37,13 @@
 <a href="https://developer.mozilla.org/ko/docs/Web/CSS"><img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=CSS3&logoColor=white"/></a>
 <br/>
 <a href="https://www.mysql.com/"><img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/></a>
-<a href="https://tomcat.apache.org/"><img src="https://img.shields.io/badge/Apache Tomcat-F8DC75?style=flat-square&logo=Apache Tomcat&logoColor=black"/></a>
+<img src="https://img.shields.io/badge/JPA-000000?style=flat-square&logo=JPA&logoColor=white"/></a>
 <br/>
 <a href="https://www.jetbrains.com/ko-kr/idea/"><img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=flat-square&logo=IntelliJ IDEA&logoColor=white"/></a>
 <a href="https://code.visualstudio.com/"><img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=Visual Studio Code&logoColor=white"/></a>
+<br/>
+<a href="https://www.postman.com/"><img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white"/></a>
+<a href="https://www.erdcloud.com/"><img src="https://img.shields.io/badge/ERDCloud-9388fb?style=flat-square&logo=ERDCloud&logoColor=white"/></a>
 
 ## Getting Started
 [(back to top)](#table-of-contents)<br/>
@@ -59,12 +62,37 @@ if yarn version upgrade<br/>
 5. 의존성 업데이트
    $yarn install
 ```
+
+MySQL<br/>
+1. Create and Use Database<br/>
+```CREATE DATABASE {DB NAME};```<br/>
+```USE {DATABASE};```<br/><br/>
+2. Download and Execute [SQL Script](https://github.com/ram-yeon/everyday/blob/main/document/everyday-DB-query.pdf)<br/>
+
 ### Installation
 1. Clone the repo<br/>
 ```git clone https://github.com/ram-yeon/everyday.git```<br/>
 2. Install NPM packages<br/>
 ```npm install or yarn install```<br/>
-3. ```npm start or yarn start```
+3. ```npm start or yarn start```<br/><br/>
+(Spring Boot with IntelliJ IDEA)
+4. Setting Environment variables<br/>
+Run > Edit Configurations --> Application > ramyeon.everyday.EverydayApplication<br/>
+_Add Environment variables:_
+```
+   MAIL_USERNAME={your mail}@gmail.com;
+   MAIL_PASSWORD={your password};
+   MYSQL_USERNAME={your MySQL username};
+   MYSQL_PASSWORD={your MySQL password};
+   FILE_DIR={file upload path}
+```
+5. Change DataBase Connection Info<br/>
+src/main/resources/application.yml<br/>
+   spring: > datasource: > url: ><br/>
+```jdbc:mysql://{IP:Port}/{DataBase Name}?useSSL=false&useUnicode=true&serverTimezone={Timezone}&allowPublicKeyRetrieval=true```
+   <br/><br/>
+6. Run Application<br/>
+   Run > Run... or _Alt+Shift+F10_
 
 ## Contact
 [(back to top)](#table-of-contents)<br/>
@@ -73,7 +101,8 @@ https://github.com/ram-yeon/everyday
 
 <h4>backend developer</h4>
 원동연<br/>
-https://github.com/Won-dy<br/>
+https://github.com/Won-dy <br/>
+<a href="mailto:junhfireace@gmail.com?">junhfireace@gmail.com</a>
 
 <h4>frontend developer</h4>
 정보람<br/>
