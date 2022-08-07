@@ -1,6 +1,7 @@
 package ramyeon.everyday.domain.post.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.dto.PostDto;
@@ -114,6 +116,23 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(200, "게시글 검색 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * 게시글 등록 API
+     */
+    @PostMapping(value = "/posts/files")
+    public ResponseEntity createPostWithFile(@RequestPart(value = "imageFiles", required = false) List<MultipartFile> files,
+                                             @RequestPart(value = "postInfo") PostDto.PostRequestDto postRequestDto,
+                                             @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+        try {
+            PostDto.PostResponseDto data = postService.createPostWithFile(principalDetails.getUsername(), postRequestDto.getBoardType(), postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents(), files);
+            return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NotFoundEnumException | SizeLimitExceededException ee) {
+            return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 

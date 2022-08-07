@@ -1,6 +1,8 @@
 package ramyeon.everyday.domain.file.entity;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.notice.entity.Notice;
 import ramyeon.everyday.domain.post.entity.Post;
@@ -8,6 +10,7 @@ import ramyeon.everyday.domain.post.entity.Post;
 import javax.persistence.*;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class File extends DateBaseEntity {  // 파일
 
@@ -31,4 +34,31 @@ public class File extends DateBaseEntity {  // 파일
     @JoinColumn(name = "notice_id")
     private Notice notice;  // 공지사항
 
+    @Builder
+    public File(String uploadFilename, String storeFilename, String size, Long sequence) {
+        this.uploadFilename = uploadFilename;
+        this.storeFilename = storeFilename;
+        this.size = size;
+        this.sequence = sequence;
+    }
+
+
+    //== 연관관계 메서드 ==//
+    private void setPost(Post post) {
+        this.post = post;
+        post.getFileList().add(this);
+    }
+
+
+    //== 생성 메서드 ==//
+    public static File addFile(String originalFilename, String storeFileName, String fileSize, long sequence, Post post) {
+        File file = File.builder()
+                .uploadFilename(originalFilename)
+                .storeFilename(storeFileName)
+                .size(String.valueOf(fileSize))
+                .sequence(sequence)
+                .build();
+        file.setPost(post);
+        return file;
+    }
 }
