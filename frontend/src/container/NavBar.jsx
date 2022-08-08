@@ -5,7 +5,7 @@ import { AppBar, makeStyles, Toolbar, Typography } from "@material-ui/core";
 
 import { Search } from '@mui/icons-material';
 import { InputBase } from '@mui/material';
-import { alpha } from '@mui/lab/node_modules/@mui/system';
+// import { alpha } from '@mui/lab/node_modules/@mui/system';
 import { Avatar } from 'antd';
 
 import * as UserAPI from '../api/Users';
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "55%",
     marginTop: "5px",
     border: "2px lightgray solid",
-    backgroundColor: alpha(theme.palette.common.white, 1),
+    // backgroundColor: alpha(theme.palette.common.white, 1),
     borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.down("sm")]: {
       display: "none",
@@ -60,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
   input: {
     marginLeft: theme.spacing(1),
     width: "100%",
-
   },
   myImg: {
     marginLeft: "1rem",

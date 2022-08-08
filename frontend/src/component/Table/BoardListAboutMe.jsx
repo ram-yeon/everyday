@@ -49,13 +49,13 @@ function BoardListAboutMe() {
                         response.data.content.forEach((v, i) => {
                             let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
                             let boardTypeToKor = v.boardType;                               //게시판타입(한글)
-                            const title = (v.title).replaceAll("\"", "");                            
-                            const contents = (v.contents).replaceAll("\"", "");                      
-                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));        
-                            let writer = (v.writer).replaceAll("\"", "");                         
-                            const likeCount = (v.likeCount)                                 
-                            const commentCount = (v.commentCount);                         
-                            const views = (v.views);;                                       
+                            const title = (v.title).replaceAll("\"", "");
+                            const contents = (v.contents).replaceAll("\"", "");
+                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));
+                            let writer = (v.writer).replaceAll("\"", "");
+                            const likeCount = (v.likeCount)
+                            const commentCount = (v.commentCount);
+                            const views = (v.views);;
                             const fileCount = (v.fileCount);
                             switch (boardTypeToKor) {
                                 case 'FREE':
@@ -69,11 +69,13 @@ function BoardListAboutMe() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer = '에브리타임';
+                                    writer = '에브리데이';
+                                    break;
+                                default:
                                     break;
                             }
                             postItems.push({
-                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, 
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor,
                                 user: writer, postTitle: title, postContent: contents, date: registrationDate,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
@@ -98,14 +100,14 @@ function BoardListAboutMe() {
                         response.data.content.forEach((v, i) => {
                             let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
                             let boardTypeToKor = v.boardType;                               //게시판타입(한글)
-                            const title = (v.title).replaceAll("\"", "");                            
-                            const contents = (v.contents).replaceAll("\"", "");                      
-                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));        
-                            let writer = (v.writer).replaceAll("\"", "");                         
-                            const likeCount = (v.likeCount)                                 
-                            const commentCount = (v.commentCount);                         
-                            const views = (v.views);;                                       
-                            const fileCount = (v.fileCount);                                
+                            const title = (v.title).replaceAll("\"", "");
+                            const contents = (v.contents).replaceAll("\"", "");
+                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));
+                            let writer = (v.writer).replaceAll("\"", "");
+                            const likeCount = (v.likeCount)
+                            const commentCount = (v.commentCount);
+                            const views = (v.views);;
+                            const fileCount = (v.fileCount);
                             switch (boardTypeToKor) {
                                 case 'FREE':
                                     boardTypeToKor = '자유 게시판';
@@ -118,11 +120,13 @@ function BoardListAboutMe() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer = '에브리타임';
+                                    writer = '에브리데이';
+                                    break;
+                                default:
                                     break;
                             }
                             postItems.push({
-                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, 
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor,
                                 user: writer, postTitle: title, postContent: contents, date: registrationDate,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
@@ -147,13 +151,13 @@ function BoardListAboutMe() {
                         response.data.content.forEach((v, i) => {
                             let boardTypeToLowerCase = (v.boardType.toLowerCase());         //게시판타입(소문자)
                             let boardTypeToKor = v.boardType;                               //게시판타입(한글)
-                            const title = (v.title).replaceAll("\"", "");                            
-                            const contents = (v.contents).replaceAll("\"", "");                      
-                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));        
-                            let writer = (v.writer).replaceAll("\"", "");                         
-                            const likeCount = (v.likeCount)                                 
-                            const commentCount = (v.commentCount);                         
-                            const views = (v.views);;                                       
+                            const title = (v.title).replaceAll("\"", "");
+                            const contents = (v.contents).replaceAll("\"", "");
+                            const registrationDate = displayDateFormat((v.registrationDate).replaceAll("\"", ""));
+                            let writer = (v.writer).replaceAll("\"", "");
+                            const likeCount = (v.likeCount)
+                            const commentCount = (v.commentCount);
+                            const views = (v.views);;
                             const fileCount = (v.fileCount);
                             switch (boardTypeToKor) {
                                 case 'FREE':
@@ -167,11 +171,13 @@ function BoardListAboutMe() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer = '에브리타임';
+                                    writer = '에브리데이';
+                                    break;
+                                default:
                                     break;
                             }
                             postItems.push({
-                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor, 
+                                boardTypeToLowerCase: boardTypeToLowerCase, boardTypeToKor: boardTypeToKor,
                                 user: writer, postTitle: title, postContent: contents, date: registrationDate,
                                 likeCount: likeCount, commentCount: commentCount, fileCount: fileCount, views: views, id: v.id
                             });
