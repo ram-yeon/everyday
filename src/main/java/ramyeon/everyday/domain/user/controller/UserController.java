@@ -40,8 +40,10 @@ public class UserController {
     public ResponseEntity register(@Valid @RequestBody UserDto.RegisterRequestDto registerRequestDto) {
         try {
             userService.register(registerRequestDto.getLoginId(), registerRequestDto.getPassword(), registerRequestDto.getName(), registerRequestDto.getEmail(), registerRequestDto.getNickname(), registerRequestDto.getAdmissionYear(), registerRequestDto.getSchoolName());
-        } catch (NotFoundResourceException | DuplicateResourceException e) {
+        } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (DuplicateResourceException de) {
+            return new ResponseEntity<>(new ResultDto(400, de.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(new ResultDto(200, "회원가입 성공"), HttpStatus.OK);
     }

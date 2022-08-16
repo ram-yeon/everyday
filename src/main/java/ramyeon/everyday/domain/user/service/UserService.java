@@ -14,6 +14,7 @@ import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
 import ramyeon.everyday.dto.UserDto;
 import ramyeon.everyday.enum_.UserAuthority;
+import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
@@ -44,16 +45,19 @@ public class UserService {
      */
     public void register(String loginId, String password, String name, String email, String nickname, String admissionYear, String schoolName) {
         // 아이디 중복 체크
-        if (userRepository.findByLoginId(loginId).isPresent())
+        userRepository.findByLoginIdAndIsDeleted(loginId, Whether.N).ifPresent(u -> {
             throw new DuplicateResourceException("이미 존재하는 아이디");
+        });
 
         // 이메일 중복 체크
-        if (userRepository.findByEmail(email).isPresent())
+        userRepository.findByEmailAndIsDeleted(email, Whether.N).ifPresent(u -> {
             throw new DuplicateResourceException("이미 존재하는 이메일");
+        });
 
         // 닉네임 중복 체크
-        if (userRepository.findByNickname(nickname).isPresent())
+        userRepository.findByNicknameAndIsDeleted(nickname, Whether.N).ifPresent(u -> {
             throw new DuplicateResourceException("이미 존재하는 닉네임");
+        });
 
         School findSchool = schoolRepository.findBySchoolName(schoolName).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 학교"));  // 학교 조회
 
