@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.manager.entity.Manager;
-import ramyeon.everyday.domain.manager.repository.ManagerRepository;
+import ramyeon.everyday.domain.manager.service.ManagerService;
 import ramyeon.everyday.domain.token.entity.Token;
 import ramyeon.everyday.domain.token.repository.TokenRepository;
 import ramyeon.everyday.domain.user.entity.User;
@@ -18,7 +18,7 @@ public class TokenService {
 
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
-    private final ManagerRepository managerRepository;
+    private final ManagerService managerService;
 
     /**
      * 토큰 등록
@@ -41,7 +41,7 @@ public class TokenService {
 
             // 관리자의 토큰 등록
             case MANAGER:
-                Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));
+                Manager manager = managerService.getLoginManager(loginId);  // 관리자 조회
 
                 // 토큰이 이미 존재하면
                 if (isManagerTokenExisted(manager)) {

@@ -4,19 +4,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ramyeon.everyday.domain.manager.entity.Manager;
-import ramyeon.everyday.domain.manager.repository.ManagerRepository;
+import ramyeon.everyday.domain.manager.service.ManagerService;
 import ramyeon.everyday.domain.token.service.TokenService;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.service.UserService;
 import ramyeon.everyday.enum_.AccountAuthority;
-import ramyeon.everyday.exception.NotFoundResourceException;
 
 @Service
 @AllArgsConstructor
 public class LogoutService {
 
     private final UserService userService;
-    private final ManagerRepository managerRepository;
+    private final ManagerService managerService;
     private final TokenService tokenService;
 
     @Transactional
@@ -30,7 +29,7 @@ public class LogoutService {
 
             // 관리자 로그아웃
             case MANAGER:
-                Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회
+                Manager manager = managerService.getLoginManager(loginId);  // 관리자 조회
                 tokenService.deleteToken(manager.getToken());  // 토큰 삭제
                 break;
         }
