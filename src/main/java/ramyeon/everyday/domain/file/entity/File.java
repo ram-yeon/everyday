@@ -47,6 +47,17 @@ public class File extends DateBaseEntity {  // 파일
     }
 
 
+    //== 비즈니스 로직 ==//
+
+    // 파일 삭제
+    public void delete(Object type) {
+        this.isDeleted = Whether.Y;
+        if (type instanceof Post) { // 게시글의 첨부파일이면
+            deleteFromPost(post);  // post에서 파일 삭제
+        }
+    }
+
+
     //== 연관관계 메서드 ==//
     private void setPost(Post post) {
         this.post = post;
@@ -58,6 +69,9 @@ public class File extends DateBaseEntity {  // 파일
         notice.getFileList().add(this);
     }
 
+    public void deleteFromPost(Post post) {
+        post.getFileList().remove(this);
+    }
 
     //== 생성 메서드 ==//
     public static File addFile(String originalFilename, String storeFileName, String fileSize, long sequence, Object type) {

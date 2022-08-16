@@ -389,6 +389,12 @@ public class PostService {
             commentList.get(i).delete(commentList.get(i).getUser(), post);
         }
 
+        // 파일 삭제
+        List<File> fileList = post.getFileList();
+        for (int i = fileList.size() - 1; i >= 0; i--) {
+            fileList.get(i).delete(post);
+        }
+
         post.delete(loginUser);  // 게시글 삭제
     }
 
