@@ -69,7 +69,6 @@ public class UserService {
         User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         loginUser.delete(loginUser.getSchool());
         tokenService.deleteToken(loginUser.getToken());  // 토큰 삭제
-        userRepository.delete(loginUser);
     }
 
     /**

@@ -60,7 +60,7 @@ public class User extends DateBaseEntity {  // 회원
     private Token token;  // 토큰
 
     @Builder
-    public User(String loginId, String password, String name, String email, String nickname, String admissionYear, UserAuthority authority, School school) {
+    public User(String loginId, String password, String name, String email, String nickname, String admissionYear, UserAuthority authority, Whether isDeleted, School school) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -68,6 +68,7 @@ public class User extends DateBaseEntity {  // 회원
         this.nickname = nickname;
         this.admissionYear = admissionYear;
         this.authority = authority;
+        this.isDeleted = isDeleted;
         this.school = school;
     }
 
@@ -80,6 +81,7 @@ public class User extends DateBaseEntity {  // 회원
 
     // 회원 삭제
     public void delete(School school) {
+        this.isDeleted = Whether.Y;
         deleteFromSchool(school);
     }
 
@@ -114,6 +116,7 @@ public class User extends DateBaseEntity {  // 회원
                 .nickname(nickname)
                 .admissionYear(admissionYear)
                 .authority(UserAuthority.ROLE_BASIC)
+                .isDeleted(Whether.N)
                 .school(school).build();
         user.setSchool(school);
         return user;
