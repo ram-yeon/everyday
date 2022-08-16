@@ -51,14 +51,15 @@ public class File extends DateBaseEntity {  // 파일
 
 
     //== 생성 메서드 ==//
-    public static File addFile(String originalFilename, String storeFileName, String fileSize, long sequence, Post post) {
+    public static File addFile(String originalFilename, String storeFileName, String fileSize, long sequence, Object type) {
         File file = File.builder()
                 .uploadFilename(originalFilename)
                 .storeFilename(storeFileName)
                 .size(String.valueOf(fileSize))
                 .sequence(sequence)
                 .build();
-        file.setPost(post);
+        if (type instanceof Post)  // 게시글의 첨부파일이면
+            file.setPost((Post) type);  // post에 파일 설정
         return file;
     }
 }

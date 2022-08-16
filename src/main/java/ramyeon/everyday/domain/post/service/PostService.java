@@ -1,11 +1,9 @@
 package ramyeon.everyday.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ramyeon.everyday.domain.comment.entity.Comment;
 import ramyeon.everyday.domain.comment.service.CommentService;
@@ -335,17 +333,12 @@ public class PostService {
      * 게시글 등록
      */
     public PostDto.PostResponseDto createPostWithFile(String loginId, String boardType, String isAnonymous, String title, String contents, List<MultipartFile> fileList) throws Exception {
-        // 파일이 존재하는 경우
-        if (!CollectionUtils.isEmpty(fileList)) {
-            int uploadFileCnt = fileList.size();  // 업로드 파일 개수
-            if (uploadFileCnt > 20)  // 업로드 가능한 파일 개수 초과
-                throw new SizeLimitExceededException("파일은 최대 20개 까지 업로드 가능" + System.lineSeparator() + "현재 업로드 파일 개수: " + uploadFileCnt, uploadFileCnt, 20);
-        }
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        fileService.checkFileType(fileList);  // 첨부 파일 종류 확인
+        fileService.checkFileCountLimitExceeded(fileList);  // 파일 최대 업로드 개수 초과여부 확인
 
+        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
         Post post = Post.createPost(loginUser, loginUser.getSchool(), BoardType.findBoardType(boardType), Whether.findWhether(isAnonymous), Whether.N, 0L, title, contents);  // 게시글 생성
         Post savedPost = postRepository.save(post);  // 게시글 등록
-
         fileService.createFiles(fileList, savedPost);  // 파일 등록
 
         return PostDto.PostResponseDto.builder()

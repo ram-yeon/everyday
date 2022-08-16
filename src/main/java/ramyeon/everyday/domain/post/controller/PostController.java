@@ -1,7 +1,6 @@
 package ramyeon.everyday.domain.post.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +15,7 @@ import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.dto.PostDto;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.enum_.BoardType;
+import ramyeon.everyday.exception.BadFileUploadException;
 import ramyeon.everyday.exception.NoRightsOfAccessException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
@@ -131,7 +131,7 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (NotFoundEnumException | SizeLimitExceededException ee) {
+        } catch (NotFoundEnumException | BadFileUploadException ee) {
             return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }

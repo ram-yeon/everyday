@@ -68,7 +68,7 @@ public class Post extends DateBaseEntity {  // 게시글
     }
 
     @Builder
-    public Post(BoardType boardType, String title, String contents, Whether isAnonymous, Whether isDeleted, Long views, User user, School school, List<File> fileList) {
+    public Post(BoardType boardType, String title, String contents, Whether isAnonymous, Whether isDeleted, Long views, User user, School school) {
         this.boardType = boardType;
         this.title = title;
         this.contents = contents;
@@ -77,7 +77,6 @@ public class Post extends DateBaseEntity {  // 게시글
         this.views = views;
         this.user = user;
         this.school = school;
-        this.fileList = fileList;
     }
 
     //== 비즈니스 로직 ==//
