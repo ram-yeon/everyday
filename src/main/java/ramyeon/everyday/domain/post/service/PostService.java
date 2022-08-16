@@ -18,6 +18,7 @@ import ramyeon.everyday.domain.post.entity.Post;
 import ramyeon.everyday.domain.post.repository.PostRepository;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
+import ramyeon.everyday.domain.user.service.UserService;
 import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.dto.FileDto;
 import ramyeon.everyday.dto.PostDto;
@@ -37,6 +38,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final LikeService likeService;
     private final NoticeService noticeService;
     private final NoticeRepository noticeRepository;
@@ -47,7 +49,7 @@ public class PostService {
      * 메인화면 게시글 목록 조회
      */
     public Map<BoardType, List<PostDto.PostResponseDto>> getPostsMain(String loginId, Pageable pageable) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
 
         Map<BoardType, List<PostDto.PostResponseDto>> postsMainMap = new HashMap<>();
 
@@ -95,7 +97,7 @@ public class PostService {
     public Page<PostDto.PostResponseDto> getPostsBoard(String loginId, String type, Pageable pageable) {
         BoardType boardType = BoardType.findBoardType(type);  // 게시판 종류
 
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         if (boardType == BoardType.HOT) {  // 핫 게시판
             // 핫 게시글 조회
             List<Post> postsHot = getHotPostsMain(loginUser);
@@ -197,7 +199,7 @@ public class PostService {
      * 좋아요한 게시글, 공지사항 목록 조회
      */
     public Page<PostDto.PostResponseDto> getLikePostsAndNotices(String loginId, Pageable pageable) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
 
         List<PostDto.PostResponseDto> postAndNoticeDtoList = new ArrayList<>();
 
@@ -262,7 +264,7 @@ public class PostService {
      */
     public Page<PostDto.PostResponseDto> getPostsMy(String type, String loginId, Pageable pageable) {
         MyPostType myPostType = MyPostType.findMyPostType(type);  // 요청 글 종류
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
 
         List<Post> posts = new ArrayList<>();
         if (myPostType == MyPostType.POST) {   // 내가 쓴 글
@@ -309,7 +311,7 @@ public class PostService {
      * 게시글 검색
      */
     public PostDto.PostsSearchResponseDto getPostsSearch(String keyword, String loginId, Pageable pageable) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         Page<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(keyword, keyword, loginUser.getSchool(), Whether.N, pageable);
         Page<PostDto.PostResponseDto> postDtos = posts.map(
                 post -> PostDto.PostResponseDto.builder()
@@ -336,7 +338,7 @@ public class PostService {
         fileService.checkFileType(fileList);  // 첨부 파일 종류 확인
         fileService.checkFileCountLimitExceeded(fileList);  // 파일 최대 업로드 개수 초과여부 확인
 
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         Post post = Post.createPost(loginUser, loginUser.getSchool(), BoardType.findBoardType(boardType), Whether.findWhether(isAnonymous), Whether.N, 0L, title, contents);  // 게시글 생성
         Post savedPost = postRepository.save(post);  // 게시글 등록
         fileService.createFiles(fileList, savedPost);  // 파일 등록
@@ -350,7 +352,7 @@ public class PostService {
      * 게시글 등록 (첨부 파일 제외)
      */
     public PostDto.PostResponseDto createPost(String loginId, String boardType, String isAnonymous, String title, String contents) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         Post post = Post.createPost(loginUser, loginUser.getSchool(), BoardType.findBoardType(boardType), Whether.findWhether(isAnonymous), Whether.N, 0L, title, contents);  // 게시글 생성
         return PostDto.PostResponseDto.builder()
                 .id(postRepository.save(post).getId())  // 게시글 등록 및 등록된 게시글 번호 반환
@@ -362,7 +364,7 @@ public class PostService {
      */
     @Transactional
     public void updatePost(String loginId, Long postId, String isAnonymous, String title, String contents) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
         if (post.getUser() != loginUser)  // 다른 회원의 게시글 수정
             throw new NoRightsOfAccessException("해당 게시글의 수정 권한이 없음");
@@ -374,7 +376,7 @@ public class PostService {
      */
     @Transactional
     public void deletePost(String loginId, Long postId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         // 게시글 및 댓글, 사용자 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
         Post post = postRepository.findByIdAndIsDeletedWithUserCommentUser(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));
 

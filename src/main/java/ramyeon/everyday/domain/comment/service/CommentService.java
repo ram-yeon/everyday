@@ -12,6 +12,7 @@ import ramyeon.everyday.domain.post.repository.PostRepository;
 import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
+import ramyeon.everyday.domain.user.service.UserService;
 import ramyeon.everyday.dto.CommentDto;
 import ramyeon.everyday.enum_.CommentType;
 import ramyeon.everyday.enum_.TargetType;
@@ -28,6 +29,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final PostRepository postRepository;
     private final LikeService likeService;
 
@@ -35,7 +37,7 @@ public class CommentService {
      * 댓글 등록
      */
     public CommentDto.CommentResponseDto createComment(String loginId, CommentDto.CommentCreateRequestDto createRequestDto) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         Post post = postRepository.findByIdAndIsDeleted(createRequestDto.getPostId(), Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
         Comment comment = Comment.addComment(createRequestDto.getContents(), CommentType.findCommentType(createRequestDto.getCommentType()), createRequestDto.getPreId(),
                 Whether.findWhether(createRequestDto.getIsAnonymous()), Whether.N, loginUser, post);
@@ -95,7 +97,7 @@ public class CommentService {
      */
     @Transactional
     public void deleteComment(String loginId, Long commentId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
         Comment comment = commentRepository.findByIdAndIsDeleted(commentId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 댓글"));  // 댓글 조회
         if (comment.getUser() != loginUser)  // 남의 댓글 삭제
             throw new NoRightsOfAccessException("해당 댓글의 삭제 권한이 없음");

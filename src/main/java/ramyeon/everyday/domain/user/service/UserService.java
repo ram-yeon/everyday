@@ -70,7 +70,7 @@ public class UserService {
      * 회원 탈퇴
      */
     public void deleteUser(String loginId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = getLoginUser(loginId);  // 회원 조회
         loginUser.delete(loginUser.getSchool());
         tokenService.deleteToken(loginUser.getToken());  // 토큰 삭제
     }
@@ -79,7 +79,7 @@ public class UserService {
      * 배너에 띄울 회원 정보 조회
      */
     public UserDto.BannerResponseDto getUserInfoForBanner(String loginId) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = getLoginUser(loginId);  // 회원 조회
         return new UserDto.BannerResponseDto(loginUser.getLoginId(), loginUser.getName(), loginUser.getNickname(), loginUser.getSchool().getSchoolName());
     }
 
@@ -88,7 +88,7 @@ public class UserService {
      */
     @Transactional
     public int upgradeUserAuthority(String loginId, Collection<? extends GrantedAuthority> authorities) {
-        User loginUser = userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));  // 회원 조회
+        User loginUser = getLoginUser(loginId);  // 회원 조회
 
         // 이미 등업이 완료된 회원이면
         for (GrantedAuthority authority : authorities) {
@@ -106,5 +106,10 @@ public class UserService {
         } else {  // 등업 거절
             return 1;
         }
+    }
+
+    // 로그인한 회원 조회
+    public User getLoginUser(String loginId) {
+        return userRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 회원"));
     }
 }
