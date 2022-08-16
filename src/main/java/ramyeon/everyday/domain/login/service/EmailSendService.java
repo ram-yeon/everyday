@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ramyeon.everyday.domain.user.entity.User;
 import ramyeon.everyday.domain.user.repository.UserRepository;
+import ramyeon.everyday.enum_.Whether;
+import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.InvalidInputValueException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
@@ -37,6 +38,11 @@ public class EmailSendService {
             if (loginId == null || loginId.isBlank())
                 throw new InvalidInputValueException("아이디를 입력하세요");
             userRepository.findByLoginIdAndEmail(loginId, email).orElseThrow(() -> new NotFoundResourceException("아이디와 이메일 정보가 다름"));
+        }
+        if (type == EmailAuthenticateType.JOIN) {  // 회원가입 시 이미 가입된 이메일인지 확인
+            userRepository.findByEmailAndIsDeleted(email, Whether.N).ifPresent(u -> {
+                throw new DuplicateResourceException("이미 가입된 이메일");
+            });
         }
 
         Random random = new Random();

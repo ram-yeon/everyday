@@ -14,6 +14,7 @@ import ramyeon.everyday.domain.login.service.EmailSendService;
 import ramyeon.everyday.domain.login.service.LoginService;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.dto.UserDto;
+import ramyeon.everyday.exception.DuplicateResourceException;
 import ramyeon.everyday.exception.InvalidInputValueException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
@@ -67,7 +68,7 @@ public class LoginController {
             code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType(), emailAuthenticationRequestDto.getLoginId());  // 인증코드 발송
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (NotFoundEnumException | InvalidInputValueException ee) {
+        } catch (NotFoundEnumException | InvalidInputValueException | DuplicateResourceException ee) {
             return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
