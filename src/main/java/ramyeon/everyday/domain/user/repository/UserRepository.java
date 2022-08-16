@@ -18,11 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             " WHERE u.loginId = ?1")
     Optional<User> findByLoginIdTargetTypeInWithLike(String loginId);  // 회원 조회 - likeList와 fetch join
 
-    Optional<User> findByEmail(String email);
-
     Optional<User> findByEmailAndIsDeleted(String email, Whether isDeleted);
 
-    Optional<User> findByLoginIdAndEmail(String loginId, String email);
+    Optional<User> findByLoginIdAndEmailAndIsDeleted(String loginId, String email, Whether isDeleted);
 
     Optional<User> findByNicknameAndIsDeleted(String nickname, Whether isDeleted);
 

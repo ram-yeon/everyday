@@ -37,7 +37,7 @@ public class EmailSendService {
         if (type == EmailAuthenticateType.FINDPW) {  // 비밀번호 찾기 시 아이디와 이메일 정보가 맞는지 확인
             if (loginId == null || loginId.isBlank())
                 throw new InvalidInputValueException("아이디를 입력하세요");
-            userRepository.findByLoginIdAndEmail(loginId, email).orElseThrow(() -> new NotFoundResourceException("아이디와 이메일 정보가 다름"));
+            userRepository.findByLoginIdAndEmailAndIsDeleted(loginId, email, Whether.N).orElseThrow(() -> new NotFoundResourceException("아이디와 이메일 정보가 다름"));
         }
         if (type == EmailAuthenticateType.JOIN) {  // 회원가입 시 이미 가입된 이메일인지 확인
             userRepository.findByEmailAndIsDeleted(email, Whether.N).ifPresent(u -> {
@@ -75,7 +75,7 @@ public class EmailSendService {
 
     // 아이디 찾기를 위한 아이디 전송
     public void sendLoginId(String email) {
-        User findUser = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundResourceException("해당 이메일로 가입된 아이디 없음"));
+        User findUser = userRepository.findByEmailAndIsDeleted(email, Whether.N).orElseThrow(() -> new NotFoundResourceException("해당 이메일로 가입된 아이디 없음"));
         String loginId = findUser.getLoginId();
 
         // 이메일로 아이디 전송

@@ -36,7 +36,7 @@ public class UserService {
      */
     @Transactional
     public void changePassword(String email, String password) {
-        User findUser = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundResourceException("해당 이메일로 가입된 회원 없음"));  // 회원 조회
+        User findUser = userRepository.findByEmailAndIsDeleted(email, Whether.N).orElseThrow(() -> new NotFoundResourceException("해당 이메일로 가입된 회원 없음"));  // 회원 조회
         findUser.changePassword(bCryptPasswordEncoder.encode(password));  // 비밀번호 변경
     }
 

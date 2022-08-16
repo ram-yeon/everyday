@@ -28,7 +28,7 @@ public class LoginService {
      */
     public boolean findUserForFindPassword(String loginId) {
         // 아이디로 가입된 회원이 있나 조회
-        User findUser = userRepository.findByLoginId(loginId).orElse(null);
+        User findUser = userRepository.findByLoginIdAndIsDeleted(loginId, Whether.N).orElse(null);
         return findUser != null;
     }
 
