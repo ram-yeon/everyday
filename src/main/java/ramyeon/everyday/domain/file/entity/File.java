@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ramyeon.everyday.domain.DateBaseEntity;
 import ramyeon.everyday.domain.notice.entity.Notice;
 import ramyeon.everyday.domain.post.entity.Post;
+import ramyeon.everyday.enum_.Whether;
 
 import javax.persistence.*;
 
@@ -24,6 +25,9 @@ public class File extends DateBaseEntity {  // 파일
 
     private String size;  // 용량
     private Long sequence;  // 순서
+
+    @Enumerated(EnumType.STRING)
+    private Whether isDeleted;  // 삭제 여부
 
 
     @ManyToOne(fetch = FetchType.LAZY)

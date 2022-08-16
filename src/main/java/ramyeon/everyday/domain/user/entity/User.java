@@ -10,6 +10,7 @@ import ramyeon.everyday.domain.post.entity.Post;
 import ramyeon.everyday.domain.school.entity.School;
 import ramyeon.everyday.domain.token.entity.Token;
 import ramyeon.everyday.enum_.UserAuthority;
+import ramyeon.everyday.enum_.Whether;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,6 +36,9 @@ public class User extends DateBaseEntity {  // 회원
 
     @Enumerated(EnumType.STRING)
     private UserAuthority authority;  // 권한
+
+    @Enumerated(EnumType.STRING)
+    private Whether isDeleted;  // 삭제 여부
 
 
     @ManyToOne(fetch = FetchType.LAZY)
