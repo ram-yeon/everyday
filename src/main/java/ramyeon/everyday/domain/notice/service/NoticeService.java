@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ramyeon.everyday.domain.file.entity.File;
+import ramyeon.everyday.domain.file.service.FileService;
 import ramyeon.everyday.domain.like.repository.LikeRepository;
 import ramyeon.everyday.domain.manager.entity.Manager;
 import ramyeon.everyday.domain.manager.repository.ManagerRepository;
@@ -33,6 +35,7 @@ public class NoticeService {
     private final LikeRepository likeRepository;
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
 
     /**
      * 공지사항 목록 조회
@@ -126,6 +129,23 @@ public class NoticeService {
 
     /**
      * 공지사항 등록
+     */
+    public NoticeDto.NoticeResponseDto createNoticeWithFile(String loginId, String title, String contents, List<MultipartFile> fileList) throws Exception {
+        fileService.checkFileType(fileList);  // 첨부 파일 종류 확인
+        fileService.checkFileCountLimitExceeded(fileList);  // 파일 최대 업로드 개수 초과여부 확인
+
+        Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회
+        Notice notice = Notice.createNotice(manager, Whether.N, 0L, title, contents);  // 공지사항 생성
+        Notice savedNotice = noticeRepository.save(notice);  // 공지사항 등록
+        fileService.createFiles(fileList, savedNotice);  // 파일 등록
+
+        return NoticeDto.NoticeResponseDto.builder()
+                .id(savedNotice.getId())  // 등록된 공지사항 번호 반환
+                .build();
+    }
+
+    /**
+     * 공지사항 등록 (첨부 파일 제외)
      */
     public NoticeDto.NoticeResponseDto createNotice(String loginId, String title, String contents) {
         Manager manager = managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회

@@ -9,14 +9,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ramyeon.everyday.auth.ManagerDetails;
 import ramyeon.everyday.auth.PrincipalDetails;
 import ramyeon.everyday.domain.notice.service.NoticeService;
 import ramyeon.everyday.dto.NoticeDto;
 import ramyeon.everyday.dto.ResultDto;
+import ramyeon.everyday.exception.BadFileUploadException;
+import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,6 +52,23 @@ public class NoticeController {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new ResultDto(200, "공지사항 상세 조회 성공", data), HttpStatus.OK);
+    }
+
+    /**
+     * 공지사항 등록 API
+     */
+    @PostMapping(value = "/notices/files")
+    public ResponseEntity createNoticeWithFile(@RequestPart(value = "imageFiles", required = false) List<MultipartFile> files,
+                                               @RequestPart(value = "noticeInfo") NoticeDto.NoticeRequestDto noticeRequestDto,
+                                               @AuthenticationPrincipal ManagerDetails managerDetails) throws Exception {
+        try {
+            NoticeDto.NoticeResponseDto data = noticeService.createNoticeWithFile(managerDetails.getUsername(), noticeRequestDto.getTitle(), noticeRequestDto.getContents(), files);
+            return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NotFoundEnumException | BadFileUploadException ee) {
+            return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**

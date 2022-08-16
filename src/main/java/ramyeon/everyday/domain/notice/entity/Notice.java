@@ -52,13 +52,12 @@ public class Notice extends DateBaseEntity {  // 공지사항
     }
 
     @Builder
-    public Notice(String title, String contents, Long views, Whether isDeleted, Manager manager, List<File> fileList) {
+    public Notice(String title, String contents, Long views, Whether isDeleted, Manager manager) {
         this.title = title;
         this.contents = contents;
         this.views = views;
         this.isDeleted = isDeleted;
         this.manager = manager;
-        this.fileList = fileList;
     }
 
     //== 비즈니스 로직 ==//

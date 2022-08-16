@@ -49,6 +49,11 @@ public class File extends DateBaseEntity {  // 파일
         post.getFileList().add(this);
     }
 
+    private void setNotice(Notice notice) {
+        this.notice = notice;
+        notice.getFileList().add(this);
+    }
+
 
     //== 생성 메서드 ==//
     public static File addFile(String originalFilename, String storeFileName, String fileSize, long sequence, Object type) {
@@ -60,6 +65,8 @@ public class File extends DateBaseEntity {  // 파일
                 .build();
         if (type instanceof Post)  // 게시글의 첨부파일이면
             file.setPost((Post) type);  // post에 파일 설정
+        else if (type instanceof Notice)  // 공지사항의 첨부파일이면
+            file.setNotice((Notice) type);  // notice에 파일 설정
         return file;
     }
 }
