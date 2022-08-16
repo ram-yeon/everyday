@@ -172,6 +172,13 @@ public class NoticeService {
     public void deleteNotice(String loginId, Long noticeId) {
         managerRepository.findByLoginId(loginId).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 관리자"));  // 관리자 조회
         Notice notice = noticeRepository.findByIdAndIsDeleted(noticeId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 공지사항"));  // 공지사항 조회
+
+        // 파일 삭제
+        List<File> fileList = notice.getFileList();
+        for (int i = fileList.size() - 1; i >= 0; i--) {
+            fileList.get(i).delete(notice);
+        }
+
         notice.delete();  // 공지사항 삭제
     }
 

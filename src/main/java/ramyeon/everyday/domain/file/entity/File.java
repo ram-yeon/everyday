@@ -52,9 +52,10 @@ public class File extends DateBaseEntity {  // 파일
     // 파일 삭제
     public void delete(Object type) {
         this.isDeleted = Whether.Y;
-        if (type instanceof Post) { // 게시글의 첨부파일이면
+        if (type instanceof Post)  // 게시글의 첨부파일이면
             deleteFromPost(post);  // post에서 파일 삭제
-        }
+        else if (type instanceof Notice)  // 공지사항의 첨부파일이면
+            deleteFromNotice(notice);  // notice에서 파일 삭제
     }
 
 
@@ -71,6 +72,10 @@ public class File extends DateBaseEntity {  // 파일
 
     public void deleteFromPost(Post post) {
         post.getFileList().remove(this);
+    }
+
+    public void deleteFromNotice(Notice notice) {
+        notice.getFileList().remove(this);
     }
 
     //== 생성 메서드 ==//
