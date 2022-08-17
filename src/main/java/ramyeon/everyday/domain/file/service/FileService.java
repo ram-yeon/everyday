@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ramyeon.everyday.domain.file.entity.File;
 import ramyeon.everyday.domain.file.repository.FileRepository;
 import ramyeon.everyday.exception.BadFileUploadException;
+import ramyeon.everyday.exception.InvalidInputValueException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,6 +89,15 @@ public class FileService {
                 if (!file.getContentType().startsWith("image"))  // 이미지 파일만 업로드 가능
                     throw new BadFileUploadException("이미지 파일만 첨부할 수 있습니다.");
             }
+        }
+    }
+
+    // "imageFiles" 요청 객체에 값이 없을 때
+    public void checkRequestFileIsEmpty(List<MultipartFile> fileList) {
+        // "imageFiles" 요청 객체가 존재하는 경우
+        if (!CollectionUtils.isEmpty(fileList)) {
+            if (fileList.get(0).getContentType() == null)  // "imageFiles" 요청 객체에 값이 없을 때
+                throw new InvalidInputValueException("파일을 첨부하세요");
         }
     }
 

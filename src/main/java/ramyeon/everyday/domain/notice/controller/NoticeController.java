@@ -16,6 +16,7 @@ import ramyeon.everyday.domain.notice.service.NoticeService;
 import ramyeon.everyday.dto.NoticeDto;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.exception.BadFileUploadException;
+import ramyeon.everyday.exception.InvalidInputValueException;
 import ramyeon.everyday.exception.NotFoundEnumException;
 import ramyeon.everyday.exception.NotFoundResourceException;
 
@@ -66,7 +67,7 @@ public class NoticeController {
             return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (NotFoundEnumException | BadFileUploadException ee) {
+        } catch (NotFoundEnumException | BadFileUploadException | InvalidInputValueException ee) {
             return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }

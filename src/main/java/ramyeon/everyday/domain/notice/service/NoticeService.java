@@ -131,6 +131,7 @@ public class NoticeService {
      * 공지사항 등록
      */
     public NoticeDto.NoticeResponseDto createNoticeWithFile(String loginId, String title, String contents, List<MultipartFile> fileList) throws Exception {
+        fileService.checkRequestFileIsEmpty(fileList);  // "imageFiles" 요청 객체에 값이 있나 확인
         fileService.checkFileType(fileList);  // 첨부 파일 종류 확인
         fileService.checkFileCountLimitExceeded(fileList);  // 파일 최대 업로드 개수 초과여부 확인
 

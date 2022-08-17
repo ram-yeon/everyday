@@ -15,10 +15,7 @@ import ramyeon.everyday.domain.post.service.PostService;
 import ramyeon.everyday.dto.PostDto;
 import ramyeon.everyday.dto.ResultDto;
 import ramyeon.everyday.enum_.BoardType;
-import ramyeon.everyday.exception.BadFileUploadException;
-import ramyeon.everyday.exception.NoRightsOfAccessException;
-import ramyeon.everyday.exception.NotFoundEnumException;
-import ramyeon.everyday.exception.NotFoundResourceException;
+import ramyeon.everyday.exception.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -131,7 +128,7 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(200, "게시글 등록 성공", data), HttpStatus.OK);
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (NotFoundEnumException | BadFileUploadException ee) {
+        } catch (NotFoundEnumException | BadFileUploadException | InvalidInputValueException ee) {
             return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
