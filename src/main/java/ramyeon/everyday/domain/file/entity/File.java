@@ -39,11 +39,12 @@ public class File extends DateBaseEntity {  // 파일
     private Notice notice;  // 공지사항
 
     @Builder
-    public File(String uploadFilename, String storeFilename, String size, Long sequence) {
+    public File(String uploadFilename, String storeFilename, String size, Long sequence, Whether isDeleted) {
         this.uploadFilename = uploadFilename;
         this.storeFilename = storeFilename;
         this.size = size;
         this.sequence = sequence;
+        this.isDeleted = isDeleted;
     }
 
 
@@ -85,6 +86,7 @@ public class File extends DateBaseEntity {  // 파일
                 .storeFilename(storeFileName)
                 .size(String.valueOf(fileSize))
                 .sequence(sequence)
+                .isDeleted(Whether.N)
                 .build();
         if (type instanceof Post)  // 게시글의 첨부파일이면
             file.setPost((Post) type);  // post에 파일 설정
