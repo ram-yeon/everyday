@@ -150,6 +150,26 @@ public class PostController {
     }
 
     /**
+     * 게시글 수정 API
+     */
+    @PatchMapping("/posts/{postId}/files")
+    public ResponseEntity updatePostWithFile(@PathVariable Long postId,
+                                             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> files,
+                                             @RequestPart(value = "postInfo") PostDto.PostRequestDto postRequestDto,
+                                             @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+        try {
+            postService.updatePostWithFile(principalDetails.getUsername(), postId, postRequestDto.getIsAnonymous(), postRequestDto.getTitle(), postRequestDto.getContents(), files);
+            return new ResponseEntity<>(new ResultDto(200, "게시글 수정 성공"), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (NoRightsOfAccessException nre) {
+            return new ResponseEntity<>(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (NotFoundEnumException | InvalidInputValueException nfe) {
+            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
      * 게시글 수정 API (첨부 파일 제외)
      */
     @PatchMapping("/posts/{postId}")

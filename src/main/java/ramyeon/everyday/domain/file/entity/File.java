@@ -59,6 +59,10 @@ public class File extends DateBaseEntity {  // 파일
             deleteFromNotice(notice);  // notice에서 파일 삭제
     }
 
+    // 파일 순서 변경
+    public void changeSequence(Long sequence) {
+        this.sequence = sequence;
+    }
 
     //== 연관관계 메서드 ==//
     private void setPost(Post post) {

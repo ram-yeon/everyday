@@ -74,6 +74,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             " and p.isDeleted = ?2")
     Optional<Post> findByIdAndIsDeletedWithUserCommentUser(Long id, Whether isDeleted);  // 게시글 삭제 시 조회 - commentList, user와 fetch join
 
+    @Query("SELECT p FROM Post p" +
+            " LEFT OUTER JOIN FETCH p.fileList f" +
+            " where p.id = ?1" +
+            " and p.isDeleted = ?2" +
+            " order by f.sequence")
+    Optional<Post> findByIdAndIsDeletedWithFile(Long id, Whether isDeleted);  // 게시글 수정 시 조회 - fileList와 fetch join
+
     Optional<Post> findByIdAndIsDeleted(Long id, Whether isDeleted);
 
     Page<Post> findByTitleContainingIgnoreCaseOrContentsContainingIgnoreCaseAndSchoolAndIsDeleted(String title, String contents, School school, Whether isDeleted, Pageable pageable);  // 게시글 검색

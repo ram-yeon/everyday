@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ramyeon.everyday.domain.comment.entity.Comment;
 import ramyeon.everyday.domain.comment.service.CommentService;
 import ramyeon.everyday.domain.file.entity.File;
+import ramyeon.everyday.domain.file.repository.FileRepository;
 import ramyeon.everyday.domain.file.service.FileService;
 import ramyeon.everyday.domain.like.entity.Like;
 import ramyeon.everyday.domain.like.service.LikeService;
@@ -44,6 +46,7 @@ public class PostService {
     private final NoticeRepository noticeRepository;
     private final CommentService commentService;
     private final FileService fileService;
+    private final FileRepository fileRepository;
 
     /**
      * 메인화면 게시글 목록 조회
@@ -358,6 +361,89 @@ public class PostService {
         return PostDto.PostResponseDto.builder()
                 .id(postRepository.save(post).getId())  // 게시글 등록 및 등록된 게시글 번호 반환
                 .build();
+    }
+
+    /**
+     * 게시글 수정
+     */
+    @Transactional
+    public void updatePostWithFile(String loginId, Long postId, String isAnonymous, String title, String contents, List<MultipartFile> fileList) throws Exception {
+        fileService.checkRequestFileIsEmpty(fileList);  // "imageFiles" 요청 객체에 값이 있나 확인
+        fileService.checkFileType(fileList);  // 첨부 파일 종류 확인
+        fileService.checkFileCountLimitExceeded(fileList);  // 파일 최대 업로드 개수 초과여부 확인
+
+        User loginUser = userService.getLoginUser(loginId);  // 회원 조회
+
+        // 게시글 및 파일 조회 - fetch join을 통한 성능 최적화로 쿼리 수 감소
+        Post post = postRepository.findByIdAndIsDeletedWithFile(postId, Whether.N).orElseThrow(() -> new NotFoundResourceException("존재하지 않는 게시글"));  // 게시글 조회
+
+        if (post.getUser() != loginUser)  // 다른 회원의 게시글 수정
+            throw new NoRightsOfAccessException("해당 게시글의 수정 권한이 없음");
+
+        // 게시글의 파일 수정
+        List<File> originalFiles = post.getFileList();  // 게시글이 기존에 가지고 있던 파일들
+
+        // 파일 존재 여부에 따른 처리 방식
+        // Server | Client | 처리
+        //      X | X      | #1. skip
+        //      X | O      | #2. 추가
+        //      O | X      | #3. 삭제
+        //      O | O      | #4. 추가 or 삭제 or 변경
+
+        if (CollectionUtils.isEmpty(originalFiles)) {  // 파일이 존재하지 않는 게시글
+            if (!CollectionUtils.isEmpty(fileList)) {  // 수정할 새 파일 존재 (#2 처리)
+                fileService.createFiles(fileList, post);  // 파일 추가
+            }
+
+        } else {  // 파일이 존재하는 게시글
+            if (CollectionUtils.isEmpty(fileList)) {  // 수정할 새 파일이 존재하지 않음 (#3 처리)
+                // 기존 파일 삭제
+                for (int i = originalFiles.size() - 1; i >= 0; i--) {
+                    File originalFile = originalFiles.get(i);
+                    originalFile.delete(post);
+                    fileRepository.delete(originalFile);  // DB에서 제거
+                }
+
+            } else {  // 수정할 새 파일 존재 (#4 처리)
+
+                // 서버에 저장되어있는 파일과 새 파일의 존재 여부에 따른 처리 방식
+                // Server | Client | 처리
+                //      X | X      | #5. skip
+                //      X | O      | #6. 추가
+                //      O | X      | #7. 삭제
+                //      O | O      | #8. 기존 파일의 sequence 변경
+
+                // 서버에 저장되어 있는 파일의 원본명과 인스턴스 저장
+                Map<String, File> originalFileInfo = new HashMap<>();
+                for (File originalFile : originalFiles) {
+                    originalFileInfo.put(originalFile.getUploadFilename(), originalFile);
+                }
+
+                // 서버에 저장되어 있는 파일이 요청 온 새 파일에도 존재하는지 확인
+                for (Map.Entry<String, File> fileEntry : originalFileInfo.entrySet()) {
+                    // 서버에 저장되어 있는 파일이 요청 온 새 파일에는 존재하지 않음 (#7 처리)
+                    if (fileList.stream().noneMatch(f -> f.getOriginalFilename().equals(fileEntry.getKey()))) {  // 원본명이 같은 파일이 없음
+                        fileEntry.getValue().delete(post);  // 서버에 저장되어 있던 파일 삭제
+                        fileRepository.delete(fileEntry.getValue());  // DB에서 제거
+                    }
+                }
+
+                // 요청 온 새 파일이 서버에도 존재하는지 확인
+                long fileSequence = 1L;  // 파일 순서
+                for (MultipartFile newFile : fileList) {
+                    String newFileName = newFile.getOriginalFilename();
+                    // 요청 온 새 파일이 서버에도 존재 (#8 처리)
+                    if (originalFileInfo.containsKey(newFileName)) {  // 원본명이 같은 파일이 존재
+                        originalFileInfo.get(newFileName).changeSequence(fileSequence);  // 기존 파일의 sequence 변경
+
+                    } else {  // 요청 온 새 파일이 서버에는 존재하지 않음 (#6 처리)
+                        fileRepository.save(fileService.uploadFile(newFile, fileSequence, post));  // 파일 업로드 후, DB에 파일 저장
+                    }
+                    fileSequence++;  // 파일 순서 누적
+                }
+            }
+        }
+        post.edit(Whether.findWhether(isAnonymous), title, contents);  // 게시글 내용 수정
     }
 
     /**
