@@ -30,7 +30,7 @@ public class EmailSendService {
     private Map<String, StringBuilder> emailAndCodeStore = new HashMap<>();  // 인증할 이메일과 인증코드 저장소
 
     // 이메일 인증을 위한 인증코드 전송
-    public String sendCode(String email, String authType, String loginId) {
+    public void sendCode(String email, String authType, String loginId) {
 
         EmailAuthenticateType type = EmailAuthenticateType.findEmailAuthenticateType(authType);  // 회원가입, 비밀번호 찾기 구분
 
@@ -64,8 +64,6 @@ public class EmailSendService {
         javaMailSender.send(message);
 
         saveEmailAndAuthenticationCode(email, code);  // 이메일과 인증코드 저장
-
-        return code.toString();
     }
 
     // 이메일과 인증코드 저장

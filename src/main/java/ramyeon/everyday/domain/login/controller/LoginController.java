@@ -63,19 +63,14 @@ public class LoginController {
      */
     @PostMapping("/email-authenticate")
     public ResponseEntity emailAuthenticate(@Valid @RequestBody UserDto.EmailAuthenticationRequestDto emailAuthenticationRequestDto) {
-        String code;
         try {
-            code = emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType(), emailAuthenticationRequestDto.getLoginId());  // 인증코드 발송
+            emailSendService.sendCode(emailAuthenticationRequestDto.getEmail(), emailAuthenticationRequestDto.getType(), emailAuthenticationRequestDto.getLoginId());  // 인증코드 발송
         } catch (NotFoundResourceException re) {
             return new ResponseEntity<>(new ResultDto(404, re.getMessage()), HttpStatus.NOT_FOUND);
         } catch (NotFoundEnumException | InvalidInputValueException | DuplicateResourceException ee) {
             return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
-
-        Map<String, String> data = new HashMap<>();
-        data.put("authenticationCode", code);
-
-        return new ResponseEntity<>(new ResultDto(200, "인증코드 발송 성공", data), HttpStatus.OK);
+        return new ResponseEntity<>(new ResultDto(200, "인증코드 발송 성공"), HttpStatus.OK);
     }
 
     /**
