@@ -164,8 +164,8 @@ public class PostController {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (NoRightsOfAccessException nre) {
             return new ResponseEntity<>(new ResultDto(403, nre.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (NotFoundEnumException | InvalidInputValueException nfe) {
-            return new ResponseEntity<>(new ResultDto(400, nfe.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundEnumException | InvalidInputValueException | BadFileUploadException ee) {
+            return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
