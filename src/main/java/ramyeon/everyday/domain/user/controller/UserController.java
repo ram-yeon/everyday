@@ -79,18 +79,21 @@ public class UserController {
      */
     @PostMapping("/users/authority/edit")
     public ResponseEntity changeAuthority(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        int isSuccess;
+        UserService.UpgradeResult upgradeResult;
         try {
-            isSuccess = userService.upgradeUserAuthority(principalDetails.getUsername(), principalDetails.getAuthorities());
+            upgradeResult = userService.upgradeUserAuthority(principalDetails.getUsername(), principalDetails.getAuthorities());
         } catch (NotFoundResourceException e) {
             return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
         }
-        if (isSuccess == 0) {
+        if (upgradeResult.isSuccess()) {  // 등업 성공
             return new ResponseEntity<>(new ResultDto(200, "등업 성공"), HttpStatus.OK);
-        } else if (isSuccess == 1) {
-            return new ResponseEntity<>(new ResultDto(200, "등업 실패: [좋아요 10개, 댓글 5개 이상] 조건 미충족"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new ResultDto(200, "이미 등업이 완료된 회원"), HttpStatus.OK);
+        } else {  // 등업 실패
+            if (upgradeResult.getLikeCount() == null) {  // 이미 등업이 완료된 회원
+                return new ResponseEntity<>(new ResultDto(200, "이미 등업이 완료된 회원"), HttpStatus.OK);
+            } else {  // 등업 조건 미충족
+                return new ResponseEntity<>(new ResultDto(200, "등업 실패: [좋아요 10개, 댓글 5개 이상] 조건 미충족" +
+                        System.lineSeparator() + "현황: [좋아요 " + upgradeResult.getLikeCount() + "개, 댓글 " + upgradeResult.getCommentCount() + "개]"), HttpStatus.OK);
+            }
         }
     }
 }

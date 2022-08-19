@@ -1,5 +1,7 @@
 package ramyeon.everyday.domain.user.service;
 
+import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -87,13 +89,17 @@ public class UserService {
      * 회원 등업 신청
      */
     @Transactional
-    public int upgradeUserAuthority(String loginId, Collection<? extends GrantedAuthority> authorities) {
+    public UpgradeResult upgradeUserAuthority(String loginId, Collection<? extends GrantedAuthority> authorities) {
         User loginUser = getLoginUser(loginId);  // 회원 조회
+
+        boolean isSuccess = false;
 
         // 이미 등업이 완료된 회원이면
         for (GrantedAuthority authority : authorities) {
             if (authority.getAuthority().equals(UserAuthority.ROLE_UPGRADE.name()))
-                return 2;
+                return UpgradeResult.builder()
+                        .isSuccess(isSuccess)
+                        .build();
         }
 
         Long likeCount = likeRepository.countByUser(loginUser);  // 좋아요 개수 조회
@@ -102,10 +108,23 @@ public class UserService {
         // 두 조건 모두 만족하면 등업 승인
         if (likeCount >= 10 && commentCount >= 5) {
             loginUser.changeAuthority(UserAuthority.ROLE_UPGRADE);
-            return 0;
-        } else {  // 등업 거절
-            return 1;
+            isSuccess = true;
         }
+
+        return UpgradeResult.builder()
+                .isSuccess(isSuccess)
+                .likeCount(likeCount)
+                .commentCount(commentCount)
+                .build();
+    }
+
+    // 등업 결과 Class
+    @Getter
+    @Builder
+    public static class UpgradeResult {
+        private boolean isSuccess;  // 등업 성공 여부
+        private Long likeCount;  //좋아요 개수
+        private Long commentCount;  // 댓글 개수
     }
 
     // 로그인한 회원 조회
