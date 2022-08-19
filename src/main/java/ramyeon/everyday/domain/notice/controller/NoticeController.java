@@ -87,6 +87,24 @@ public class NoticeController {
     }
 
     /**
+     * 공지사항 수정 API
+     */
+    @PatchMapping("/notices/{noticeId}/files")
+    public ResponseEntity updateNoticeWithFile(@PathVariable Long noticeId,
+                                               @RequestPart(value = "imageFiles", required = false) List<MultipartFile> files,
+                                               @RequestPart(value = "noticeInfo") NoticeDto.NoticeRequestDto noticeRequestDto,
+                                               @AuthenticationPrincipal ManagerDetails managerDetails) throws Exception {
+        try {
+            noticeService.updateNoticeWithFile(managerDetails.getUsername(), noticeId, noticeRequestDto.getTitle(), noticeRequestDto.getContents(), files);
+            return new ResponseEntity<>(new ResultDto(200, "공지사항 수정 성공"), HttpStatus.OK);
+        } catch (NotFoundResourceException e) {
+            return new ResponseEntity<>(new ResultDto(404, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (BadFileUploadException | InvalidInputValueException ee) {
+            return new ResponseEntity<>(new ResultDto(400, ee.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
      * 공지사항 수정 API (첨부 파일 제외)
      */
     @PatchMapping("/notices/{noticeId}")

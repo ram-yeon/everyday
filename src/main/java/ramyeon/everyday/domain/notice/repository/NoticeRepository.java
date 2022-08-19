@@ -5,10 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ramyeon.everyday.enum_.Whether;
 import ramyeon.everyday.domain.notice.entity.Notice;
-import ramyeon.everyday.enum_.TargetType;
 import ramyeon.everyday.domain.user.entity.User;
+import ramyeon.everyday.enum_.TargetType;
+import ramyeon.everyday.enum_.Whether;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +24,13 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
     List<Notice> findByIsDeletedWithManagerFile(Whether isDeleted, Sort sort);  // 공지사항 목록 조회 - manager, fileList와 fetch join
 
     Optional<Notice> findByIdAndIsDeleted(Long id, Whether isDeleted);
+
+    @Query("SELECT n FROM Notice n" +
+            " LEFT OUTER JOIN FETCH n.fileList f" +
+            " WHERE n.id = ?1" +
+            " and n.isDeleted = ?2" +
+            " order by f.sequence")
+    Optional<Notice> findByIsDeletedWithFile(Long id, Whether isDeleted);  // 공지사항 수정 시 조회 - fileList와 fetch join
 
     @Query("SELECT DISTINCT n FROM Notice n" +
             " LEFT OUTER JOIN FETCH n.manager m" +
