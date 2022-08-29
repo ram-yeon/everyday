@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+
 import EditBox from './EditBox';
 import CommentList from './Comment/CommentList';
-import { Link, useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material/';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
-import { makeStyles, Typography } from "@material-ui/core";
-import { useLocation } from 'react-router-dom';
 import { displayDateFormat } from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
-const useStyles = makeStyles((theme) => ({
+import { Box } from '@mui/material/';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //색채워진좋아요
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
+import { makeStyles, Typography } from "@material-ui/core";
+
+const useStyles = makeStyles(() => ({
     headLink: {
         textDecoration: 'none',
         cursor: 'pointer',
@@ -27,8 +28,6 @@ const useStyles = makeStyles((theme) => ({
     },
     writerIcon: {
         color: "gray",
-        [theme.breakpoints.up("sm")]: {
-        },
     },
     postUpdate: {
         color: "gray",
@@ -108,14 +107,10 @@ function BoardDetail() {
     //게시글상세조회api
     const boardDetailSelect = async () => {
         BoardAPI.boardDetailSelect(data).then(response => {
-            // file 처리필요
-            // if (response.data.hasOwnProperty('file')) {
-            // }
             const boardType = response.data.boardType;
             setBoardType(JSON.stringify(response.data.boardType).replaceAll("\"", ""));
             setBoardTypeToLowerCase(boardType.toLowerCase());
             setTitle(JSON.stringify(response.data.title).replaceAll("\"", ""));
-            // setContents(JSON.stringify(response.data.contents).replaceAll("\"", ""));
             setContents((response.data.contents).replaceAll("\"", ""));
             setRegistrationDate(response.data.registrationDate);
             setWriter(JSON.stringify(response.data.writer).replaceAll("\"", ""));

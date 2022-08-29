@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import MainBoard from '../../pages/MainBoard';
 import { useNavigate, useLocation } from 'react-router-dom';
-// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';             //채워진좋아요
+import MainBoard from '../../pages/MainBoard';
+import { displayDateFormat } from "../CommentTool";
+import * as BoardAPI from '../../api/Board';
+import { Message } from '../Message';
+import { SESSION_TOKEN_KEY } from '../Axios/Axios';
+
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';                  //댓글
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
+
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { displayDateFormat } from "../CommentTool";
+
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import * as BoardAPI from '../../api/Board';
-import { Message } from '../Message';
-import { SESSION_TOKEN_KEY } from '../Axios/Axios';
 
 function SearchBoardList() {
     const navigate = useNavigate();
@@ -68,7 +70,9 @@ function SearchBoardList() {
                                     break;
                                 case 'NOTICE':
                                     boardTypeToKor = '공지사항';
-                                    writer = '에브리타임';
+                                    writer = '에브리데이';
+                                    break;
+                                default:
                                     break;
                             }
                             postItems.push({
@@ -217,7 +221,6 @@ function SearchBoardList() {
                 </Stack>
             </>
             :
-            // <h2>검색결과 없음</h2>
             <MainBoard/>
             }
 

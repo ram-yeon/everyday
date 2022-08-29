@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import EditBox from './EditBox';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { makeStyles, Typography } from "@material-ui/core";
-import { Box } from '@mui/material/';
-import { Info } from '@material-ui/icons';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
+
+import EditBox from './EditBox';
 import { displayDateFormat } from "../CommentTool";
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../../component/Message';
 import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
-const useStyles = makeStyles((theme) => ({
+import { Box } from '@mui/material/';
+import { Info } from '@material-ui/icons';
+import { makeStyles, Typography } from "@material-ui/core";
+
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';            //조회수
+import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';          //사진첨부
+
+const useStyles = makeStyles(() => ({
     headLink: {
         textDecoration: 'none',
         cursor: 'pointer',
@@ -24,8 +27,6 @@ const useStyles = makeStyles((theme) => ({
     },
     writerIcon: {
         color: "#C00000",
-        [theme.breakpoints.up("sm")]: {
-        },
     },
     update: {
         color: "gray",

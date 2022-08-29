@@ -1,24 +1,25 @@
 import React, { useState } from "react";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
-import { Stack, Button, Divider } from "@mui/material";
-import { Box } from '@mui/material/';
-import Markdown from "../../Markdown";
+
 import * as BoardAPI from '../../../api/Board';
 import { Message } from '../../Message';
 import { SESSION_TOKEN_KEY } from '../../Axios/Axios';
+import Markdown from "../../Markdown";
 import {
   displayDateFormat,
   Item,
 } from "../../CommentTool";
+
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //색채워진좋아요
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
+import { Stack, Button, Divider, Box } from "@mui/material";
 
 const Reply = (props) => {
   const {
     reply,
     handleIsInitialize,
   } = props;
-  // const index = reply.commentId;
+
   const token = localStorage.getItem(SESSION_TOKEN_KEY);
   const tokenJson = JSON.parse(atob(token.split(".")[1]));
 
@@ -103,7 +104,7 @@ const Reply = (props) => {
           </>
         )}
         {/* 대댓글 컴포넌트 -> 주석처리(대댓글까지만 구현) */}
-        {/* <ReplyList commentId={comment.commentId}  /> */}
+        {/* 무한 대댓글 구현 시 -> <ReplyList commentId={comment.commentId}  /> */}
 
       </Box>
 

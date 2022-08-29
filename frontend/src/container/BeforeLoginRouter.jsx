@@ -12,7 +12,6 @@ import Certification from '../pages/Certification/Certification.jsx';
 
 import Error from "../component/Error";
 
-
 function BeforeLoginRouter(props) {
     return (
         <div>

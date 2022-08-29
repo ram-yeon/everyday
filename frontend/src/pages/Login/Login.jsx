@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import './Login.css'
 import { Link } from 'react-router-dom';
+
 import { FormControlLabel, Checkbox } from '@mui/material';
 
-// import { useDispatch } from 'react-redux';
-// import { loginUser } from '../../_actions/user_action';
 import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
 import { useNavigate } from 'react-router-dom';
@@ -13,16 +12,13 @@ function Login(props) {
     const [idVal, setIdVal] = useState("");
     const [pwVal, setPwVal] = useState("");
     const [checked, setChecked] = useState(false);
-    // const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
     
     const handleCheckBox = (event) => {
         setChecked(event.target.checked);
       };
 
     const handleBtn = (event) => {
-        // event.preventDefualt();
         let isKeptLogin = '';
         if (checked) {
             isKeptLogin = 'Y'
@@ -42,16 +38,6 @@ function Login(props) {
             console.log(JSON.stringify(error));
             Message.error(error.message);
         });
-        // redux사용
-        // dispatch(loginUser(data))
-        //     .then(response => {
-        //         if(response.payload.loginSuccess){
-        //             props.history.phsh('/')
-        //             // navigate("/");
-        //         } else{
-        //             alert('Error');
-        //         }
-        //     })
     }
 
     return (

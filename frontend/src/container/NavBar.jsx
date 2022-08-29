@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
+
 import ModalContainer from './ModalContainer';
-import { Link, useNavigate } from 'react-router-dom';
-import { AppBar, makeStyles, Toolbar, Typography } from "@material-ui/core";
-
-import { Search } from '@mui/icons-material';
-import { InputBase } from '@mui/material';
-// import { alpha } from '@mui/lab/node_modules/@mui/system';
-import { Avatar } from 'antd';
-
 import * as UserAPI from '../api/Users';
 import * as BoardAPI from '../api/Board';
 import { Message } from '../component/Message';
 import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
+
+import { Link, useNavigate } from 'react-router-dom';
+import { AppBar, makeStyles, Toolbar, Typography } from "@material-ui/core";
+import { InputBase } from '@mui/material';
+import { Search } from '@mui/icons-material';
+
+import { Avatar } from 'antd';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -51,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "55%",
     marginTop: "5px",
     border: "2px lightgray solid",
-    // backgroundColor: alpha(theme.palette.common.white, 1),
     borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.down("sm")]: {
       display: "none",
@@ -139,7 +138,7 @@ function NavBar(props) {
             <Toolbar className={classes.Toolbar}>
               <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
               <div>
-                <Typography className={classes.textLogo} style={{ fontWeight:'bold', fontSize: '0.8rem', color: '#C00000' }}>
+                <Typography className={classes.textLogo} style={{ fontWeight: 'bold', fontSize: '0.8rem', color: '#C00000' }}>
                   에브리데이
                 </Typography>
               </div>
@@ -151,7 +150,7 @@ function NavBar(props) {
             <Toolbar className={classes.Toolbar}>
               <Link to='/'><Avatar alt="로고이미지" src={"/images/smallLogo.png"} className={classes.imgLogo}></Avatar></Link>
               <div>
-                <Typography className={classes.textLogo} style={{ fontWeight:'bold', fontSize: '0.8rem', color: '#C00000' }}>
+                <Typography className={classes.textLogo} style={{ fontWeight: 'bold', fontSize: '0.8rem', color: '#C00000' }}>
                   에브리데이
                 </Typography>
                 <Typography className={classes.schoolName}>
@@ -183,7 +182,6 @@ function NavBar(props) {
             </Toolbar>
           </AppBar>
       }
-
     </>
   );
 }

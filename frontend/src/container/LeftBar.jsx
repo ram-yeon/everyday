@@ -1,13 +1,14 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, makeStyles, Typography } from "@material-ui/core";
-import { Info } from '@material-ui/icons';
-import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
-import ChatIcon from '@mui/icons-material/Chat';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import GroupIcon from '@mui/icons-material/Group';
-
 import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
+
+import { Container, makeStyles, Typography } from "@material-ui/core";
+
+import { Info } from '@material-ui/icons';
+import ChatIcon from '@mui/icons-material/Chat';
+import GroupIcon from '@mui/icons-material/Group';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -148,7 +149,6 @@ function LeftBar() {
                         </Link>
                     </Container>
             }
-
         </>
     );
 }

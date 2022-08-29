@@ -1,3 +1,4 @@
+//학교선택 및 학번선택
 import React, { useState } from 'react'
 import './Register.css'
 import { useNavigate } from 'react-router-dom';

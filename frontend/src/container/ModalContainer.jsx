@@ -1,25 +1,24 @@
 import React from 'react'
-import { Container, Modal, makeStyles, ListItemIcon } from "@material-ui/core";
+import { useNavigate } from 'react-router-dom';
+import * as UserAPI from '../api/Users';
+import { Message } from '../component/Message';
+import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
+
 import ChatIcon from '@mui/icons-material/Chat';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
+import { Container, Modal, makeStyles, ListItemIcon } from "@material-ui/core";
+
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //색채워진좋아요
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import { Avatar } from 'antd';
+
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-import * as UserAPI from '../api/Users';
-import { Message } from '../component/Message';
-import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
-import { useNavigate } from 'react-router-dom';
+import { Avatar } from 'antd';
 
-const useStyles = makeStyles((theme) => ({
-    myImg: {
-        [theme.breakpoints.down("sm")]: {
-        },
-    },
+const useStyles = makeStyles(() => ({
     modal: {
         width: 200,
         height: 470,
@@ -31,8 +30,6 @@ const useStyles = makeStyles((theme) => ({
         textAlign: "center",
         paddingTop: "3rem",
         outline: "none",
-        [theme.breakpoints.down("sm")]: {
-        },
     },
 }));
 

@@ -1,3 +1,4 @@
+//댓글 관련하여 필요한 함수 공통화
 import { styled } from "@mui/material/styles";
 import { Avatar } from "@mui/material";
 import { Box } from '@mui/material/';

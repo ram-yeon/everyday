@@ -1,9 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import './Landing.css';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 import { Layout } from 'antd';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 import { Box, TextField } from '@mui/material/';
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
@@ -12,8 +16,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 
 function Landing() {
   const { Sider, Content } = Layout;

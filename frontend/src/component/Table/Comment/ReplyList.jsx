@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import Reply from './Reply';
-import { makeStyles } from "@material-ui/core";
-import { FormControlLabel, Checkbox } from '@mui/material';
-import { Stack, Button } from "@mui/material";
+
 import { Editor } from "@toast-ui/react-editor";
 import * as BoardAPI from '../../../api/Board';
 import { Message } from '../../Message';
 
-const useStyles = makeStyles((theme) => ({
+import { makeStyles } from "@material-ui/core";
+import { FormControlLabel, Checkbox, Stack, Button } from '@mui/material';
+
+const useStyles = makeStyles(() => ({
   checkAnonymous: {
     marginTop: "-4.3rem",
   },
@@ -16,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
 const ReplyList = (props) => {
   const [reply, setReply] = useState([]);
   const [checked, setChecked] = useState(false);
-  // const [initCommentId] = useState(props.commentId);
   const [isInitialize, setIsInitialize] = useState(false);
 
   const handleCheckBox = (event) => {
@@ -44,9 +44,6 @@ const ReplyList = (props) => {
     } else {
       isAnonymous = 'N'
     }
-    // const contentsReplaceNewline = () => {
-    //   return getContent.replace(/(?:\r\n|\r|\n)/g, '<br />');
-    // }
     const data = {
       postId: props.postId,
       contents: getContent,

@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { makeStyles } from "@material-ui/core";
-import { Box } from '@mui/material/';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
 import WriteBox from './WriteBox';
-// import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+import { displayDateFormat } from "../CommentTool";
+import * as BoardAPI from '../../api/Board';
+import { Message } from '../../component/Message';
+import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
+
+import { Box } from '@mui/material/';
+import { makeStyles } from "@material-ui/core";
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
+
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { displayDateFormat } from "../CommentTool";
+
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import * as BoardAPI from '../../api/Board';
-import { Message } from '../../component/Message';
-import { SESSION_TOKEN_KEY } from '../../component/Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
     writeBoxBtn: {
@@ -56,7 +58,7 @@ function NoticeBoardList(props) {
     const handleChange = (event, value) => {
         setPage(value);
         getBoardList({
-            page: value - 1,    //추후 -1 제거 필요
+            page: value - 1,   
         });
     };
 
@@ -92,7 +94,7 @@ function NoticeBoardList(props) {
     useEffect(() => {
         if (!isInitialize) {
             getBoardList({
-                page: 0,    //추후 1로 수정필요
+                page: 0,    
             });
         }
     });

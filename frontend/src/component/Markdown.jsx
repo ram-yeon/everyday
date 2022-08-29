@@ -1,3 +1,4 @@
+//댓글작성에 사용되는 Markdown 컴포넌트
 import React from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";

@@ -99,7 +99,6 @@
     border: none;
     cursor: pointer;
     box-shadow: 0.1rem 0.1rem 0.3rem 0.1rem gray;
-    /* margin-left: 2rem; */
     margin-top: 2rem;
 }
 .emailAuth-btn:hover{

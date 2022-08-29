@@ -1,16 +1,14 @@
 //게시글 수정 박스
 import React, { useState } from 'react'
 import { makeStyles } from "@material-ui/core";
-import { Box, TextField } from '@mui/material/';
+import { Box, TextField, FormControlLabel, Checkbox } from '@mui/material/';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-// import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-import { FormControlLabel, Checkbox } from '@mui/material';
 
 import * as BoardAPI from '../../api/Board';
 import { Message } from '../Message';
 import { SESSION_TOKEN_KEY } from '../Axios/Axios';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     writeBox: {
         height: "auto",
         border: "2px lightgray solid",
@@ -79,20 +77,6 @@ function EditBox(props) {
         setChecked(event.target.checked);
     };
 
-    //입력 글자 수 제한
-    // const checkLength = (event) => {
-    //     let text = event.value;
-    //     let textLength = text.length;
-    //     //최대 글자수
-    //     let maxLength = 5;
-    //     if (textLength > maxLength) {
-    //         alert(maxLength + "자 이상 작성할 수 없습니다.");
-    //         text = text.substr(0, maxLength);
-    //         event.value = text;
-    //         event.focus();
-    //     }
-    // };
-
     //글수정(파일제외)
     const handleUpdate = (e) => {
         if (!title || !contents) { //입력값체크
@@ -141,7 +125,6 @@ function EditBox(props) {
                 </div>
                 <div>
                     <textarea
-                        // onKeyUp={checkLength}
                         style={{ padding: "1rem", width: "100%", height: "26vh", fontSize: "0.9rem", fontFamily: "-moz-initial", marginTop: "1rem", resize: "none", whiteSpace: "pre-line" }}
                         value={contents}
                         onChange={(e) => handleSetContents(e)}

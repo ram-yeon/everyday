@@ -6,7 +6,6 @@ import * as UserAPI from '../../api/Users';
 import { Message } from '../../component/Message';
 
 function Certification(props) {
-
     const [emailVal, setEmailVal] = useState("");
     const [codeVal, setCodeVal] = useState("");
 

@@ -1,6 +1,8 @@
+//회원정보 입력
 import React, { useState } from 'react'
 import './Register.css';
 import { Link } from 'react-router-dom';
+
 import { TextField } from '@mui/material/';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';

@@ -22,16 +22,13 @@ const useStyles = makeStyles((theme) => ({
 function Footer() {
     const classes = useStyles();
     return (
-
         <div className={classes.footerContainer} >
             <Link className={classes.link} to='/useterms'>이용약관</Link>
             <Link className={classes.link} to='/privacypolicy'>개인정보처리방침</Link>
             <Link className={classes.link} to='/communityrule'>커뮤니티이용규칙</Link>
             <Link className={classes.link} to='/noticeBoard'>공지사항</Link>
             <Link className={classes.link} to='/'><strong>©에브리데이</strong></Link>
-
         </div>
-
     );
 }
 

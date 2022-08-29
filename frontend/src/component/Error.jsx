@@ -1,21 +1,12 @@
-// import React, { useEffect, useState } from 'react';
+//url에 해당하는 페이지 없을 때, 보여줄 에러페이지
 import React from 'react';
 
 function Error() {
 
-    // const [isInitialize, setIsInitialize] = useState(false);
-
-    // useEffect(() => {
-    //     if (!isInitialize) {
-    //         setIsInitialize(true);
-    //     }
-    // }, [isInitialize, setIsInitialize]);
-
-
     return (
         <div>
             <h1>
-                에러 페이지입니다.
+                원하시는 페이지를 찾을 수 없습니다.
             </h1>
         </div>
 

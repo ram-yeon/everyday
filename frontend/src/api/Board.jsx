@@ -1,5 +1,4 @@
-import Axios from "../component/Axios/Axios";
-import AxiosFile from "../component/Axios/AxiosFile";
+import Axios from "../component/Axios/Axios";    
 import { NewPromise } from "../component/Common";
 
 //메인화면 게시글 목록 조회
@@ -11,7 +10,6 @@ export const userInfoSelect = () => NewPromise(Axios.get('/users/banner'));
 export const userAuthorityEdit = (data) => NewPromise(Axios.post('/users/authority/edit', data));
 
 //게시판 별 게시글 목록 조회
-// export const eachBoardSelect = (data) => NewPromise(Axios.get('/posts/list/' + data.boardType + '?page=' + data.page + '&size=' + '3'));
 export const eachBoardSelect = (data) => NewPromise(Axios.get(`/posts/list/${data.boardType}?page=${data.page}&size=3`));
 
 //공지사항 게시글 목록 조회

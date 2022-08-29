@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Comment from './Comment';
+import * as BoardAPI from '../../../api/Board';
+import { Message } from '../../Message';
+import { Editor } from "@toast-ui/react-editor";
+import "@toast-ui/editor/dist/toastui-editor.css";
+
 import { makeStyles } from "@material-ui/core";
 import { FormControlLabel, Checkbox, Paper } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import "@toast-ui/editor/dist/toastui-editor.css";
-import { Editor } from "@toast-ui/react-editor";
-import * as BoardAPI from '../../../api/Board';
-import { Message } from '../../Message';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   commentInputBox: {
     border: "lightgray 1px solid",
     backgroundColor: "#F6F6F6",
@@ -36,7 +37,6 @@ const CommentList = (props) => {
     handleIsInitialize,
   } = props;
   const classes = useStyles();
-  // const commentData = props.comment;
   const [display, setDisplay] = useState(false);
   const editorRef = useRef();
   const [checked, setChecked] = useState(false);
@@ -47,7 +47,6 @@ const CommentList = (props) => {
 
   //댓글등록
   const onSubmit = (e) => {
-    // e.preventDefault();
 
     //마크다운 변환
     const editorInstance = editorRef.current.getInstance();

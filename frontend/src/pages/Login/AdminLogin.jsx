@@ -8,11 +8,9 @@ import { useNavigate } from 'react-router-dom';
 function AdminLogin(props) {
     const [idVal, setIdVal] = useState("");
     const [pwVal, setPwVal] = useState("");
-    // const { state } = useLocation();  //이전페이지에서 받은 type값(user인지 manager인지)
     const navigate = useNavigate();
 
-    const handleBtn = (event) => {
-        // event.preventDefualt();
+    const handleBtn = () => {
         const data = {
             loginId: idVal,
             password: pwVal,

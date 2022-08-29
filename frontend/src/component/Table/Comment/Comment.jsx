@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //채워진좋아요
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
 import ReplyList from "./ReplyList";
-import { Stack, Button, Divider, Box } from "@mui/material";
-import "@toast-ui/editor/dist/toastui-editor.css";
+
 import Markdown from "../../Markdown";
+import "@toast-ui/editor/dist/toastui-editor.css";
 import * as BoardAPI from '../../../api/Board';
 import { Message } from '../../Message';
 import { SESSION_TOKEN_KEY } from '../../Axios/Axios';
@@ -13,6 +10,11 @@ import {
   displayDateFormat,
   Item,
 } from "../../CommentTool";
+
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';                //색채워진좋아요
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';    //좋아요
+import { Stack, Button, Divider, Box } from "@mui/material";
 
 const Comment = (props) => {
   const {

@@ -1,7 +1,7 @@
+//Axios 컴포넌트 (Axios에 대한 설정값 공통화)
 import CommonAxios from 'axios';
 
 const Axios = CommonAxios.create({
-    // timeout: 30000,
     headers: {
         'Content-Type': 'application/json; charset=UTF-8;',
         'Access-Control-Allow-Origin': '*',

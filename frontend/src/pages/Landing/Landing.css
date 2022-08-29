@@ -1,15 +1,4 @@
 
-/* .landing-loginContain {
-    height: 16rem;
-    width: 16rem;
-    background: linear-gradient(to right bottom, rgba(236, 236, 236, 0.7), rgba(236, 236, 236, 0.4));
-    box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
-    border-radius: 3rem;
-    margin-top: 0.8rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}*/
 .landing-loginContent {
     margin-top: 2rem;
     height: 100%;

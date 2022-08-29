@@ -1,3 +1,4 @@
+//약관동의
 import React, { useState, useEffect } from 'react'
 import './Register.css'
 import { FormControlLabel, Checkbox } from '@mui/material';

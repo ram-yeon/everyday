@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import NoticeBoard from '../pages/Notice/NoticeBoard';
-import { Link } from 'react-router-dom';
-import { Grid, makeStyles } from "@material-ui/core";
-import { Box } from '@mui/material/';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { useNavigate } from 'react-router-dom';
 import * as BoardAPI from '../api/Board';
+import NoticeBoard from '../pages/Notice/NoticeBoard';
 import { displayDateFormat } from "../component/CommentTool";
 import { Message } from '../component/Message';
 import { SESSION_TOKEN_KEY } from '../component/Axios/Axios';
 
-const useStyles = makeStyles((theme) => ({
+import { Link, useNavigate } from 'react-router-dom';
+
+import { Box } from '@mui/material/';
+import { Grid, makeStyles } from "@material-ui/core";
+
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+
+const useStyles = makeStyles(() => ({
     link: {
         textDecoration: "none",
         color: "#C00000",

@@ -11,7 +11,6 @@
 
 .email-txf {
     width: 30%;
-
 }
 
 .code-txf {
@@ -29,10 +28,6 @@
     margin-left: 8px;
 
 }
-
-/* .send-btn:hover{
-    box-shadow: 4px 3px 9px -1px gray;
-} */
 
 #confirm-btn {
     margin-top: 1rem;
